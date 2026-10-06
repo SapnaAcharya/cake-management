@@ -1,0 +1,292 @@
+/* ==========================================================================
+   Cakes.css
+   Scoped under .cakes-page so it never clashes with the Home page's
+   .cake-card styles.
+
+   Sections:
+   1. Tokens
+   2. Layout
+   3. Header
+   4. States (loading / error / empty)
+   5. Grid
+   6. Card
+   7. Pagination
+   8. Responsive
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Tokens
+   ========================================================================== */
+.cakes-page {
+  --color-bg: #faf6f3;
+  --color-surface: #ffffff;
+  --color-ink: #251320;
+  --color-ink-muted: #7c6670;
+  --color-accent: #9a2c5d;
+  --color-border: #ece2e5;
+  --color-soft: #f8eaf0;
+
+  --radius-card: 16px;
+  --radius-control: 8px;
+
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: 'Work Sans', sans-serif;
+}
+
+
+/* ==========================================================================
+   2. Layout
+   ========================================================================== */
+.cakes-page .cakes-content {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 28px 32px 72px;
+}
+
+
+/* ==========================================================================
+   3. Header
+   No divider and no bottom padding; only one small gap before the grid.
+   ========================================================================== */
+.cakes-page .cakes-header {
+  margin: 0 0 24px;
+  padding: 0;
+  text-align: center;
+}
+
+.cakes-page .cakes-header h2 {
+  margin: 0 0 4px;
+  color: var(--color-ink);
+  font-family: 'Fraunces', serif;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.cakes-page .cakes-header p {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+
+/* ==========================================================================
+   4. States: loading / error / empty
+   ========================================================================== */
+.cakes-page .cakes-loading,
+.cakes-page .cakes-error,
+.cakes-page .cakes-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-card);
+  color: var(--color-ink-muted);
+  font-size: 15px;
+  text-align: center;
+}
+
+.cakes-page .cakes-error {
+  background: #fef3f2;
+  border-color: #fecdca;
+  color: #b42318;
+}
+
+
+/* ==========================================================================
+   5. Grid
+   ========================================================================== */
+.cakes-page .cakes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+
+/* ==========================================================================
+   6. Card (a single link: image, name, price)
+   ========================================================================== */
+.cakes-page a.cake-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cakes-page a.cake-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(37, 19, 32, 0.1);
+}
+
+.cakes-page a.cake-card:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Image */
+.cakes-page .cake-card-image {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #f1e9ec;
+  line-height: 0;
+}
+
+.cakes-page .cake-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.cakes-page a.cake-card:hover .cake-card-image img {
+  transform: scale(1.04);
+}
+
+/* Body: name on top, price below, no empty gap between them */
+.cakes-page .cake-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 18px 16px;
+}
+
+.cakes-page .cake-card-body h3 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-ink);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cakes-page .cake-card-footer {
+  margin-top: auto;
+}
+
+.cakes-page .cake-card-price {
+  color: var(--color-accent);
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+/* ==========================================================================
+   7. Pagination
+   ========================================================================== */
+.cakes-page .pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 36px;
+}
+
+.cakes-page .pagination button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.cakes-page .pagination button:hover:not(:disabled):not(.active) {
+  border-color: var(--color-accent);
+  background: var(--color-soft);
+  color: var(--color-accent);
+}
+
+.cakes-page .pagination button.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.cakes-page .pagination button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.cakes-page .pagination button:disabled {
+  background: #f5f1f3;
+  border-color: #e8dfe3;
+  color: #b5a8ae;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================================
+   8. Responsive
+   ========================================================================== */
+@media (max-width: 640px) {
+  .cakes-page .cakes-content {
+    padding: 20px 16px 48px;
+  }
+
+  .cakes-page .cakes-header {
+    margin-bottom: 18px;
+  }
+
+  /* Two cards per row instead of one very tall column */
+  .cakes-page .cakes-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .cakes-page .cake-card-body {
+    padding: 12px 12px 14px;
+  }
+
+  .cakes-page .cake-card-body h3 {
+    font-size: 14px;
+  }
+
+  .cakes-page .cake-card-price {
+    font-size: 15px;
+  }
+
+  .cakes-page .pagination button {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cakes-page a.cake-card,
+  .cakes-page .cake-card-image img {
+    transition: none;
+  }
+
+  .cakes-page a.cake-card:hover {
+    transform: none;
+  }
+}

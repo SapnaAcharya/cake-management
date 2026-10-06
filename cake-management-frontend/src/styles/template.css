@@ -1,0 +1,1394 @@
+@import url("https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+:root {
+  /* ---- Brand ---- */
+  --pink-50:  #fff1f5;
+  --pink-100: #ffe0e9;
+  --pink-200: #ffc2d4;
+  --pink-400: #ff6b9a;
+  --pink-500: #ff2d6f;
+
+  /* ---- Neutrals ---- */
+  --ink:       #221f3d;
+  --ink-soft:  #5f5b78;
+  --ink-mute:  #9994ad;
+  --line:      #efe6ea;
+  --surface:   #ffffff;
+  --surface-2: #f6f4f8;   /* "More" chip */
+  --surface-3: #f4f2f8;   /* delivery pill */
+  --track:     #eeeaf3;   /* inactive step number */
+
+  /* ---- Status ---- */
+  --success: #2ecc71;
+
+  /* ---- Colour variations (swatches + preview dots) ---- */
+  --swatch-pink:       #ff5c8a;
+  --swatch-blue:       #a9def2;
+  --swatch-lilac:      #d9b8f0;
+  --swatch-yellow:     #ffde85;
+  --swatch-cream:      #fdf1e6;
+  --swatch-cream-edge: #efe3d8;
+  --dot-blue:          #4a86e8;   /* stronger blue for the small preview dots */
+
+  /* ---- Backgrounds ---- */
+  --bg-page:  linear-gradient(180deg, #fff6f9 0%, #fdeaf0 100%);
+  --bg-photo: linear-gradient(180deg, #f9d6de 0%, #fbe3e8 100%);
+  --bg-stage: linear-gradient(180deg, #f9d6de 0%, #fbe3e8 60%, #f8d8df 100%);
+
+  /* ---- Radius ---- */
+  --radius-xs:    6px;
+  --radius-sm:    8px;
+  --radius-tag:   9px;
+  --radius-media: 10px;
+  --radius-md:    12px;
+  --radius-card:  14px;
+  --radius-xl:    18px;
+  --radius-lg:    20px;
+  --radius-badge: 26px;
+  --radius-pill:  999px;
+
+  /* ---- Elevation ---- */
+  --shadow-sm:            0 2px 8px  rgba(120, 90, 110, 0.08);
+  --shadow-card:          0 2px 12px rgba(120, 90, 110, 0.08);
+  --shadow-card-hover:    0 8px 20px rgba(120, 90, 110, 0.14);
+  --shadow-card-selected: 0 6px 18px rgba(255, 45, 111, 0.18);
+  --shadow-pop:           0 8px 24px rgba(34, 31, 61, 0.14);
+  --shadow-glass:         0 4px 16px rgba(255, 120, 160, 0.14);
+  --shadow-icon:          0 2px 10px rgba(255, 120, 160, 0.18);
+  --shadow-arrow:         0 1px 6px  rgba(34, 31, 61, 0.15);
+  --shadow-cta:           0 8px 20px rgba(255, 45, 111, 0.32);
+  --shadow-cta-hover:     0 10px 24px rgba(255, 45, 111, 0.40);
+  --glow-pink:            0 4px 12px rgba(255, 45, 111, 0.30);
+  --ring-pink:            0 0 0 3px var(--pink-50);
+
+  /* ---- Type scale ---- */
+  --text-3xs:    9.5px;    /* delivery sub-label */
+  --text-2xs:    10.5px;
+  --text-xs:     11.5px;
+  --text-caption: 12px;
+  --text-body-sm: 12.5px;
+  --text-sm:     13px;
+  --text-md:     14px;
+  --text-quote:  15px;
+  --text-lg:     16px;
+  --text-xl:     24px;     /* price "Rs. 1,950" */
+  --text-2xl:    26px;     /* "Design by Template", "Floral Birthday Cake" */
+  --text-brand:  28px;     /* "SweetCakes" logo text */
+
+  /* ---- Spacing (4px base) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* ---- Motion ---- */
+  --ease: 0.15s ease;
+
+  /* ---- Fonts ---- */
+  --font-body:    "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-display: "Kalam", cursive;
+
+  /* ---- Layout dimensions (the responsive section only changes these) ---- */
+  --page-gutter:  20px;
+  --header-h:     79px;
+  --footer-h:     76px;
+  --col-sidebar:  435px;
+  --col-details:  450px;
+  --gap-columns:  15px;
+
+  /* ---- Stacking ---- */
+  --z-menu:    5;
+  --z-overlay: 50;
+}
+
+
+/* ==========================================================================
+   2. BASE & RESETS
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+:where(button) {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--pink-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ---- Vite / CRA starter resets ----------------------------------------
+   The default starters centre <body> and cap #root's width, which stops a
+   full-screen layout from filling the window. Only applies to this page. */
+html:has(.sidebar__grid),
+body:has(.sidebar__grid) {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  display: block;
+  place-items: initial;
+}
+
+#root:has(.sidebar__grid),
+#__next:has(.sidebar__grid) {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+
+/* ==========================================================================
+   3. PAGE SHELL & LAYOUT
+   ========================================================================== */
+
+/* Wrapper around header + layout + footer.
+   `.dbt` is the class used in DesignByTemplate.jsx today; `.page` is the
+   cleaner name. Both work. */
+.page,
+.dbt {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--page-gutter);
+}
+
+/* The three columns: sidebar | stage | details.
+   `.dbt-body` is the class used in the JSX today; `.layout` also works. */
+.layout,
+.dbt-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: var(--col-sidebar) minmax(0, 1fr) var(--col-details);
+  grid-template-rows: minmax(0, 1fr);   /* row = available height, never grows with content */
+  gap: var(--gap-columns);
+}
+
+
+/* ==========================================================================
+   4. SHARED PATTERNS
+   Rules used by more than one component live here, once.
+   ========================================================================== */
+
+/* ---- Display (handwriting) font ---- */
+.brand__name,
+.sidebar__title,
+.details__title,
+.footer__quote {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+ .brand__name {
+  font-family: var(--font-body);
+  font-size: var(--text-brand);
+  font-style: normal;
+  font-weight: 700;
+  color: var(--pink-500);
+}
+
+/* ---- Script headings (sidebar + details share one style) ---- */
+.sidebar__title,
+.details__title {
+  font-family: var(--font-body);
+  font-size: var(--text-2xl);
+  font-style: normal;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+/* ---- White side panels ---- */
+.sidebar,
+.details {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+/* ---- Floating "glass" surfaces on top of the photo ---- */
+.stage__badge,
+.pv {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(6px);
+}
+
+/* ---- Round white icon buttons (header user/cart + stage tools) ---- */
+.icon-btn,
+.stage__tool {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: var(--shadow-icon);
+}
+
+/* ---- Section title inside the details panel ---- */
+.section-title {
+  margin: 0 0 10px;
+  font-size: var(--text-lg);
+  font-weight: 500;
+}
+
+
+/* ==========================================================================
+   5. HEADER
+   ========================================================================== */
+.header {
+  flex: none;
+  height: var(--header-h);
+  display: grid;
+  grid-template-columns: 36% auto 1fr;   /* steps start ~x=571 like the design */
+  align-items: center;
+  padding: 0 14px 0 28px;
+}
+
+/* ---- Brand ---- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: inherit;
+  text-decoration: none;
+}
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+.brand__name {
+  font-size: var(--text-brand);
+  font-style: normal;
+  color: var(--ink);
+}
+.brand__tag {
+  margin-top: 3px;
+  font-size: var(--text-caption);
+  color: var(--ink-soft);
+}
+
+.cz-brand__name {
+  font-style: normal;
+}
+
+/* ---- Steps (progress) ---- */
+.steps {
+  display: flex;
+  align-items: center;
+}
+.steps__group {
+  display: flex;
+  align-items: center;
+  align-self: stretch;                   /* underline spans the step only */
+}
+.steps__sep {
+  margin: 0 28px;
+  color: var(--pink-400);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0 3px;                    /* underline sits at y≈60 */
+  border-bottom: 2px solid transparent;
+  font-size: var(--text-md);
+  color: var(--ink-soft);
+}
+.step__num {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--track);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.step--active {
+  border-bottom-color: var(--pink-500);
+  font-weight: 500;
+  color: var(--pink-500);
+}
+.step--active .step__num {
+  background: var(--pink-500);
+  color: #fff;
+  box-shadow: var(--glow-pink);
+}
+
+/* ---- Actions (saved, user, cart) ---- */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 21px;
+  justify-self: end;
+  padding-right: var(--space-3);
+}
+
+.saved-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-right: 10px;
+  font-size: var(--text-md);
+  font-weight: 500;
+}
+
+.icon-btn {
+  position: relative;                    /* anchors .badge */
+  width: 44px;
+  height: 44px;
+}
+
+/* Cart count bubble */
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--pink-500);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: #fff;
+}
+
+.cz-chip__thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.cz-chip__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cz-chip__check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+}
+
+/* ==========================================================================
+   6. SIDEBAR
+   ========================================================================== */
+.sidebar {
+  padding: 24px 21px 0 25px;
+  overflow-x: hidden;
+  overflow-y: auto;                      /* fallback: the panel scrolls if the grid can't */
+}
+
+/* ---- Head: title, lead text, search, chips ---- */
+.sidebar__head {
+  flex: none;
+  padding-right: var(--space-1);
+}
+.sidebar__title {
+  margin: 0 0 4px;
+}
+.sidebar__lead {
+  max-width: 260px;
+  margin: 0 0 10px;
+  font-size: var(--text-md);
+  line-height: 20px;
+  color: var(--ink-soft);
+}
+
+/* ---- Search ---- */
+.search {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 14px 0 12px;
+  border: 1px solid var(--pink-100);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink-soft);
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+.search:focus-within {
+  border-color: var(--pink-400);
+  box-shadow: var(--ring-pink);
+}
+.search input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+.search input::placeholder {
+  color: var(--ink-mute);
+}
+
+/* ---- Filter chips ---- */
+.chips {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 13px;
+  margin-top: 11px;
+}
+.chip {
+  min-width: 55px;
+  height: 30px;
+  padding: 0 15px;
+  border: 1px solid var(--pink-100);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink);
+  transition: background var(--ease), color var(--ease), box-shadow var(--ease);
+}
+.chip:hover {
+  background: var(--pink-50);
+}
+.chip--active,
+.chip--active:hover {
+  border-color: var(--pink-500);
+  background: var(--pink-500);
+  color: #fff;
+  box-shadow: var(--glow-pink);
+}
+.chip--more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 14px 0 18px;
+  border-color: var(--surface-2);
+  background: var(--surface-2);
+}
+
+/* "More" dropdown */
+.chip-more {
+  position: relative;
+}
+.chip-menu {
+  position: absolute;
+  top: 38px;
+  right: 0;
+  z-index: var(--z-menu);
+  min-width: 140px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-pop);
+}
+.chip-menu button {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  font-size: var(--text-sm);
+  transition: background var(--ease);
+}
+.chip-menu button:hover {
+  background: var(--pink-50);
+}
+
+/* ---- Card grid ---- */
+.sidebar__grid {
+  flex: 1;
+  min-height: 0;
+  margin: 16px -4px 0;
+  padding: 4px 0 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: max-content;
+  gap: 12px 16px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pink-200) transparent;
+}
+.sidebar__empty {
+  grid-column: 1 / -1;
+  margin: var(--space-5) 0;
+  text-align: center;
+  font-size: var(--text-md);
+  color: var(--ink-soft);
+}
+
+/* ---- Template card ---- */
+.card {
+  --card-zoom: 1;                        /* below 1 makes the cake look smaller in the frame */
+
+  padding: 5px 5px 6px;
+  border: 2px solid transparent;         /* 190px card → 176px image */
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: border-color var(--ease), box-shadow var(--ease), transform var(--ease);
+}
+.card:hover:not(.card--selected) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+.card--selected {
+  border-color: var(--pink-500);
+  box-shadow: var(--shadow-card-selected);
+}
+
+/* Photo */
+.card__media {
+  position: relative;
+  aspect-ratio: 176 / 130;
+  overflow: visible;                     /* lets the Popular tag overhang the photo */
+  border-radius: var(--radius-media);
+  background: var(--bg-photo);
+}
+.card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(var(--card-zoom));
+}
+
+/* Overlays on the photo */
+.card__popular {
+  position: absolute;
+  top: 1px;
+  left: -4px;
+  padding: 3px 12px;
+  border-radius: var(--radius-tag);
+  background: var(--pink-500);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: #fff;
+}
+.card__like {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--pink-500);
+}
+.card__like svg {
+  width: 14px;
+  height: 14px;
+}
+.card__like--on {
+  background: #fff;
+}
+
+/* Text + button */
+.card__name {
+  margin: 6px var(--space-1) 0;
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.card__cat {
+  margin: 2px var(--space-1) 7px;
+  font-size: var(--text-caption);
+  color: var(--ink-soft);
+  text-transform: capitalize;
+}
+.card__cta {
+  display: block;
+  width: 100%;
+  height: 28px;
+  border: 1px solid var(--pink-100);
+  border-radius: var(--radius-sm);
+  background: var(--pink-50);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--pink-500);
+  transition: background var(--ease);
+}
+.card--selected .card__cta,
+.card__cta:hover {
+  background: var(--pink-100);
+}
+
+
+/* ==========================================================================
+   7. STAGE — live preview
+   ========================================================================== */
+.stage {
+  position: relative;
+  min-height: 0;
+  margin: var(--space-4) 0 30px;
+  overflow: hidden;
+  border-radius: var(--radius-xs);
+  background: var(--bg-stage);
+}
+.stage--expanded {
+  position: fixed;
+  inset: var(--space-3);
+  z-index: var(--z-overlay);
+  margin: 0;
+  border-radius: var(--radius-lg);
+}
+
+/* ---- Main photo ---- */
+.stage__image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                     /* photo fills the whole stage, like the design */
+  object-position: center;
+  transition: filter 0.3s ease;
+  animation: stage-fade 0.35s ease;      /* replays when the <img> key changes */
+}
+.stage--expanded .stage__image {
+  object-fit: contain;
+}
+
+@keyframes stage-fade {
+  from { opacity: 0; transform: scale(1.015); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---- "Live Preview" badge ---- */
+.stage__badge {
+  position: absolute;
+  top: 15px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 10px 21px 10px 19px;
+  border-radius: var(--radius-badge);
+}
+.stage__badge p {
+  margin: 0;
+}
+.stage__badge-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+.stage__badge-sub {
+  margin-top: 2px !important;
+  font-size: var(--text-2xs);
+  color: var(--ink-soft);
+}
+.stage__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.stage__overlay {
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.stage__image-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---- Top-right tools (expand, like) ---- */
+.stage__tools {
+  position: absolute;
+  top: 18px;
+  right: 15px;
+  display: flex;
+  gap: var(--space-2);
+}
+.stage__tool {
+  width: 38px;
+  height: 38px;
+}
+.stage__tool--like {
+  color: var(--pink-500);
+}
+
+/* ---- Thumbnail + variation strip ---- */
+.pv {
+  position: absolute;
+  right: 14px;
+  bottom: var(--space-3);
+  left: 14px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px 0 10px;
+  border-radius: var(--radius-xl);
+}
+
+/* Arrows */
+.pv__arrow {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: var(--shadow-arrow);
+}
+.pv__arrow--plain {
+  width: 22px;
+  height: 22px;
+  background: none;
+  box-shadow: none;
+}
+
+/* Thumbnails */
+.pv__thumbs {
+  display: flex;
+  gap: var(--space-3);
+}
+.pv__thumb {
+  width: 70px;
+  height: 76px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--pink-50);
+  transition: border-color var(--ease), transform var(--ease);
+}
+.pv__thumb:hover {
+  transform: translateY(-2px);
+}
+.pv__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pv__thumb--active {
+  border-color: var(--pink-500);
+}
+
+/* Colour variation dots */
+.pv__vars {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.pv__label {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.pv__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.pv__dots {
+  display: flex;
+  gap: 14px;
+}
+.pv__dot {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  transition: box-shadow var(--ease), transform var(--ease);
+}
+.pv__dot:hover {
+  transform: scale(1.1);
+}
+.pv__dot--active {
+  box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px var(--pink-200);
+}
+
+
+/* ==========================================================================
+   8. DETAILS PANEL
+   ========================================================================== */
+.details {
+  padding: 26px 22px 22px 24px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pink-200) transparent;
+}
+
+/* ---- Top row: category pill + like ---- */
+.details__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.details__pill {
+  padding: 5px 15px;
+  border-radius: var(--radius-pill);
+  background: var(--pink-100);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--pink-500);
+}
+.details__like {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink);
+  transition: color var(--ease), border-color var(--ease);
+}
+.details__like:hover {
+  border-color: var(--pink-200);
+}
+.details__like[aria-pressed="true"] {
+  color: var(--pink-500);
+}
+
+/* ---- Title + description ---- */
+.details__title {
+  margin: 0 0 9px;
+}
+.details__desc {
+  max-width: 330px;
+  margin: 0 0 30px;
+  font-size: var(--text-md);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* ---- Divider between sections ---- */
+.details__rule {
+  width: 100%;
+  margin: 28px 0 23px;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+/* ---- Stats row (tiers, sizes, prep time) ---- */
+.stats {
+  display: grid;
+  grid-template-columns: 1.12fr 1.11fr 1fr;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stats__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.stats__item svg {
+  flex: none;
+  margin-top: 1px;
+}
+.stats__item strong {
+  display: block;
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.stats__item span {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--text-2xs);
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+
+/* ---- "Design Includes" ---- */
+.includes {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0 22px 0 0;
+  list-style: none;
+}
+.includes__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.includes__icon {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.includes__label {
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+/* ---- Colour swatches ---- */
+.swatches {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.swatches__list {
+  display: flex;
+  gap: 18px;
+  margin-left: -3px;
+  padding: 3px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.swatches__list::-webkit-scrollbar {
+  display: none;
+}
+.swatches__next {
+  padding: var(--space-1);
+  color: var(--ink);
+}
+
+.swatch {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  padding: 3px;
+  border: 1.5px solid transparent;
+  border-radius: 50%;
+  transition: box-shadow var(--ease), border-color var(--ease), transform var(--ease);
+}
+.swatch:hover {
+  transform: scale(1.06);
+}
+.swatch--on {
+  border-color: var(--pink-500);
+  background: var(--pink-50);
+  box-shadow: 0 0 0 3px var(--pink-100);
+}
+.swatch__fill {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;                           /* white check/heart on the active swatch */
+}
+
+/* Colour fills (shared by swatches and preview dots) */
+.is-pink   { background: var(--swatch-pink); }
+.is-blue   { background: var(--swatch-blue); }
+.is-lilac  { background: var(--swatch-lilac); }
+.is-yellow { background: var(--swatch-yellow); }
+.is-cream  { background: var(--swatch-cream); box-shadow: inset 0 0 0 1px var(--swatch-cream-edge); }
+
+/* The small preview dots use a stronger blue */
+.pv__dot.is-blue { background: var(--dot-blue); }
+
+/* ---- Price + delivery ---- */
+.price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.price__amount {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--pink-500);
+}
+.price__delivery {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface-3);
+}
+.price__delivery span {
+  display: block;
+}
+.price__delivery-title {
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+.price__delivery-sub {
+  margin-top: 2px;
+  font-size: var(--text-3xs);
+  color: var(--ink-soft);
+}
+
+/* ---- Template note ---- */
+.details__note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: 26px;
+  padding: 20px;
+  border-radius: var(--radius-md);
+  background: var(--pink-50);
+}
+.details__note p {
+  margin: 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ---- Primary button ---- */
+.details__cta {
+  height: 48px;
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--pink-500);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: #fff;
+  box-shadow: var(--shadow-cta);
+  transition: transform var(--ease), box-shadow var(--ease);
+}
+.details__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-cta-hover);
+}
+.details__cta:active {
+  transform: translateY(0);
+}
+
+
+/* ==========================================================================
+   9. FOOTER
+   ========================================================================== */
+.footer {
+  flex: none;                            /* must NOT grow, or it steals height from the layout */
+  height: var(--footer-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px 0 var(--space-6);
+}
+
+/* ---- Perks (secure checkout, delivery, ingredients) ---- */
+.footer__perks {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.footer__perks li {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 32px;
+  border-left: 1px solid var(--line);
+  font-size: var(--text-caption);
+  color: var(--ink-soft);
+}
+.footer__perks li:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.footer__perks svg {
+  color: var(--ink);
+}
+
+/* ---- Handwritten quote ---- */
+.footer__quote {
+  margin: 0;
+  font-size: var(--text-quote);
+  line-height: 1.15;
+  text-align: left;
+  color: var(--ink);
+  transform: rotate(-9deg);
+}
+.footer__quote svg {
+  margin-left: var(--space-1);
+  vertical-align: middle;
+}
+
+/* ---- Middle column wrapper: stage + stats + about ---- */
+.preview-col {
+  min-height: 0;
+  margin: var(--space-4) 0 30px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pink-200) transparent;
+}
+
+.stage {
+  margin: 0;                 /* was: margin: var(--space-4) 0 30px; now handled by .preview-col */
+  flex: 1 1 380px;
+  min-height: 320px;
+}
+
+.stage__meta {
+  flex: none;
+  padding: 0 4px;
+}
+
+.stage__about h3 {
+  margin: 0 0 8px;
+}
+.stage__about p {
+  margin: 0;
+  font-size: var(--text-md);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* ---- Card selected checkmark (replaces heart on the selected card) ---- */
+.card__check {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--pink-500);
+  color: #fff;
+  box-shadow: var(--shadow-icon);
+}
+
+/* ---- "Template Details" section heading ---- */
+.details__heading {
+  margin: 0 0 18px;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* details__top now just wraps the title row (no like button) */
+.details__top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.details__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---- Add Your Message ---- */
+.details__message {
+  margin: 22px 0 0;
+}
+.message-box {
+  position: relative;
+}
+.message-box textarea {
+  width: 100%;
+  min-height: 74px;
+  padding: 12px 14px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--ink);
+  resize: none;
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+.message-box textarea:focus {
+  outline: none;
+  border-color: var(--pink-400);
+  box-shadow: var(--ring-pink);
+}
+.message-box__count {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  font-size: var(--text-2xs);
+  color: var(--ink-mute);
+}
+
+/* ---- Swatch + label ---- */
+.swatch-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.swatch__label {
+  font-size: var(--text-2xs);
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+/* ---- Skeleton loading state ---- */
+.template-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 16px;
+  padding: 16px 4px 0;
+}
+.template-skeleton-card {
+  aspect-ratio: 176 / 170;
+  border-radius: var(--radius-card);
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 37%, var(--surface-2) 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+@keyframes skeleton-loading {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+
+/* ==========================================================================
+   10. RESPONSIVE
+   Wide → narrow. Most breakpoints only change a token from section 1.
+   ========================================================================== */
+
+/* Short laptop screens: slimmer footer so the panels get more room */
+@media (max-height: 800px) and (min-width: 1101px) {
+  :root {
+    --footer-h: 56px;
+  }
+}
+
+/* Small desktops: narrower side columns */
+@media (max-width: 1280px) {
+  :root {
+    --col-sidebar: 380px;
+    --col-details: 400px;
+  }
+}
+
+/* Tablets: columns stack and the page scrolls normally */
+@media (max-width: 1100px) {
+  html,
+  body {
+    overflow: auto;
+  }
+
+  .page,
+  .dbt {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .layout,
+  .dbt-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+
+  .stage {
+    min-height: 560px;
+  }
+
+  .sidebar__grid {
+    max-height: 520px;
+  }
+}
+
+/* Small tablets: the step indicator is hidden */
+@media (max-width: 900px) {
+  .header {
+    grid-template-columns: 1fr auto;
+  }
+
+  .header > .steps {
+    display: none;
+  }
+}
+
+/* Phones */
+@media (max-width: 720px) {
+  :root {
+    --page-gutter: 12px;
+  }
+
+  .footer {
+    height: auto;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4) 0;
+  }
+
+  .footer__perks {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2) 0;
+  }
+}

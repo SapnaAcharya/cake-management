@@ -1,0 +1,206 @@
+.add-cake-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #EDE8EE;
+  padding: 28px;
+  max-width: 600px;
+  font-family: 'Work Sans', sans-serif;
+}
+
+.add-cake-error {
+  background: #F7E6E6;
+  color: #A63A3A;
+  border-radius: 8px;
+  padding: 11px 13px;
+  font-size: 13px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(166, 58, 58, 0.15);
+}
+
+.add-cake-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-cake-field {
+  margin-bottom: 18px;
+}
+
+.add-cake-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.add-cake-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 7px;
+  color: #2A1620;
+}
+
+.add-cake-field input,
+.add-cake-field select,
+.add-cake-field textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: 9px;
+  border: 1.5px solid #EBDDE1;
+  background: #fff;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 13.5px;
+  color: #2A1620;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.add-cake-field textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.add-cake-field input::placeholder,
+.add-cake-field textarea::placeholder {
+  color: #C4B5BC;
+}
+
+.add-cake-field input:focus,
+.add-cake-field select:focus,
+.add-cake-field textarea:focus {
+  border-color: #8E2A63;
+  box-shadow: 0 0 0 3px rgba(142, 42, 99, 0.1);
+}
+
+.add-cake-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  color: #4A4550;
+  cursor: pointer;
+  margin-bottom: 22px;
+}
+
+.add-cake-checkbox input[type="checkbox"] {
+  accent-color: #8E2A63;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.add-cake-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 6px;
+  border-top: 1px solid #F4F0F3;
+}
+
+.add-cake-btn-secondary {
+  padding: 11px 20px;
+  border-radius: 8px;
+  border: 1.5px solid #EBDDE1;
+  background: #fff;
+  color: #4A4550;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+.add-cake-btn-secondary:hover {
+  background: #F6F4F8;
+}
+
+.add-cake-btn-primary {
+  padding: 11px 24px;
+  border-radius: 8px;
+  border: none;
+  background: #8E2A63;
+  color: #fff;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.add-cake-btn-primary:hover:not(:disabled) {
+  background: #6E1F4C;
+}
+
+.add-cake-btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.add-cake-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1.5px dashed #DCC9D1;
+  border-radius: 10px;
+  padding: 28px 16px;
+  cursor: pointer;
+  background: #FBF8FA;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.add-cake-dropzone:hover {
+  border-color: #8E2A63;
+  background: #FAF3F7;
+}
+
+.dropzone-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #4A4550;
+}
+
+.dropzone-hint {
+  font-size: 12px;
+  color: #8C7681;
+}
+
+.add-cake-preview {
+  position: relative;
+  width: 160px;
+}
+
+.add-cake-preview img {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #EBDDE1;
+  display: block;
+}
+
+.add-cake-remove-image {
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: #B5486B;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.add-cake-remove-image:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .add-cake-row {
+    grid-template-columns: 1fr;
+  }
+
+  .add-cake-card {
+    padding: 20px;
+  }
+}

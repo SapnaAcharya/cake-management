@@ -1,0 +1,169 @@
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid #F0E9EE;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navbar-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.navbar-brand-icon {
+  font-size: 20px;
+  color: #d1477a;
+}
+
+.navbar-brand-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #2A1620;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.navbar-link {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #6B6270;
+  text-decoration: none;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.navbar-link:hover {
+  color: #8E2A63;
+}
+
+.navbar-link.active {
+  color: #8E2A63;
+  border-bottom-color: #8E2A63;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.navbar-icon-btn {
+  background: none;
+  border: none;
+  color: #4A4550;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 4px;
+}
+
+.navbar-icon-btn:hover {
+  color: #8E2A63;
+}
+
+.navbar-cart {
+  text-decoration: none;
+}
+
+.navbar-cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #8E2A63;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.navbar-login {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #4A4550;
+  text-decoration: none;
+}
+
+.navbar-login:hover {
+  color: #8E2A63;
+}
+
+.navbar-register {
+  background: #8E2A63;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 9px 20px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.navbar-register:hover {
+  background: #6E1F4C;
+}
+
+.navbar-admin-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #8E2A63;
+  text-decoration: none;
+}
+
+.navbar-admin-link:hover {
+  text-decoration: underline;
+}
+
+.navbar-search-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navbar-search-input {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  width: 180px;
+}
+
+@media (max-width: 860px) {
+  .navbar-links {
+    display: none;
+  }
+
+  .navbar-inner {
+    padding: 12px 20px;
+  }
+}

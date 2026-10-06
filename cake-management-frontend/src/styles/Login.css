@@ -1,0 +1,329 @@
+.auth-page {
+  width: 100%;
+  overflow: auto;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fffbfb;
+  font-family: 'Work Sans', sans-serif;
+}
+
+.auth-shell {
+  border: 1.5px solid #EBDDE1;
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  display: flex;
+  grid-template-columns: 1fr 1fr;
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(42, 22, 32, 0.04),
+    0 20px 48px rgba(42, 22, 32, 0.12);
+}
+
+/* ==========================================================================
+   Form panel — header
+   ========================================================================== */
+
+.auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 36px;
+  overflow-y: auto;
+}
+
+.auth-panel-inner {
+  width: 100%;
+  max-width: 360px;
+}
+
+.auth-panel-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-icon {
+  display: block;
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.auth-panel-brand {
+  color: #8E2A63;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.auth-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #2A1620;
+  margin: 0 0 6px;
+}
+
+.auth-subtitle {
+  font-size: 13px;
+  color: #8C7681;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Form panel — fields
+   ========================================================================== */
+
+.auth-field {
+  margin-bottom: 18px;
+}
+
+.auth-field label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #2A1620;
+}
+
+.auth-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid #EBDDE1;
+  border-radius: 9px;
+  padding: 0 12px;
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-input-icon {
+  color: #B7A3AE;
+  flex-shrink: 0;
+}
+
+.auth-input input {
+  flex: 1;
+  min-width: 0; /* lets the input shrink instead of forcing overflow */
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 11px 0;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 13.5px;
+  color: #2A1620;
+  width: 100%;
+}
+
+.auth-input:focus-within {
+  border-color: #8E2A63;
+  box-shadow: 0 0 0 3px rgba(142, 42, 99, 0.1);
+}
+
+.auth-input.input-error {
+  border-color: #B5486B;
+}
+
+.auth-input-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #B7A3AE;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.auth-input-toggle:hover {
+  color: #8E2A63;
+}
+
+.field-error {
+  color: #B5486B;
+  font-size: 11.5px;
+  margin-top: 5px;
+}
+
+.auth-form-error {
+  background: #F7E6E6;
+  color: #A63A3A;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(166, 58, 58, 0.15);
+}
+
+/* ==========================================================================
+   Form panel — remember me / forgot password row
+   ========================================================================== */
+
+.auth-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;   /* FIX: stop "Remember me" / "Forgot password?" wrapping */
+  gap: 10px;
+  margin: -4px 0 20px;
+  font-size: 13px;
+}
+
+.auth-row .check-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #8C7681;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;  /* FIX */
+  flex-shrink: 0;
+}
+
+.auth-row .check-row input[type="checkbox"] {
+  accent-color: #8E2A63;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.auth-row a {
+  color: #B5486B;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;  /* FIX */
+  flex-shrink: 0;
+}
+
+.auth-row a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Submit button + footer link
+   ========================================================================== */
+
+.btn-auth {
+  width: 100%;
+  padding: 12.5px;
+  border: none;
+  border-radius: 9px;
+  background: #8E2A63;
+  color: #fff;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-auth:hover:not(:disabled) {
+  background: #6E1F4C;
+}
+
+.btn-auth:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-auth:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #8C7681;
+}
+
+.auth-switch a {
+  color: #B5486B;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Large desktop: cap card content width so it doesn't stretch too wide */
+@media (min-width: 1400px) {
+  .auth-panel-inner {
+    max-width: 400px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .auth-panel {
+    padding: 32px 28px;  /* FIX: was 20px + invalid display:content */
+  }
+}
+
+/* Small tablet / large phone */
+@media (max-width: 760px) {
+  .auth-panel {
+    padding: 40px 24px;
+  }
+}
+
+/* Phone: tighten spacing, shrink type, stack the remember/forgot row */
+@media (max-width: 480px) {
+  .auth-panel {
+    padding: 32px 18px;
+  }
+
+  .auth-panel-inner {
+    max-width: 100%;
+  }
+
+  .auth-title {
+    font-size: 19px;
+  }
+
+  .auth-subtitle {
+    font-size: 12.5px;
+  }
+
+  .auth-field {
+    margin-bottom: 14px;
+  }
+
+  .auth-input input {
+    font-size: 16px; /* prevents iOS Safari auto-zoom on focus */
+    padding: 10px 0;
+  }
+
+  .auth-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0 0 18px;
+  }
+
+  .btn-auth {
+    padding: 13px;
+    font-size: 14.5px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+  .auth-panel {
+    padding: 28px 14px;
+  }
+
+  .auth-title {
+    font-size: 18px;
+  }
+}

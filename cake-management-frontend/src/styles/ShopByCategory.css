@@ -1,0 +1,97 @@
+/* Category image tiles (chips and headings reuse your existing Home.css) */
+.cat-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 16px;
+    max-width: 1200px;
+    margin: 24px auto 0;
+}
+
+.cat-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 0 12px;
+    background: #fff;
+    border: 1px solid #f1e3e6;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    font: inherit;
+    color: #2b2024;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cat-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(120, 60, 80, 0.12);
+}
+
+.cat-tile:focus-visible {
+    outline: 2px solid #d9456d;
+    outline-offset: 2px;
+}
+
+.cat-tile img,
+.cat-tile-fallback {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background: #fdf3f5;
+}
+
+.cat-tile-fallback {
+    display: grid;
+    place-items: center;
+    font-size: 40px;
+    font-weight: 700;
+    color: #d9456d;
+}
+
+.cat-tile span {
+    font-weight: 600;
+    padding: 0 10px;
+}
+
+/* Selected-category status bar */
+.cat-selected-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: 1200px;
+    margin: 20px auto 0;
+    padding: 10px 16px;
+    background: #fdf3f5;
+    border-radius: 12px;
+    color: #2b2024;
+}
+
+.cat-selected-bar button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: 0;
+    color: #d9456d;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cat-selected-bar button:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 520px) {
+    .cat-tiles {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+.cat-empty {
+    margin: 24px 0 0;
+    text-align: center;
+    color: #7a6a70;
+}

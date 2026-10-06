@@ -1,0 +1,4 @@
+<Solution>
+  <Folder Name="/Order/" />
+  <Project Path="CakeManagement.API/CakeManagementAPI.csproj" />
+</Solution>
