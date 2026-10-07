@@ -11,7 +11,7 @@ import { addToGuestCart, getGuestCartCount } from "../../services/guestCartServi
 import { mapApiTemplateToViewModel } from "../../utils/mapApiTemplate";
 import { initialConfig, calcPrice } from "../../data/Options";
 import "../../styles/template.css";
-import "../../styles/customize.css";
+import "../../styles/Customize.css";
 
 const TEMPLATE_PAGE = "/templates";
 
