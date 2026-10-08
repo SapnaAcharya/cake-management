@@ -1,6 +1,4 @@
-﻿using Microsoft.Identity.Client;
-
-namespace CakeManagementAPI.DTOs.Templates
+﻿namespace CakeManagementAPI.DTOs.Templates
 {
     public class TemplateImageDto
     {

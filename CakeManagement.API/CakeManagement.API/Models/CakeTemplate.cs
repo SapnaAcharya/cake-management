@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient.DataClassification;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CakeManagementAPI.Models
 {
