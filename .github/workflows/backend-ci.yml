@@ -16,7 +16,7 @@ on:
 jobs:
   backend-build:
     name: Build ASP.NET Core Backend
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
@@ -28,7 +28,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore ./CakeManagement.API/CakeManagement.API/CakeManagement.API.csproj
+        run: dotnet restore ./CakeManagement.API/CakeManagement.API/CakeManagementAPI.csproj
 
       - name: Build backend
-        run: dotnet build ./CakeManagement.API/CakeManagement.API/CakeManagement.API.csproj --no-restore --configuration Release
+        run: dotnet build ./CakeManagement.API/CakeManagement.API/CakeManagementAPI.csproj --no-restore --configuration Release
