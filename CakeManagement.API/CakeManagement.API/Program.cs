@@ -77,7 +77,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrWhiteSpace(jwtKey) || jwtKey.Length < 32)
-    throw new InvalidOperationException("Jwt:Key must be set and at least 32 characters long.");
+    throw new InvalidOperationException("Jwt:Key must be set and at least 10 characters long.");
 
 builder.Services.AddAuthentication(
     JwtBearerDefaults.AuthenticationScheme)
