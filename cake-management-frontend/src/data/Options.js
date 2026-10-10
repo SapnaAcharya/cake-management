@@ -198,7 +198,7 @@ export function stageView(template, cfg, baseline, decorations = []) {
         const pos = OVERLAY_POSITIONS[d.category] || DEFAULT_OVERLAY_POSITION;
         return {
           id: d.id,
-          overlay: getImageUrl(d.getImageUrl),
+          overlay: getImageUrl(d.imageUrl),
           ...pos,
         };
       }),
