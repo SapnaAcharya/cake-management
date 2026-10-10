@@ -72,7 +72,7 @@ function AdminLayout({ children, title, subtitle, headerAction }) {
             const Icon = item.icon;
             // const isActive = location.pathname === item.to;
             const isActive = item.to === "/admin/"
-                 ? location.pathname === "/admin/"
+                 ? location.pathname === "/admin" || location.pathname === "/admin/"
                  : location.pathname.startsWith(item.to);
             return (
               <Link

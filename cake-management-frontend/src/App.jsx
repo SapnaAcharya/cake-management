@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 // Layouts & shared
-import AdminLayout from "./layouts/AdminLayout";
 import Footer from "./components/Footer";
 
 // Public pages
@@ -83,21 +82,21 @@ function AppContent() {
         <Route path="/profile" element={<Profile />} />
 
         {/* Admin */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminOverview />} />
-          <Route path="cakes" element={<ManageCakes />} />
-          <Route path="cakes/add" element={<AddCake />} />
-          <Route path="cakes/:id/edit" element={<EditCake />} />
-          <Route path="categories" element={<ManageCategories />} />
-          <Route path="orders" element={<ManageOrders />} />
-          <Route path="users" element={<ManageUsers />} />
-          <Route path="templates" element={<TemplatesPage />} />
-          <Route path="templates/add" element={<AddTemplate />} />
-          <Route path="templates/:id/edit" element={<EditTemplate />} />
-          <Route path="decorations" element={<ManageDecorations />} />
-          <Route path="decorations/add" element={<AddDecoration />} />
-          <Route path="decorations/:id/edit" element={<EditDecoration />} />
-        </Route>
+        <Route path="/admin" element={<AdminOverview />} />
+          {/* <Route index element={<AdminOverview />} /> */}
+          <Route path="/admin/cakes" element={<ManageCakes />} />
+          <Route path="/admin/cakes/add" element={<AddCake />} />
+          <Route path="/admin/cakes/:id/edit" element={<EditCake />} />
+          <Route path="/admin/categories" element={<ManageCategories />} />
+          <Route path="/admin/orders" element={<ManageOrders />} />
+          <Route path="/admin/users" element={<ManageUsers />} />
+          <Route path="/admin/templates" element={<TemplatesPage />} />
+          <Route path="/admin/templates/add" element={<AddTemplate />} />
+          <Route path="/admin/templates/:id/edit" element={<EditTemplate />} />
+          <Route path="/admin/decorations" element={<ManageDecorations />} />
+          <Route path="/admin/decorations/add" element={<AddDecoration />} />
+          <Route path="/admin/decorations/:id/edit" element={<EditDecoration />} />
+        {/* </Route> */}
       </Routes>
 
       {!hideFooter && <Footer />}
