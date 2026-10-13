@@ -17,9 +17,12 @@ namespace CakeManagementAPI.Services
         public async Task<List<AdminOrderResponseDto>> GetAllOrdersAsync()
         {
             var orders = await _context.Orders
+                .AsSplitQuery()
                 .Include(o => o.User)
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Cake)
+                    .ThenInclude(oi => oi.Cake)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.CakeTemplate)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
@@ -32,9 +35,12 @@ namespace CakeManagementAPI.Services
             int orderId)
         {
             var order = await _context.Orders
+                .AsSplitQuery()
                 .Include(o => o.User)
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Cake)
+                    .ThenInclude(oi => oi.Cake)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.CakeTemplate)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (order == null)
@@ -51,9 +57,12 @@ namespace CakeManagementAPI.Services
             string status)
         {
             var order = await _context.Orders
+                .AsSplitQuery()
                 .Include(o => o.User)
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Cake)
+                    .ThenInclude(oi => oi.Cake)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.CakeTemplate)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (order == null)
@@ -111,18 +120,19 @@ namespace CakeManagementAPI.Services
                 PaymentStatus = order.PaymentStatus,
 
                 Items = order.OrderItems
-                    .Where(oi => oi.Cake != null)
                     .Select(oi => new AdminOrderItemDto
                     {
                         CakeId = oi.CakeId,
 
-                        CakeName = oi.Cake!.Name,
+                        CakeName = oi.Cake?.Name
+                                   ?? oi.CakeTemplate?.Name
+                                   ?? "Custom Cake",
 
                         Quantity = oi.Quantity,
 
                         UnitPrice = oi.UnitPrice,
 
-                        Subtotal = oi.Subtotal
+                        Subtotal = oi.Subtotal,
                     })
                     .ToList()
             };

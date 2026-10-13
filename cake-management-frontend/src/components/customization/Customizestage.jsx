@@ -57,7 +57,7 @@ export default function CustomizeStage({ template, cfg, baseline, decorations })
       {/* Canvas: cake + overlays zoom together so decorations stay on the cake */}
       <div className="cz-stage__canvas" style={{ transform: `scale(${zoom * (useDrawnCake ? 1 : sizeScale)})` }}>
         {useDrawnCake ? (
-          /* Tier, frosting, sponge or colour changed → drawn cake */
+          /* Tier changed and there is no real photo for it → drawn cake */
           <TierCake cfg={cfg} fontFamily={view.fontFamily} colorHex={cfg.colorHex} decorations={decorations} />
         ) : (
           <>
@@ -116,6 +116,11 @@ export default function CustomizeStage({ template, cfg, baseline, decorations })
 
       {/* Shown alongside the illustration when the chosen tiers have no real photo */}
       {view.tierNote && <div className="cz-glass cz-illus">{view.tierNote}</div>}
+
+      {/* Flavour and frosting can't be drawn on a photo, so tell the customer */}
+      <p className="cz-glass cz-note">
+        Flavour and frosting are confirmed with your order.
+      </p>
 
       {/* Top-right tools */}
       <div className="cz-stage__tools">
@@ -191,12 +196,7 @@ export default function CustomizeStage({ template, cfg, baseline, decorations })
                   onClick={() => setIndex(i)}
                 >
                   <span className="cz-thumb__frame">
-                    {/* <img src={src} alt="" style={{ filter: tint }} /> */}
-                  <img
-    src={getImageUrl(src)}
-    alt=""
-    style={{ filter: tint }}
-/>
+                    <img src={getImageUrl(src)} alt="" style={{ filter: tint }} />
                   </span>
                   {i === safeIndex && (
                     <span className="cz-thumb__badge" aria-hidden="true">
@@ -223,3 +223,4 @@ export default function CustomizeStage({ template, cfg, baseline, decorations })
     </section>
   );
 }
+

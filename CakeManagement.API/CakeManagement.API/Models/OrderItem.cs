@@ -8,7 +8,8 @@ namespace CakeManagementAPI.Models
 
     public int OrderId { get; set; }
 
-    public int CakeId { get; set; }
+    // Null fro customized cakes (identified by CakeTemplateId instead)
+    public int? CakeId { get; set; }
 
     public int Quantity { get; set; }
 

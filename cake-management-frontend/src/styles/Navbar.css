@@ -1,6 +1,22 @@
+/* ---------- Tokens ---------- */
 .navbar {
-  background: #fff;
-  border-bottom: 1px solid #F0E9EE;
+  --nav-ink: #2a1620;
+  --nav-text: #4a4550;
+  --nav-muted: #6b6270;
+  --nav-plum: #8e2a63;
+  --nav-plum-dark: #6e1f4c;
+  --nav-rose: #d1477a;
+  --nav-line: #f0e9ee;
+  --nav-tint: #fbf3f7;
+  --nav-ring: rgba(142, 42, 99, 0.22);
+}
+
+/* ---------- Bar ---------- */
+.navbar {
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: saturate(160%) blur(10px);
+  backdrop-filter: saturate(160%) blur(10px);
+  border-bottom: 1px solid var(--nav-line);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -13,73 +29,106 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 28px;
 }
 
+/* ---------- Brand ---------- */
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-decoration: none;
   flex-shrink: 0;
+  border-radius: 8px;
 }
 
 .navbar-brand-icon {
-  font-size: 20px;
-  color: #d1477a;
+  color: var(--nav-rose);
+  flex-shrink: 0;
 }
 
 .navbar-brand-name {
   font-family: 'Fraunces', serif;
   font-weight: 600;
-  font-size: 16px;
-  color: #2A1620;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--nav-ink);
 }
 
+/* ---------- Links ---------- */
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 32px;
 }
 
 .navbar-link {
-  font-size: 13.5px;
+  position: relative;
+  font-size: 14px;
   font-weight: 600;
-  color: #6B6270;
+  color: var(--nav-muted);
   text-decoration: none;
-  padding-bottom: 4px;
-  border-bottom: 2px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  padding: 6px 0;
+  transition: color 0.15s ease;
+}
+
+.navbar-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--nav-plum);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
 }
 
 .navbar-link:hover {
-  color: #8E2A63;
+  color: var(--nav-plum);
+}
+
+.navbar-link:hover::after {
+  transform: scaleX(0.4);
 }
 
 .navbar-link.active {
-  color: #8E2A63;
-  border-bottom-color: #8E2A63;
+  color: var(--nav-plum);
 }
 
+.navbar-link.active::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Actions ---------- */
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 
 .navbar-icon-btn {
   background: none;
   border: none;
-  color: #4A4550;
+  color: var(--nav-text);
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   position: relative;
-  padding: 4px;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .navbar-icon-btn:hover {
-  color: #8E2A63;
+  color: var(--nav-plum);
+  background: var(--nav-tint);
 }
 
 .navbar-cart {
@@ -88,74 +137,138 @@
 
 .navbar-cart-badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #8E2A63;
+  top: 1px;
+  right: 0;
+  min-width: 13px;
+  height: 13px;
+  padding: 0 2px;
+  background: var(--nav-plum);
   color: #fff;
   font-size: 10px;
   font-weight: 700;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
+  border-radius: 999px;
+  border: 2px solid #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  box-sizing: content-box;
 }
 
 .navbar-login {
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
-  color: #4A4550;
+  color: var(--nav-text);
   text-decoration: none;
+  padding: 8px 4px;
+  transition: color 0.15s ease;
 }
 
 .navbar-login:hover {
-  color: #8E2A63;
+  color: var(--nav-plum);
 }
 
 .navbar-register {
-  background: #8E2A63;
+  background: var(--nav-plum);
   color: #fff;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
   text-decoration: none;
-  padding: 9px 20px;
-  border-radius: 8px;
-  transition: background 0.15s ease;
+  padding: 10px 22px;
+  border-radius: 999px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 6px 14px -6px rgba(142, 42, 99, 0.55);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .navbar-register:hover {
-  background: #6E1F4C;
+  background: var(--nav-plum-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 10px 18px -8px rgba(110, 31, 76, 0.6);
+}
+
+.navbar-register:active {
+  transform: translateY(0);
 }
 
 .navbar-admin-link {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
-  color: #8E2A63;
+  color: var(--nav-plum);
   text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--nav-tint);
+  transition: background 0.15s ease;
 }
 
 .navbar-admin-link:hover {
-  text-decoration: underline;
+  background: #f6e4ee;
 }
 
+/* ---------- Search ---------- */
 .navbar-search-form {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 6px;
 }
 
-.navbar-search-input {
-  padding: 6px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 0.9rem;
+.navbar .navbar-search-input {
+  width: 240px;
+  padding: 9px 38px 9px 16px; /* right space for the close button */
+  border: 1px solid #ddd5db;
+  border-radius: 999px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--nav-ink);
   outline: none;
-  width: 180px;
+  box-shadow: none;
+  transition: border-color 0.15s ease;
+}
+
+.navbar .navbar-search-input::placeholder {
+  color: #9a8f97;
+}
+
+/* One thin border on focus, no extra ring */
+.navbar .navbar-search-input:focus,
+.navbar .navbar-search-input:focus-visible {
+  border-color: var(--nav-plum);
+  outline: none;
+  box-shadow: none;
+}
+
+/* Close (X) button sits inside the input, on the right */
+.navbar-search-form .navbar-icon-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+}
+
+/* ---------- Keyboard focus ---------- */
+.navbar a:focus-visible,
+.navbar button:focus-visible {
+  outline: 2px solid var(--nav-plum);
+  outline-offset: 3px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+  .navbar-links {
+    gap: 22px;
+  }
+
+  .navbar .navbar-search-input {
+    width: 180px;
+  }
 }
 
 @media (max-width: 860px) {
@@ -165,5 +278,32 @@
 
   .navbar-inner {
     padding: 12px 20px;
+    gap: 16px;
+  }
+
+  .navbar-actions {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .navbar-brand-name {
+    font-size: 22px;
+  }
+
+  .navbar .navbar-search-input {
+    width: 130px;
+  }
+
+  .navbar-register {
+    padding: 8px 16px;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .navbar *,
+  .navbar *::after {
+    transition: none !important;
   }
 }

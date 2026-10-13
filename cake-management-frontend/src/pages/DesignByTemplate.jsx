@@ -19,7 +19,6 @@ export default function DesignByTemplate() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
-  const [pickedColor, setPickedColor] = useState(null);
   const [category, setCategory] = useState(CATEGORY.ALL);
   const [query, setQuery] = useState("");
   const [liked, setLiked] = useState(new Set());
@@ -49,10 +48,6 @@ export default function DesignByTemplate() {
 
   const selected = templates.find((t) => t.id === selectedId) ?? templates[0];
 
-  const colorId = selected
-  ? (selected.colors.find((c) => c.id === pickedColor)?.id ?? selected.colors[0]?.id)
-  : null;
-
   const categories = useMemo(() => {
     const unique = Array.from(
       new Set(templates.map((t) => t.category).filter(Boolean))
@@ -78,7 +73,9 @@ export default function DesignByTemplate() {
     });
 
   const handleUseTemplate = () =>
-    navigate(`/customize/${cakeId}/${selected.id}`, { state: { colorId, cake: cakeFromState } });
+    navigate(`/customize/${cakeId}/${selected.id}`, {
+      state: { cake: cakeFromState },
+    });
 
   if (loading) {
     return (
@@ -95,7 +92,9 @@ export default function DesignByTemplate() {
               ))}
             </div>
           </aside>
-          <div className="stage" style={{ background: "var(--surface-2)" }} />
+          <div className="preview-col">
+            <div className="ps" style={{ background: "var(--surface-2)" }} />
+          </div>
         </div>
       </div>
     );
@@ -121,7 +120,15 @@ export default function DesignByTemplate() {
 
   return (
     <div className="dbt app">
-      <Header />
+      <Header
+        leftTitle="Design by Template"
+        rightTitle={
+          <>
+            {selected.name}
+            {selected.popular && <span className="details__pill">Popular</span>}
+          </>
+        }
+      />
 
       <div className="dbt-body">
         <TemplateSidebar
@@ -142,17 +149,12 @@ export default function DesignByTemplate() {
           template={selected}
           liked={liked.has(selected.id)}
           onToggleLike={() => toggleLike(selected.id)}
-          colorId={colorId}
-          onColorChange={setPickedColor}
-          onUseTemplate={handleUseTemplate}
         />
 
-         <TemplateDetails
+        <TemplateDetails
           template={selected}
-          colorId={colorId}
-          onColorChange={setPickedColor}
           onUseTemplate={handleUseTemplate}
-        /> 
+        />
       </div>
     </div>
   );

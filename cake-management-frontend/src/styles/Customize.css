@@ -1,42 +1,43 @@
 /* ==========================================================================
    SweetCakes — "Customize" page (step 2)
-   File: src/styles/customize.css
+   File: src/styles/Customize.css
    --------------------------------------------------------------------------
    CONTENTS
-     0. Page tokens & shell
-     1. Shared primitives (glass, round buttons, check, dot, focus ring)
-     2. Header (brand, steps, actions)
-     3. Left column (selected design, includes, current selection)
-     4. Stage (canvas, photo, overlays, tier cake, tools, zoom bar, thumbnails)
-     5. Options panel (sections, pills, chips, swatches, candles, date)
-     6. Price summary & Add to cart
+     0. Tokens & page shell
+     1. Shared primitives
+     2. Left column (selected design, includes, current selection)
+     3. Stage (canvas, photo, overlays, tier cake, tools, zoom bar, thumbs)
+     4. Options panel (sections, pills, chips, swatches, candles, date)
+     5. Footer: total + Add to cart (sticky)
+     6. Loading state
      7. Responsive
 
-   Uses the colour / font tokens from template.css (--pink-500, --ink, ...).
-   Every class starts with `cz-` so nothing clashes with the template page.
+   The header (navbar + step bar) now comes from the shared Header
+   component and template.css, so all .cz-header / .cz-brand / .cz-steps /
+   .cz-action-pill rules were removed.
+
+   IMPORTANT: keep --cz-col-left / --cz-col-right / --cz-gap the same as
+   the column widths used in template.css (.dbt-body, .steps-bar) so both
+   pages line up exactly.
    ========================================================================== */
 
 
 /* ==========================================================================
-   0. PAGE TOKENS & SHELL
-   --------------------------------------------------------------------------
-   A small local scale (spacing / radius / elevation / motion) sits on top
-   of the template tokens so every component in this file pulls from the
-   same rhythm instead of one-off pixel values.
+   0. TOKENS & PAGE SHELL
    ========================================================================== */
 .cz {
-  /* -- colour ------------------------------------------------------------ */
+  /* colour */
   --cz-navy: #1f1b3a;
   --cz-glass: rgba(255, 255, 255, 0.92);
   --cz-glass-shadow: 0 4px 16px rgba(255, 120, 160, 0.14);
   --cz-stage-bg: linear-gradient(180deg, #f9d6de 0%, #fbe3e8 60%, #f8d8df 100%);
 
-  /* -- layout -------------------------------------------------------------- */
-  --cz-col-left: 353px;
-  --cz-col-right: 430px;
+  /* layout (match template.css) */
+  --cz-col-left: 300px;
+  --cz-col-right: 410px;
   --cz-gap: 16px;
 
-  /* -- spacing scale (4px base) -------------------------------------------- */
+  /* spacing (4px base) */
   --cz-space-1: 4px;
   --cz-space-2: 8px;
   --cz-space-3: 12px;
@@ -44,17 +45,17 @@
   --cz-space-5: 20px;
   --cz-space-6: 24px;
 
-  /* -- radius scale --------------------------------------------------------- */
+  /* radius */
   --cz-radius-sm: 8px;
   --cz-radius-md: 12px;
   --cz-radius-lg: 14px;
 
-  /* -- elevation -------------------------------------------------------------- */
+  /* elevation */
   --cz-shadow-1: 0 1px 2px rgba(31, 27, 58, 0.06);
   --cz-shadow-2: 0 6px 14px rgba(31, 27, 58, 0.10);
   --cz-shadow-3: 0 10px 24px rgba(255, 45, 111, 0.4);
 
-  /* -- motion ------------------------------------------------------------ */
+  /* motion */
   --cz-ease: var(--ease, 160ms ease);
   --cz-ease-slow: 0.25s ease;
 
@@ -62,10 +63,12 @@
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: 0 var(--cz-space-5);
+  padding: 0;                 /* header spans full width like the template page */
   color: var(--ink);
 }
 
+/* The three columns. Padding lives here (not on .cz), so the navbar and
+   step bar stay full width while the content has even gutters. */
 .cz-body {
   flex: 1;
   min-height: 0;
@@ -73,7 +76,13 @@
   grid-template-columns: var(--cz-col-left) minmax(0, 1fr) var(--cz-col-right);
   grid-template-rows: minmax(0, 1fr);
   gap: var(--cz-gap);
-  padding-bottom: var(--cz-space-4);
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: var(--cz-gap);
+}
+.cz-body > * {
+  min-height: 0;
 }
 
 
@@ -133,7 +142,6 @@
   text-transform: capitalize;
 }
 
-/* Consistent focus treatment for anything interactive in this page */
 .cz button:focus-visible,
 .cz a:focus-visible,
 .cz input:focus-visible,
@@ -141,172 +149,33 @@
   outline: 2px solid var(--pink-400);
   outline-offset: 2px;
 }
-/* ==========================================================================
-   2. HEADER
-   ========================================================================== */
-.cz-header {
-  flex: none;
-  height: 79px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 0 14px 0 var(--cz-space-5);
-}
 
-.cz-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--cz-space-3);
-  justify-self: start;
-  color: inherit;
-  text-decoration: none;
-}
-.cz-brand__text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.05;
-}
-.cz-brand__name {
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-style: italic;
-  font-weight: 700;
-  color: var(--ink);
-}
-.cz-brand__tag {
-  margin-top: 3px;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-
-.cz-steps {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.cz-steps__item {
-  display: flex;
-  align-items: center;
-}
-.cz-steps__sep {
-  margin: 0 22px;
-  color: var(--pink-400);
-}
-
-.cz-step {
-  display: flex;
-  align-items: center;
-  gap: var(--cz-space-3);
-  padding: 6px 10px 6px 8px;
-  border-radius: var(--radius-pill);
-  font-size: 13px;
-  color: var(--ink-soft);
-  transition: background var(--cz-ease), box-shadow var(--cz-ease), color var(--cz-ease);
-}
-.cz-step:disabled {
-  cursor: default;
-}
-.cz-step__num {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #eeeaf3;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  transition: background var(--cz-ease), color var(--cz-ease);
-}
-.cz-step--done .cz-step__num {
-  background: var(--pink-500);
-  color: #fff;
-}
-.cz-step--active {
-  padding-right: 22px;
-  background: #fff;
-  box-shadow: 0 0 0 1px var(--pink-100), var(--glow-pink);
-  font-weight: 600;
-  color: var(--pink-500);
-}
-.cz-step--active .cz-step__num {
-  background: var(--pink-500);
-  color: #fff;
-  box-shadow: var(--glow-pink);
-}
-
-.cz-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-self: end;
-}
-
+/* Decorations / message / candles drawn over the cake photo */
 .cz-overlays {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
-
 .cz-overlay {
   position: absolute;
   transform: translate(-50%, -50%);
   mix-blend-mode: multiply;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  mask-image: radial-gradient(circle, black 55%, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle, black 55%, transparent 78%);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
   pointer-events: none;
 }
 
-.cz-action-pill {
-  height: 46px;
-  padding: 0 18px;
-  border-radius: 999px;
-  background: #fff;
-  border: 1px solid var(--pink-100);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(31, 27, 58, 0.08));
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink);
-  transition: box-shadow var(--cz-ease), transform var(--cz-ease);
-}
-.cz-action-pill:hover {
-  box-shadow: var(--cz-shadow-2);
-}
-.cz-action-pill:active {
-  transform: scale(0.96);
-}
-
-.cz-action-pill__badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--pink-500);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-}
 
 /* ==========================================================================
-   3. LEFT COLUMN
+   2. LEFT COLUMN
    ========================================================================== */
 .cz-side {
   min-height: 0;
-  margin-top: var(--cz-space-4);
   display: flex;
   flex-direction: column;
-  gap: var(--cz-space-4);
-  padding: var(--cz-space-4) var(--cz-space-3) var(--cz-space-5);
+  gap: var(--cz-space-3);
+  padding: var(--cz-space-3);
   overflow-y: auto;
   border-radius: var(--radius-lg);
   background: #fff;
@@ -330,8 +199,8 @@
   display: flex;
   align-items: center;
   gap: var(--cz-space-3);
-  margin: 2px 0 var(--cz-space-4);
-  font-size: 16px;
+  margin: 2px 0 var(--cz-space-3);
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -340,22 +209,22 @@
   align-items: center;
   gap: var(--cz-space-2);
   margin: 0 0 var(--cz-space-3);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--pink-500);
 }
 .cz-tag .cz-check {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
 .cz-selected {
   display: flex;
-  gap: 14px;
+  gap: 12px;
 }
 .cz-selected__img {
-  width: 124px;
-  height: 124px;
+  width: 96px;
+  height: 96px;
   flex: none;
   border-radius: var(--cz-radius-md);
   object-fit: cover;
@@ -366,7 +235,7 @@
   flex: 1;
 }
 .cz-selected__name {
-  margin: 4px 0 var(--cz-space-2);
+  margin: 2px 0 6px;
   font-size: 13px;
   font-weight: 600;
 }
@@ -378,10 +247,10 @@
 .cz-selected__meta li {
   display: flex;
   align-items: center;
-  gap: var(--cz-space-3);
-  padding: 5px 0;
+  gap: var(--cz-space-2);
+  padding: 4px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--ink-soft);
 }
 .cz-selected__meta li:first-child {
@@ -391,15 +260,18 @@
   border-bottom: 0;
 }
 .cz-selected__price {
-  margin: 6px 0 4px;
-  font-size: 18px;
+  margin: 8px 0 6px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--pink-500);
 }
+
+/* "Change Template" stays on one line */
 .cz-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
   font-size: 12px;
   color: var(--pink-500);
   transition: opacity var(--cz-ease);
@@ -414,15 +286,15 @@
 .cz-includes {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   margin: 0;
-  padding: 0 0 4px 4px;
+  padding: 0 0 4px 2px;
   list-style: none;
 }
 .cz-includes li {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   font-size: 13px;
   color: var(--ink-soft);
 }
@@ -441,7 +313,7 @@
   grid-template-columns: 24px 70px 1fr 16px;
   align-items: center;
   gap: var(--cz-space-3);
-  padding: 14px 0;
+  padding: 12px 0;
   text-align: left;
   font-size: 13px;
   transition: background var(--cz-ease);
@@ -466,14 +338,13 @@
 
 
 /* ==========================================================================
-   4. STAGE — live preview
+   3. STAGE — live preview
    ========================================================================== */
 .cz-stage {
   position: relative;
   min-height: 0;
-  margin-top: var(--cz-space-4);
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: var(--radius-lg);
   background: var(--cz-stage-bg);
 }
 .cz-stage--expanded {
@@ -484,47 +355,31 @@
   border-radius: var(--radius-lg);
 }
 
-/* ---- Canvas: photo (or tier cake) + overlays share one box, so
-        decorations stay on the cake when zooming ---- */
+/* Photo (or tier cake) + overlays share one box, so decorations stay on
+   the cake when zooming */
 .cz-stage__canvas {
   position: absolute;
-  top: 96px;                              /* clears the Live Preview badge */
-  bottom: 104px;                          /* clears the zoom bar / thumbnails */
+  top: 88px;                               /* clears the Live Preview badge */
+  bottom: 100px;                           /* clears the zoom bar / thumbs */
   left: 50%;
-  width: min(calc(100% - 36px), 520px);   /* max cake width — adjust to taste */
-  translate: -50% 0;                      /* separate from transform, so zoom still works */
+  width: min(calc(100% - 36px), 520px);
+  translate: -50% 0;
   transform-origin: center center;
   transition: transform var(--cz-ease-slow);
 }
 
-/* ---- Photo: never cropped ---- */
 .cz-stage__img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  transition: filter 0.3s ease;
+  transition: filter 0.3s ease, opacity 0.3s ease;
   animation: cz-fade 0.35s ease;
 }
 @keyframes cz-fade {
   from { opacity: 0; }
   to   { opacity: 1; }
-}
-
-/* ---- Overlays: decorations, message, candles (photo mode) ---- */
-.cz-overlays {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
- .cz-overlay {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  mask-image: radial-gradient(circle, black 55%, transparent 78%);
-  -webkit-mask-image: radial-gradient(circle, black 55%, transparent 78%);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
-  pointer-events: none;
 }
 
 .cz-message {
@@ -567,10 +422,7 @@
   to   { transform: translateX(-50%) scale(1.12, 0.94); }
 }
 
-/* ---- Illustrated tier cake (TierCake.jsx) ----
-   Renders any tier count (1-tier included) from the same recipe: a
-   flex stack of .cz-tc__tier blocks sized by inline style/props, so a
-   1-tier cake is just a stack with a single tier, not a special case. */
+/* ---- Illustrated tier cake (TierCake.jsx) ---- */
 .cz-tc {
   position: absolute;
   inset: 0;
@@ -578,11 +430,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 8%;                 /* room for candles above the top tier */
-  background: transparent;         /* lets the stage gradient show through */
+  padding-top: 8%;
+  background: transparent;
   pointer-events: none;
 }
-
 .cz-tc__stack {
   position: relative;
   z-index: 1;
@@ -591,19 +442,13 @@
   align-items: center;
   width: 100%;
 }
-
 .cz-tc__tier {
-  position: relative;             /* positioning root for __body and __topside */
+  position: relative;
   margin-top: -2px;
-  overflow: visible;              /* candles/decorations must NOT be clipped */
+  overflow: visible;
   animation: cz-pop 0.25s ease;
   transition: width var(--cz-ease-slow);
 }
-
-/* The clipped, coloured part of the tier: frosting + sponge layer.
-   Three stacked backgrounds fake studio-photo lighting on flat CSS:
-   a soft highlight near the top, a gentle falloff toward the base,
-   and the frosting colour itself underneath. */
 .cz-tc__body {
   position: absolute;
   inset: 0;
@@ -617,7 +462,7 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 8px 16px rgba(0, 0, 0, 0.14);
   transition: background var(--cz-ease-slow);
 }
-.cz-tc__body::after {              /* sponge layer along the bottom */
+.cz-tc__body::after {
   content: "";
   position: absolute;
   left: 0;
@@ -629,7 +474,6 @@
   opacity: 0.9;
   transition: background var(--cz-ease-slow);
 }
-/* Pearl trim between frosting and sponge, the way a real piped border reads */
 .cz-tc__body::before {
   content: "";
   position: absolute;
@@ -645,9 +489,6 @@
   opacity: 0.85;
   z-index: 1;
 }
-
-/* Sits along the top edge of the top tier, unclipped, so candles and
-   decorations can stick up above the frosting instead of being cut off */
 .cz-tc__topside {
   position: absolute;
   left: 0;
@@ -655,7 +496,6 @@
   top: 0;
   height: 0;
 }
-
 .cz-tc__deco {
   position: absolute;
   top: 0;
@@ -664,10 +504,6 @@
   transform: translate(-50%, -78%);
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.22));
 }
-
-/* Trail of decorations along a tier's bottom seam — the "wraps every
-   tier" look. Sits astride the seam (half over this tier, half over
-   the one below), smaller than the top bouquet so it reads as trim. */
 .cz-tc__trim {
   position: absolute;
   left: 0;
@@ -683,16 +519,9 @@
   transform: translate(-50%, 38%);
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
 }
-
-/* Single-tier cakes still get the same plate + proportions as any other
-   count — no separate "made to order" preview branch needed in markup. */
 .cz-tc__stack:only-child .cz-tc__tier:first-child {
   margin-top: 0;
 }
-
-/* Cake-stand plate: bevelled rim + a soft ambient shadow underneath,
-   instead of a flat grey ellipse, so the cake reads as sitting on
-   something rather than floating on a plain disc. */
 .cz-tc__plate {
   position: relative;
   width: 82%;
@@ -705,7 +534,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
     0 10px 20px rgba(31, 27, 58, 0.16);
 }
-.cz-tc__plate::after {             /* soft contact shadow on the "table" */
+.cz-tc__plate::after {
   content: "";
   position: absolute;
   left: 8%;
@@ -716,9 +545,6 @@
   background: radial-gradient(ellipse at center, rgba(31, 27, 58, 0.22), transparent 72%);
   filter: blur(2px);
 }
-
-/* Message plaque, styled like the piped badge on a real photographed
-   cake rather than plain text laid over the frosting. */
 .cz-tc__msg {
   position: absolute;
   left: 50%;
@@ -738,14 +564,18 @@
   color: #fff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
-
 .cz-tc .cz-overlay { z-index: 2; }
 .cz-tc .cz-candle  { z-index: 3; }
 
-/* "Illustration" label under the Live Preview badge */
+@keyframes cz-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* "Illustration" note under the Live Preview badge */
 .cz-illus {
   position: absolute;
-  top: 96px;
+  top: 82px;
   left: 18px;
   z-index: 2;
   padding: 6px var(--cz-space-3);
@@ -754,21 +584,16 @@
   max-width: min(420px, calc(100% - 36px));
 }
 
-@keyframes cz-pop {
-  from { opacity: 0; transform: translateY(8px) scale(0.96); }
-  to   { opacity: 1; transform: none; }
-}
-
 /* ---- Live preview badge ---- */
 .cz-badge-live {
   position: absolute;
-  top: 18px;
-  left: 18px;
+  top: 16px;
+  left: 16px;
   z-index: 2;
   display: flex;
   align-items: center;
   gap: var(--cz-space-3);
-  padding: 10px 22px 10px 18px;
+  padding: 8px 20px 8px 16px;
   border-radius: 26px;
 }
 .cz-badge-live p {
@@ -796,8 +621,8 @@
 /* ---- Top-right tools ---- */
 .cz-stage__tools {
   position: absolute;
-  top: 20px;
-  right: 18px;
+  top: 18px;
+  right: 16px;
   z-index: 2;
   display: flex;
   gap: 10px;
@@ -806,9 +631,9 @@
 /* ---- Bottom bar ---- */
 .cz-stage__bar {
   position: absolute;
-  right: 18px;
-  bottom: 18px;
-  left: 18px;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -819,10 +644,10 @@
 .cz-zoom {
   display: flex;
   align-items: center;
-  gap: 22px;
-  height: 62px;
-  padding: 0 28px;
-  border-radius: 31px;
+  gap: 20px;
+  height: 56px;
+  padding: 0 24px;
+  border-radius: 28px;
 }
 .cz-zoom button {
   display: flex;
@@ -850,27 +675,24 @@
   align-items: center;
   gap: 10px;
   min-width: 0;
-  max-width: min(232px, 100%);   /* enough room for ~3 thumbs + arrows, capped */
-  height: 76px;
+  max-width: min(232px, 100%);
+  height: 72px;
   padding: 0 14px;
   border-radius: 20px;
 }
-/* Scrolling track for the thumbnail images only — arrows stay put beside it.
-   The active thumb is scrolled into view in JS; this just makes overflow
-   scroll cleanly instead of being clipped by the stage. */
 .cz-thumbs__track {
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
-  padding: 6px 4px;              /* room for the selected badge to poke out without clipping */
+  padding: 6px 4px;
   overflow-x: auto;
   scroll-behavior: smooth;
   scroll-snap-type: x proximity;
-  scrollbar-width: none;         /* Firefox */
+  scrollbar-width: none;
 }
 .cz-thumbs__track::-webkit-scrollbar {
-  display: none;                 /* Chrome / Safari */
+  display: none;
 }
 .cz-thumbs__arrow {
   width: 24px;
@@ -886,9 +708,9 @@
 }
 .cz-thumb {
   position: relative;
-  flex: 0 0 60px;
-  width: 60px;
-  height: 60px;
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
   aspect-ratio: 1 / 1;
   padding: 4px;
   border: 1.5px solid var(--line);
@@ -914,6 +736,12 @@
   border-radius: 8px;
   background: var(--pink-50);
 }
+.cz-thumb__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .cz-thumb__badge {
   position: absolute;
   top: -4px;
@@ -927,38 +755,16 @@
   color: #fff;
   box-shadow: 0 0 0 2px #fff;
 }
-.cz-thumb__frame img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.cz-thumb--on {
-  border-color: var(--pink-500);
-}
 
-.cz-deco-group {
-  margin-bottom: 14px;
-}
-.cz-deco-group:last-child {
-  margin-bottom: 0;
-}
-.cz-deco-group__title {
-  margin: 0 0 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft, #5f5b78);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
 
 /* ==========================================================================
-   5. OPTIONS PANEL
+   4. OPTIONS PANEL
    ========================================================================== */
 .cz-panel {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   border-radius: var(--radius-lg);
   background: #fff;
   box-shadow: var(--shadow-card);
@@ -968,59 +774,128 @@
   flex: none;
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin: 0 22px;
-  padding: 18px 0 var(--cz-space-3);
+  gap: 12px;
+  margin: 0 20px;
+  padding: 16px 0 12px;
   border-bottom: 1px solid var(--line);
 }
 .cz-panel__name {
   margin: 0;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
 }
 .cz-panel__sub {
-  margin: 3px 0 0;
+  margin: 2px 0 0;
   font-size: 12px;
   color: var(--ink-soft);
 }
 
+/* The only scrolling area of the panel. Bottom padding + soft fade tell
+   the customer there is more below. */
 .cz-panel__scroll {
   flex: 1;
   min-height: 0;
-  padding: 4px 22px var(--cz-space-2);
+  padding: 2px 20px 28px;
   overflow-y: auto;
+  scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--pink-200) transparent;
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 26px), transparent);
+  mask-image: linear-gradient(#000 calc(100% - 26px), transparent);
 }
 
+/* Accordion section: a header button (icon, title, current choice, chevron)
+   stacked above the options body. */
 .cz-sec {
-  display: flex;
-  gap: 14px;
-  padding: 14px 0;
+  display: block;
   border-bottom: 1px solid var(--line);
 }
 .cz-sec:last-child {
   border-bottom: 0;
 }
+.cz-sec__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
 .cz-sec__icon {
   flex: none;
-  margin-top: 1px;
   color: var(--ink);
 }
-.cz-sec__body {
-  min-width: 0;
-  flex: 1;
-}
 .cz-sec__title {
-  margin: 0 0 10px;
-  font-size: 13px;
+  flex: none;
+  margin: 0;
+  font-size: 13.5px;
   font-weight: 600;
+  transition: color var(--cz-ease);
+}
+.cz-sec__head:hover .cz-sec__title {
+  color: var(--pink-500);
+}
+.cz-sec__summary {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.cz-sec__chev {
+  flex: none;
+  margin-left: auto;
+  color: var(--ink-soft);
+  transition: transform var(--cz-ease);
+}
+.cz-sec__summary + .cz-sec__chev {
+  margin-left: 4px;
+}
+.cz-sec.is-open .cz-sec__chev {
+  transform: rotate(180deg);
+}
+.cz-sec__body {
+  padding: 0 0 16px 32px;          /* lines up under the section title */
+  animation: cz-fade 0.2s ease;
+}
+.cz-sec__status {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.cz-sec__status--error {
+  color: #c0392b;
 }
 
 .cz-row-wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
+}
+
+/* Decoration categories */
+.cz-deco-group {
+  margin-bottom: 14px;
+}
+.cz-deco-group:last-child {
+  margin-bottom: 0;
+}
+.cz-deco-group__title {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft, #5f5b78);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 /* ---- Text input with counter ---- */
@@ -1028,7 +903,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 34px;
+  height: 38px;
   margin-bottom: var(--cz-space-3);
   padding: 0 var(--cz-space-3);
   border: 1px solid var(--line);
@@ -1055,17 +930,15 @@
   color: var(--ink-soft);
 }
 
-/* ---- Dark pill (size / tier / frosting / lettering / lit) ----
-   Used for tier count too, so 1-tier is selected with the same pill
-   as 2-tier/3-tier — no separate "unavailable" styling by default. */
+/* ---- Dark pill (size / tier / frosting / lettering / lit) ---- */
 .cz-pill {
-  min-width: 56px;
+  min-width: 52px;
   height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--cz-space-2);
-  padding: 0 18px;
+  padding: 0 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   background: #fff;
@@ -1088,8 +961,8 @@
 }
 
 .cz-font {
-  height: 36px;
-  padding: 0 16px;
+  height: 34px;
+  padding: 0 14px;
   font-size: 13px;
 }
 .cz-font__aa {
@@ -1099,9 +972,9 @@
 .cz-font--round   .cz-font__aa { font-family: ui-rounded, "Varela Round", "Nunito", sans-serif; }
 .cz-font--classic .cz-font__aa { font-family: Georgia, "Times New Roman", serif; }
 
-/* ---- Light chip with colour dot (flavors / decorations) ---- */
+/* ---- Light chip (flavors / decorations) ---- */
 .cz-chip {
-  height: 28px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   gap: var(--cz-space-2);
@@ -1110,24 +983,50 @@
   border-radius: var(--radius-pill);
   background: #fff;
   box-shadow: 0 0 0 1px var(--line);
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--ink);
   transition: background var(--cz-ease), box-shadow var(--cz-ease);
 }
 .cz-chip__dot {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   display: grid;
   place-items: center;
   border-radius: 50%;
   color: #fff;
+}
+.cz-chip__thumb {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+.cz-chip__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.cz-chip__check {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 13px;
+  height: 13px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--pink-500);
+  color: #fff;
+  box-shadow: 0 0 0 1.5px #fff;
 }
 .cz-chip:hover:not(.cz-chip--on) {
   background: var(--pink-50);
 }
 .cz-chip--on {
   background: var(--pink-50);
-  box-shadow: 0 0 0 1px var(--pink-200);
+  box-shadow: 0 0 0 1px var(--pink-300, var(--pink-200));
 }
 .cz-chip--on .cz-chip__dot {
   box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--pink-500);
@@ -1136,7 +1035,8 @@
 /* ---- Colour swatches ---- */
 .cz-swatches {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
   padding: 3px;
 }
 .cz-swatch {
@@ -1187,7 +1087,7 @@
   transition: background var(--cz-ease), border-color var(--cz-ease);
 }
 .cz-stepper button:hover:not(:disabled) {
-  border-color: var(--pink-300);
+  border-color: var(--pink-300, var(--pink-200));
   background: var(--pink-50);
 }
 .cz-stepper button:disabled {
@@ -1200,9 +1100,9 @@
   font-size: 12px;
 }
 
-/* ---- Delivery date ---- */
+/* ---- Delivery date / special instructions ---- */
 .cz-date {
-  height: 34px;
+  height: 36px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1226,8 +1126,6 @@
 .cz-date:focus-within {
   border-color: var(--pink-400);
 }
-
-/* ---- Special instructions ---- */
 .cz-textarea {
   width: 100%;
   resize: vertical;
@@ -1248,79 +1146,98 @@
 
 
 /* ==========================================================================
-   6. PRICE SUMMARY & ADD TO CART
+   5. FOOTER — total on the left, Add to cart on the right (sticky)
    ========================================================================== */
 .cz-panel__foot {
   flex: none;
-  padding: 10px var(--cz-space-4) var(--cz-space-4);
+  padding: 12px var(--cz-space-4) var(--cz-space-4);
   border-top: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 -8px 16px rgba(31, 27, 58, 0.04);
 }
 
-.cz-summary {
-  margin-bottom: 10px;
-  padding: 10px 14px 12px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #fff1f5 0%, #ffe6ee 100%);
-}
-.cz-summary__title {
-  margin: 0 0 6px;
-  font-size: 12px;
-  font-weight: 600;
-}
-.cz-summary__lines {
+/* Opens above the total row when "View breakdown" is clicked */
+.cz-breakdown {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin: 0;
-  padding: 0;
+  max-height: 120px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  overflow-y: auto;
   list-style: none;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fff1f5 0%, #ffe6ee 100%);
+  scrollbar-width: thin;
 }
-.cz-summary__lines li,
-.cz-summary__total {
+.cz-breakdown li {
   display: flex;
   justify-content: space-between;
   gap: var(--cz-space-3);
-}
-.cz-summary__lines li {
-  font-size: 10.5px;
+  font-size: 12px;
   color: var(--ink-soft);
 }
-.cz-summary__total {
-  margin: 8px 0 0;
-  padding-top: 8px;
-  border-top: 1px solid var(--pink-100);
-  font-size: 12px;
-  font-weight: 600;
+
+.cz-foot__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
-.cz-summary__total span:last-child {
+.cz-foot__total {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.cz-foot__total small {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.cz-foot__total:hover small {
+  color: var(--pink-500);
+}
+.cz-foot__total strong {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.1;
   color: var(--pink-500);
 }
 
 .cz-cta {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 10px;
+  border: 0;
   border-radius: var(--radius-pill);
   background: var(--pink-500);
   color: #fff;
   box-shadow: var(--shadow-cta);
+  cursor: pointer;
   transition: transform var(--cz-ease), box-shadow var(--cz-ease), background var(--cz-ease);
 }
-.cz-cta:hover {
+.cz-cta:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: var(--cz-shadow-3);
 }
-.cz-cta:active {
+.cz-cta:active:not(:disabled) {
   transform: translateY(0);
 }
 .cz-cta:disabled {
   cursor: not-allowed;
-  opacity: 0.55;
+  opacity: 0.6;
   box-shadow: none;
-  transform: none;
 }
 .cz-cta__text {
   display: flex;
@@ -1331,10 +1248,19 @@
 .cz-cta__text strong {
   font-size: 15px;
   font-weight: 600;
+  white-space: nowrap;
 }
-.cz-cta__text small {
-  font-size: 11px;
-  opacity: 0.9;
+
+
+/* ==========================================================================
+   6. LOADING STATE (shown under the real header while the template loads)
+   ========================================================================== */
+.cz-loading {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  font-size: 14px;
 }
 
 
@@ -1343,8 +1269,8 @@
    ========================================================================== */
 @media (max-width: 1280px) {
   .cz {
-    --cz-col-left: 310px;
-    --cz-col-right: 400px;
+    --cz-col-left: 270px;
+    --cz-col-right: 380px;
   }
   .cz-zoom {
     gap: 14px;
@@ -1352,6 +1278,8 @@
   }
 }
 
+/* Tablet / small laptop: stack columns, page scrolls, Add to cart stays
+   pinned to the bottom of the screen */
 @media (max-width: 1100px) {
   html,
   body {
@@ -1366,25 +1294,34 @@
     grid-template-rows: none;
   }
   .cz-stage {
-    min-height: 560px;
+    order: -1;
+    min-height: 460px;
+  }
+  .cz-side {
+    overflow: visible;
+  }
+  .cz-panel {
+    overflow: visible;
   }
   .cz-panel__scroll {
     overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
-}
-
-@media (max-width: 900px) {
-  .cz-header {
-    grid-template-columns: 1fr auto;
-  }
-  .cz-steps {
-    display: none;
+  .cz-panel__foot {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
 }
 
 @media (max-width: 720px) {
-  .cz {
-    padding: 0 12px;
+  .cz-body {
+    padding: 12px;
+  }
+  .cz-stage {
+    min-height: 400px;
   }
   .cz-stage__bar {
     flex-direction: column;
@@ -1392,7 +1329,10 @@
   }
   .cz-zoom {
     justify-content: center;
-    height: 52px;
+    height: 48px;
+  }
+  .cz-thumbs {
+    display: none;
   }
   .cz-tc__plate {
     height: 10px;
@@ -1401,4 +1341,68 @@
     width: 5px;
     height: 20px;
   }
+}
+
+.cz-note {
+  position: absolute;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 32px);
+  margin: 0;
+  padding: 6px 14px;
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: center;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+   .cz-row__label { min-width: 64px; }
+   .cz-row__value {
+     display: flex;
+     align-items: center;
+     gap: 6px;
+     min-width: 0;
+     font-size: 13px;
+     white-space: nowrap;
+   }
+
+
+/* ==========================================================================
+   FONT PICKER — compact grid + "More fonts" link
+   ========================================================================== */
+.cz-font-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+.cz-font-grid .cz-font {
+  width: 100%;
+  min-width: 0;
+  height: 36px;
+  justify-content: flex-start;
+  padding: 0 12px;
+}
+.cz-font__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cz-more {
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  color: var(--pink-500);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.cz-more:hover {
+  opacity: 0.8;
 }

@@ -6,7 +6,7 @@ namespace CakeManagementAPI.DTOs.Order
     public class CreateOrderItemDto
     {
         [Required]
-        public int CakeId { get; set; }
+        public int? CakeId { get; set; }
 
         [Required]
         [Range(1, int.MaxValue)]

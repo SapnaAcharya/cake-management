@@ -6,7 +6,7 @@ namespace CakeManagementAPI.DTOs.Order
     {
         public int OrderItemId { get; set; }
 
-        public int CakeId { get; set; }
+        public int? CakeId { get; set; }
 
         public string CakeName { get; set; } = string.Empty;
 

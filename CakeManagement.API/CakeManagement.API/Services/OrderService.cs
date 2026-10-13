@@ -23,13 +23,20 @@ namespace CakeManagementAPI.Services
             _pricing = pricing;
         }
 
+        // Shared query: orders with items, cakes and templates
+        private IQueryable<Order> OrdersWithItems() =>
+            _context.Orders
+                .AsSplitQuery()
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Cake)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.CakeTemplate);
+
         // GET ALL ORDERS
         // Admin
         public async Task<List<OrderResponseDto>> GetAllOrdersAsync()
         {
-            var orders = await _context.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Cake)
+            var orders = await OrdersWithItems()
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
@@ -44,9 +51,7 @@ namespace CakeManagementAPI.Services
         public async Task<OrderResponseDto> GetOrderByIdForAdminAsync(
             int orderId)
         {
-            var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Cake)
+            var order = await OrdersWithItems()
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (order == null)
@@ -61,9 +66,7 @@ namespace CakeManagementAPI.Services
         // Get order by id guest
         public async Task<OrderResponseDto> GetGuestOrderByIdAsync(int orderId, string phoneNumber)
         {
-            var order = await _context.Orders
-                 .Include(o => o.OrderItems)
-                 .ThenInclude(oi => oi.Cake)
+            var order = await OrdersWithItems()
                  .FirstOrDefaultAsync(o => o.Id == orderId && o.PhoneNumber == phoneNumber);
 
             if (order == null)
@@ -79,9 +82,7 @@ namespace CakeManagementAPI.Services
             int orderId,
             string status)
         {
-            var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Cake)
+            var order = await OrdersWithItems()
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (order == null)
@@ -114,8 +115,8 @@ namespace CakeManagementAPI.Services
         }
 
         public async Task<OrderResponseDto> CreateOrderAsync(
-    int? userId,
-    CreateOrderDto dto)
+            int? userId,
+            CreateOrderDto dto)
         {
             if (!userId.HasValue && string.IsNullOrWhiteSpace(dto.PhoneNumber))
                 throw new ArgumentException("Phone number is required.");
@@ -146,6 +147,8 @@ namespace CakeManagementAPI.Services
                 var cart = await _context.Carts
                     .Include(c => c.CartItems)
                         .ThenInclude(ci => ci.Cake)
+                    .Include(c => c.CartItems)
+                        .ThenInclude(ci => ci.CakeTemplate)
                     .FirstOrDefaultAsync(c => c.UserId == userId.Value);
 
                 if (cart == null || !cart.CartItems.Any())
@@ -153,15 +156,15 @@ namespace CakeManagementAPI.Services
 
                 foreach (var cartItem in cart.CartItems)
                 {
-                    if (cartItem.Cake == null)
-                        throw new KeyNotFoundException("Cake not found.");
-
-                    var cake = cartItem.Cake;
                     var isCustomized = cartItem.CustomizationJson != null;
+                    var cake = cartItem.Cake;
 
                     // Stock rules apply to ready-made cakes only
                     if (!isCustomized)
                     {
+                        if (cake == null)
+                            throw new KeyNotFoundException("Cake not found.");
+
                         if (!cake.IsAvailable)
                             throw new InvalidOperationException(
                                 $"The cake '{cake.Name}' is currently unavailable.");
@@ -171,23 +174,29 @@ namespace CakeManagementAPI.Services
                                 $"Not enough stock available for '{cake.Name}'.");
                     }
 
-                    var unitPrice = cartItem.CustomUnitPrice ?? cake.Price;
+                    var unitPrice = cartItem.CustomUnitPrice
+                                    ?? cake?.Price
+                                    ?? throw new InvalidOperationException(
+                                        "Cart item has no price.");
+
                     decimal subtotal = unitPrice * cartItem.Quantity;
 
                     order.OrderItems.Add(new OrderItem
                     {
                         Cake = cake,
-                        CakeId = cake.Id,
+                        CakeId = cartItem.CakeId,
                         Quantity = cartItem.Quantity,
                         UnitPrice = unitPrice,
                         Subtotal = subtotal,
                         CakeTemplateId = cartItem.CakeTemplateId,
+                        CakeTemplate = cartItem.CakeTemplate,
                         CustomizationJson = cartItem.CustomizationJson
                     });
 
                     totalAmount += subtotal;
 
-                    if (!isCustomized)
+                    // Stock reduces for normal cakes only
+                    if (!isCustomized && cake != null)
                     {
                         cake.StockQuantity -= cartItem.Quantity;
                         if (cake.StockQuantity == 0)
@@ -209,17 +218,36 @@ namespace CakeManagementAPI.Services
                     if (item.Quantity < 1)
                         throw new ArgumentException("Quantity must be at least 1.");
 
-                    var cake = await _context.Cakes
-                        .FirstOrDefaultAsync(c => c.Id == item.CakeId);
-
-                    if (cake == null)
-                        throw new KeyNotFoundException(
-                            $"Cake with ID {item.CakeId} was not found.");
-
                     var isCustomized = item.Customization != null;
 
-                    if (!isCustomized)
+                    Cake? cake = null;
+                    CakeTemplate? template = null;
+                    decimal unitPrice;
+                    int? templateId = null;
+                    string? json = null;
+
+                    if (isCustomized)
                     {
+                        // The server prices everything. Any price from the frontend is ignored.
+                        var snapshot = await _snapshotService.CreateSnapshotAsync(item.Customization!);
+                        unitPrice = await _pricing.CalculateAsync(item.Customization!);
+                        templateId = snapshot.TemplateId;
+                        json = _snapshotService.ToJson(snapshot);
+                        template = await _context.CakeTemplates.FindAsync(snapshot.TemplateId);
+                    }
+                    else
+                    {
+                        if (item.CakeId == null)
+                            throw new ArgumentException(
+                                "CakeId is required for normal cakes.");
+
+                        cake = await _context.Cakes
+                            .FirstOrDefaultAsync(c => c.Id == item.CakeId.Value);
+
+                        if (cake == null)
+                            throw new KeyNotFoundException(
+                                $"Cake with ID {item.CakeId} was not found.");
+
                         if (!cake.IsAvailable)
                             throw new InvalidOperationException(
                                 $"The cake '{cake.Name}' is currently unavailable.");
@@ -227,19 +255,8 @@ namespace CakeManagementAPI.Services
                         if (item.Quantity > cake.StockQuantity)
                             throw new InvalidOperationException(
                                 $"Not enough stock available for '{cake.Name}'.");
-                    }
 
-                    // The server prices everything. Any price from the frontend is ignored.
-                    decimal unitPrice = cake.Price;
-                    int? templateId = null;
-                    string? json = null;
-
-                    if (isCustomized)
-                    {
-                        var snapshot = await _snapshotService.CreateSnapshotAsync(item.Customization!);
-                        unitPrice = await _pricing.CalculateAsync(item.Customization!);
-                        templateId = snapshot.TemplateId;
-                        json = _snapshotService.ToJson(snapshot);
+                        unitPrice = cake.Price;
                     }
 
                     decimal subtotal = unitPrice * item.Quantity;
@@ -247,17 +264,19 @@ namespace CakeManagementAPI.Services
                     order.OrderItems.Add(new OrderItem
                     {
                         Cake = cake,
-                        CakeId = cake.Id,
+                        CakeId = cake?.Id,
                         Quantity = item.Quantity,
                         UnitPrice = unitPrice,
                         Subtotal = subtotal,
                         CakeTemplateId = templateId,
+                        CakeTemplate = template,
                         CustomizationJson = json
                     });
 
                     totalAmount += subtotal;
 
-                    if (!isCustomized)
+                    // Stock reduces for normal cakes only
+                    if (cake != null)
                     {
                         cake.StockQuantity -= item.Quantity;
                         if (cake.StockQuantity == 0)
@@ -279,9 +298,7 @@ namespace CakeManagementAPI.Services
             int userId,
             int orderId)
         {
-            var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Cake)
+            var order = await OrdersWithItems()
                 .FirstOrDefaultAsync(o =>
                     o.Id == orderId &&
                     o.UserId == userId);
@@ -300,9 +317,7 @@ namespace CakeManagementAPI.Services
         public async Task<List<OrderResponseDto>> GetMyOrdersAsync(
             int userId)
         {
-            var orders = await _context.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Cake)
+            var orders = await OrdersWithItems()
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
@@ -314,7 +329,7 @@ namespace CakeManagementAPI.Services
 
 
         // MAP ORDER TO DTO
-        
+
         private OrderResponseDto MapOrderToDto(
             Order order)
         {
@@ -325,7 +340,9 @@ namespace CakeManagementAPI.Services
 
                     CakeId = oi.CakeId,
 
-                    CakeName = oi.Cake!.Name,
+                    CakeName = oi.Cake?.Name
+                               ?? oi.CakeTemplate?.Name
+                               ?? "Custom Cake",
 
                     Quantity = oi.Quantity,
 
@@ -335,8 +352,8 @@ namespace CakeManagementAPI.Services
 
                     IsCustomized = oi.CustomizationJson != null,
                     Customization = oi.CustomizationJson == null
-            ? null
-            : JsonSerializer.Deserialize<CustomizationSnapshot>(oi.CustomizationJson)
+                        ? null
+                        : JsonSerializer.Deserialize<CustomizationSnapshot>(oi.CustomizationJson)
                 })
                 .ToList();
 

@@ -68,6 +68,7 @@ namespace CakeManagementAPI.Data
                 .HasOne(ci => ci.Cake)
                 .WithMany(c => c.CartItems)
                 .HasForeignKey(ci => ci.CakeId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // User -> Orders
@@ -89,6 +90,7 @@ namespace CakeManagementAPI.Data
                 .HasOne(oi => oi.Cake)
                 .WithMany(c => c.OrderItems)
                 .HasForeignKey(oi => oi.CakeId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CakeTemplate>()
@@ -127,7 +129,7 @@ namespace CakeManagementAPI.Data
                 .HasOne(oi => oi.CakeTemplate)
                 .WithMany()
                 .HasForeignKey(oi => oi.CakeTemplateId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Decimal precision
             modelBuilder.Entity<Cake>()

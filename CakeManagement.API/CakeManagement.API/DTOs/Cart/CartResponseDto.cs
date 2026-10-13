@@ -16,7 +16,7 @@
     {
         public int CartItemId { get; set; }
 
-        public int CakeId { get; set; }
+        public int? CakeId { get; set; }
 
         public string CakeName { get; set; } = string.Empty;
 

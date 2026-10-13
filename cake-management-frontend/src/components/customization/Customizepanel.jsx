@@ -1,23 +1,39 @@
+import { useState } from "react";
 import {
-  Cake, CakeSlice, Check,
+  Cake, CakeSlice, Check, ChevronDown,
   Flame, Layers, Minus, Palette, Pencil, Plus, Ruler, ShoppingBag, Sparkles,
 } from "lucide-react";
 import { formatPrice } from "../../data/helpers";
 import {
   DECORATION_CATEGORY_ORDER, FLAVORS, FONT_STYLES, FROSTINGS, MAX_CANDLES, MAX_MESSAGE_LENGTH, SIZES, TIERS,
 } from "../../data/Options";
-import { getImageUrl } from "../../utils/imageUrl" 
+import { getImageUrl } from "../../utils/imageUrl";
+
+// how many fonts are visible before the "More fonts" link
+const FONT_PREVIEW_COUNT = 6;
 
 /* ---- Small building blocks ---------------------------------------------- */
 
-function Section({ id, icon: Icon, title, children }) {
+/* Collapsible section: the header always shows the current choice (summary),
+   so the customer sees everything at a glance without scrolling. */
+function Section({ id, icon: Icon, title, summary, defaultOpen = false, children }) {
+  const [open, setOpen] = useState(defaultOpen);
+
   return (
-    <section id={id} className="cz-sec">
-      <Icon className="cz-sec__icon" size={22} strokeWidth={1.6} />
-      <div className="cz-sec__body">
-        <h3 className="cz-sec__title">{title}</h3>
-        {children}
-      </div>
+    <section id={id} className={`cz-sec ${open ? "is-open" : ""}`}>
+      <button
+        type="button"
+        className="cz-sec__head"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <Icon className="cz-sec__icon" size={20} strokeWidth={1.6} />
+        <span className="cz-sec__title">{title}</span>
+        {!open && summary != null && <span className="cz-sec__summary">{summary}</span>}
+        <ChevronDown className="cz-sec__chev" size={16} />
+      </button>
+
+      {open && <div className="cz-sec__body">{children}</div>}
     </section>
   );
 }
@@ -55,9 +71,12 @@ function Chip({ on, dot, image, children, ...rest }) {
 
 /* ---- Panel --------------------------------------------------------------- */
 
-export default function CustomizePanel({ template, cfg, onChange, price, added, onAddToCart,
+export default function CustomizePanel({
+  template, cfg, onChange, price, added, onAddToCart, addingToCart,
   decorations, decorationsLoading, decorationsError,
- }) {
+}) {
+  const [showBreakdown, setShowBreakdown] = useState(false);
+  const [showAllFonts, setShowAllFonts] = useState(false);
 
   const toggleDecoration = (id) =>
     onChange({
@@ -66,109 +85,113 @@ export default function CustomizePanel({ template, cfg, onChange, price, added, 
         : [...cfg.decorations, id],
     });
 
+  // short text shown on each collapsed section header
+  const flavorLabel = FLAVORS.find((f) => f.id === cfg.flavor)?.label;
+  const frostingLabel = FROSTINGS.find((f) => f.id === cfg.frosting)?.label;
+  const tierLabel = TIERS.find((t) => t.value === cfg.tier)?.label;
+
+  // first few fonts, plus the selected one if it is further down the list
+  const visibleFonts = showAllFonts
+    ? FONT_STYLES
+    : FONT_STYLES.filter((f, i) => i < FONT_PREVIEW_COUNT || f.id === cfg.font);
+
   return (
     <aside className="cz-panel">
-      <header className="cz-panel__head">
-        <Cake size={38} strokeWidth={1.4} color="var(--pink-500)" />
-        <div>
-          <h2 className="cz-panel__name">{template.name}</h2>
-          <p className="cz-panel__sub">Customize your cake to make it perfect!</p>
-        </div>
-      </header>
-
       <div className="cz-panel__scroll">
         {/* Write on the cake */}
-        <Section id="cz-message" icon={Pencil} title="Write on the cake">
+        <Section
+          id="cz-message"
+          icon={Pencil}
+          title="Write Message"
+          summary={cfg.message || "None"}
+          defaultOpen
+        >
           <label className="cz-input">
             <input
               type="text"
               value={cfg.message}
               maxLength={MAX_MESSAGE_LENGTH}
-              placeholder="Happy Birthday Emma"
+              placeholder="Happy Birthday!"
               onChange={(e) => onChange({ message: e.target.value })}
             />
             <span className="cz-input__count">{cfg.message.length}/{MAX_MESSAGE_LENGTH}</span>
           </label>
-          <div className="cz-row-wrap">
-            {FONT_STYLES.map((f) => (
+
+          <div className="cz-font-grid">
+            {visibleFonts.map((f) => (
               <Pill
                 key={f.id}
                 on={cfg.font === f.id}
                 className={`cz-font cz-font--${f.id}`}
                 onClick={() => onChange({ font: f.id })}
               >
-                <span className="cz-font__aa">Aa</span> {f.label}
-                {cfg.font === f.id && (
-                  <span className="cz-check cz-check--sm"><Check size={11} strokeWidth={3} /></span>
-                )}
+                <span className="cz-font__aa">Aa</span>
+                <span className="cz-font__name">{f.label}</span>
               </Pill>
             ))}
           </div>
+
+          {FONT_STYLES.length > FONT_PREVIEW_COUNT && (
+            <button
+              type="button"
+              className="cz-more"
+              onClick={() => setShowAllFonts((v) => !v)}
+            >
+              {showAllFonts
+                ? "Show fewer fonts"
+                : `More fonts (${FONT_STYLES.length - FONT_PREVIEW_COUNT})`}
+            </button>
+          )}
         </Section>
 
-        <Section id="cz-color" icon={Palette} title="Choose a color variation">
-  <div className="cz-swatches">
-    {template.colors.map((c) => {
-      const on = cfg.colorId === c.id;
-
-      return (
-        <button
-          key={c.dbId}
-          type="button"
-          className={`cz-swatch ${on ? "cz-swatch--on" : ""}`}
-          aria-label={c.label}
-          aria-pressed={on}
-          onClick={() => {
-            console.log("Selected color:", c);
-            onChange({ colorId: c.id, colorDbId: c.dbId, colorHex: c.hex });
-          }}
+        {/* Colour */}
+        <Section
+          id="cz-color"
+          icon={Palette}
+          title="Color"
+          summary={<span className="cz-dot" style={{ background: cfg.colorHex ?? "#fff" }} />}
         >
-          <span
-            className="cz-swatch__fill"
-            style={{ background: c.hex }}
-          >
-            {on && <Check size={14} strokeWidth={3} />}
-          </span>
-        </button>
-      );
-    })}
+          <div className="cz-swatches">
+            {template.colors.map((c) => {
+              const on = cfg.colorId === c.id;
+              return (
+                <button
+                  key={c.dbId}
+                  type="button"
+                  className={`cz-swatch ${on ? "cz-swatch--on" : ""}`}
+                  aria-label={c.label}
+                  aria-pressed={on}
+                  onClick={() =>
+                    onChange({ colorId: c.id, colorDbId: c.dbId, colorHex: c.hex })
+                  }
+                >
+                  <span className="cz-swatch__fill" style={{ background: c.hex }}>
+                    {on && <Check size={14} strokeWidth={3} />}
+                  </span>
+                </button>
+              );
+            })}
 
-    <label
-      className="cz-swatch cz-swatch--picker"
-      aria-label="Pick a custom color"
-      style={{ position: "relative" }}
-    >
-      <input
-        type="color"
-        value={cfg.colorHex ?? "#ff5c8a"}
-        onChange={(e) =>
-          onChange({
-            colorId: null,
-            colorHex: e.target.value,
-          })
-        }
-        style={{
-          opacity: 0,
-          position: "absolute",
-          inset: 0,
-          cursor: "pointer",
-        }}
-      />
-
-      <span
-        className="cz-swatch__fill"
-        style={{
-          background: cfg.colorHex ?? "#ffffff",
-        }}
-      >
-        <Palette size={14} />
-      </span>
-    </label>
-  </div>
-</Section>
+            <label
+              className="cz-swatch cz-swatch--picker"
+              aria-label="Pick a custom color"
+              style={{ position: "relative" }}
+            >
+              <input
+                type="color"
+                value={cfg.colorHex ?? "#ff5c8a"}
+                onChange={(e) => onChange({ colorId: null, colorHex: e.target.value })}
+                style={{ opacity: 0, position: "absolute", inset: 0, cursor: "pointer" }}
+              />
+              <span className="cz-swatch__fill" style={{ background: cfg.colorHex ?? "#ffffff" }}>
+                <Palette size={14} />
+              </span>
+            </label>
+          </div>
+        </Section>
 
         {/* Size */}
-        <Section id="cz-size" icon={Ruler} title="Choose Size">
+        <Section id="cz-size" icon={Ruler} title="Size" summary={`${cfg.size}"`}>
           <div className="cz-row-wrap">
             {SIZES.map((s) => (
               <Pill
@@ -184,14 +207,10 @@ export default function CustomizePanel({ template, cfg, onChange, price, added, 
         </Section>
 
         {/* Tier */}
-        <Section id="cz-tier" icon={Layers} title="Choose Tier">
+        <Section id="cz-tier" icon={Layers} title="Tiers" summary={tierLabel}>
           <div className="cz-row-wrap">
             {TIERS.map((t) => (
-              <Pill
-                key={t.value}
-                on={cfg.tier === t.value}
-                onClick={() => onChange({ tier: t.value })}
-              >
+              <Pill key={t.value} on={cfg.tier === t.value} onClick={() => onChange({ tier: t.value })}>
                 {t.label}
               </Pill>
             ))}
@@ -199,7 +218,7 @@ export default function CustomizePanel({ template, cfg, onChange, price, added, 
         </Section>
 
         {/* Sponge flavor */}
-        <Section id="cz-flavor" icon={Cake} title="Choose Sponge Flavor">
+        <Section id="cz-flavor" icon={Cake} title="Sponge flavor" summary={flavorLabel}>
           <div className="cz-row-wrap">
             {FLAVORS.map((f) => (
               <Chip key={f.id} on={cfg.flavor === f.id} dot={f.dot} onClick={() => onChange({ flavor: f.id })}>
@@ -210,7 +229,7 @@ export default function CustomizePanel({ template, cfg, onChange, price, added, 
         </Section>
 
         {/* Frosting */}
-        <Section id="cz-frosting" icon={CakeSlice} title="Choose Frosting">
+        <Section id="cz-frosting" icon={CakeSlice} title="Frosting" summary={frostingLabel}>
           <div className="cz-row-wrap">
             {FROSTINGS.map((f) => (
               <Pill key={f.id} on={cfg.frosting === f.id} onClick={() => onChange({ frosting: f.id })}>
@@ -220,57 +239,63 @@ export default function CustomizePanel({ template, cfg, onChange, price, added, 
           </div>
         </Section>
 
-        {/* Decorations — grouped by category so users know what they're applying */}
-<Section id="cz-decorations" icon={Sparkles} title="Add Decorations">
-  {decorationsLoading && (
-    <p className="cz-sec__status">Loading decorations...</p>
-  )}
+        {/* Decorations, grouped by category */}
+        <Section
+          id="cz-decorations"
+          icon={Sparkles}
+          title="Decorations"
+          summary={cfg.decorations.length ? `${cfg.decorations.length} selected` : "None"}
+        >
+          {decorationsLoading && <p className="cz-sec__status">Loading decorations...</p>}
 
-  {!decorationsLoading && decorationsError && (
-    <p className="cz-sec__status cz-sec__status--error">{decorationsError}</p>
-  )}
+          {!decorationsLoading && decorationsError && (
+            <p className="cz-sec__status cz-sec__status--error">{decorationsError}</p>
+          )}
 
-  {!decorationsLoading && !decorationsError && decorations.length === 0 && (
-    <p className="cz-sec__status">No decorations available yet.</p>
-  )}
+          {!decorationsLoading && !decorationsError && decorations.length === 0 && (
+            <p className="cz-sec__status">No decorations available yet.</p>
+          )}
 
-  {!decorationsLoading && !decorationsError && decorations.length > 0 && (() => {
-    // Group decorations by category
-    const grouped = decorations.reduce((acc, d) => {
-      const cat = d.category || "Other";
-      (acc[cat] ??= []).push(d);
-      return acc;
-    }, {});
+          {!decorationsLoading && !decorationsError && decorations.length > 0 && (() => {
+            const grouped = decorations.reduce((acc, d) => {
+              const cat = d.category || "Other";
+              (acc[cat] ??= []).push(d);
+              return acc;
+            }, {});
 
-    // Known categories first, in a fixed order; anything unrecognized goes after
-    const orderedCategories = [
-      ...DECORATION_CATEGORY_ORDER.filter((cat) => grouped[cat]?.length),
-      ...Object.keys(grouped).filter((cat) => !DECORATION_CATEGORY_ORDER.includes(cat)),
-    ];
+            const orderedCategories = [
+              ...DECORATION_CATEGORY_ORDER.filter((cat) => grouped[cat]?.length),
+              ...Object.keys(grouped).filter((cat) => !DECORATION_CATEGORY_ORDER.includes(cat)),
+            ];
 
-    return orderedCategories.map((category) => (
-      <div key={category} className="cz-deco-group">
-        <p className="cz-deco-group__title">{category}</p>
-        <div className="cz-row-wrap">
-          {grouped[category].map((d) => (
-            <Chip
-              key={d.id}
-              on={cfg.decorations.includes(d.id)}
-              image={d.imageUrl ? getImageUrl(d.imageUrl) : undefined}
-              dot={d.imageUrl ? undefined : "#e8c7d6"}
-              onClick={() => toggleDecoration(d.id)}
-            >
-              {d.name}
-            </Chip>
-          ))}
-        </div>
-      </div>
-    ));
-  })()}
-</Section>
+            return orderedCategories.map((category) => (
+              <div key={category} className="cz-deco-group">
+                <p className="cz-deco-group__title">{category}</p>
+                <div className="cz-row-wrap">
+                  {grouped[category].map((d) => (
+                    <Chip
+                      key={d.id}
+                      on={cfg.decorations.includes(d.id)}
+                      image={d.imageUrl ? getImageUrl(d.imageUrl) : undefined}
+                      dot={d.imageUrl ? undefined : "#e8c7d6"}
+                      onClick={() => toggleDecoration(d.id)}
+                    >
+                      {d.name}
+                    </Chip>
+                  ))}
+                </div>
+              </div>
+            ));
+          })()}
+        </Section>
 
         {/* Candles */}
-        <Section id="cz-candles" icon={Flame} title="Add Candles">
+        <Section
+          id="cz-candles"
+          icon={Flame}
+          title="Candles"
+          summary={cfg.candles ? `${cfg.candles} · ${cfg.lit ? "Lit" : "Unlit"}` : "None"}
+        >
           <div className="cz-candles">
             <div className="cz-stepper">
               <button
@@ -298,11 +323,10 @@ export default function CustomizePanel({ template, cfg, onChange, price, added, 
         </Section>
       </div>
 
-      {/* Price summary + Add to cart */}
+      {/* Sticky footer: total on the left, button on the right */}
       <footer className="cz-panel__foot">
-        <div className="cz-summary">
-          <h3 className="cz-summary__title">Price Summary</h3>
-          <ul className="cz-summary__lines">
+        {showBreakdown && (
+          <ul className="cz-breakdown">
             {price.lines.map((l) => (
               <li key={l.label}>
                 <span>{l.label}</span>
@@ -310,19 +334,26 @@ export default function CustomizePanel({ template, cfg, onChange, price, added, 
               </li>
             ))}
           </ul>
-          <p className="cz-summary__total">
-            <span>Total</span>
-            <span>{formatPrice(price.total)}</span>
-          </p>
-        </div>
+        )}
 
-        <button type="button" className="cz-cta" onClick={onAddToCart}>
-          <ShoppingBag size={22} strokeWidth={1.8} />
-          <span className="cz-cta__text">
-            <strong>{added ? "Added to Cart" : "Add To Cart"}</strong>
-            <small>Total: {formatPrice(price.total)}</small>
-          </span>
-        </button>
+        <div className="cz-foot__row">
+          <button
+            type="button"
+            className="cz-foot__total"
+            aria-expanded={showBreakdown}
+            onClick={() => setShowBreakdown((v) => !v)}
+          >
+            <small>{showBreakdown ? "Hide breakdown" : "View breakdown"}</small>
+            <strong>{formatPrice(price.total)}</strong>
+          </button>
+
+          <button type="button" className="cz-cta" disabled={addingToCart} onClick={onAddToCart}>
+            <ShoppingBag size={20} strokeWidth={1.8} />
+            <span className="cz-cta__text">
+              <strong>{addingToCart ? "Adding..." : added ? "Added to Cart" : "Add To Cart"}</strong>
+            </span>
+          </button>
+        </div>
       </footer>
     </aside>
   );

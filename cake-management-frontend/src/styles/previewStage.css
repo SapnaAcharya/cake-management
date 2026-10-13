@@ -1,0 +1,150 @@
+/* ---------- Preview column ---------- */
+.preview-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+}
+
+/* Card: same radius / border as the left and right panels */
+.pv {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: #fff;
+  border: 1px solid #efe4e4;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+/* ---------- 1. Toolbar ---------- */
+.pv__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3eaea;
+}
+
+.pv__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #faf3f3;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2b1b22;
+}
+
+.pv__tools {
+  display: flex;
+  gap: 8px;
+}
+
+.pv__tool {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid #efe4e4;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.pv__tool:hover { background: #faf3f3; }
+.pv__tool:focus-visible { outline: 2px solid var(--pink-500, #9b2c5e); outline-offset: 2px; }
+
+/* ---------- 2. Stage ---------- */
+.pv__stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #faf6f4;
+}
+
+/* Canvas wraps the image so overlays/candles (in %) stay
+   aligned to the cake, not to the empty space around it. */
+.pv__canvas {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f1e9e6;           /* skeleton colour while loading */
+  min-width: 200px;
+  min-height: 200px;
+}
+
+.pv__image {
+  display: block;
+  max-width: 100%;
+  max-height: min(60vh, 560px);  /* keeps the whole cake in view */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.pv__canvas.is-loaded .pv__image { opacity: 1; }
+
+.pv__overlay {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* ---------- 3. Footer ---------- */
+.pv__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid #f3eaea;
+  background: #fff;               /* solid, no blur */
+}
+
+.pv__caption {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2b1b22;
+}
+
+/* Make the thumbnails sit in a tidy row.
+   Adjust selectors to match your PreviewThumbnails markup. */
+.pv__footer .thumbs,
+.pv__footer [class*="thumb"] {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+/* ---------- Expanded (full view) ---------- */
+.pv--expanded {
+  position: fixed;
+  inset: 4vh 4vw;
+  z-index: 60;
+  height: auto;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+}
+.pv--expanded .pv__image { max-height: 70vh; }
+
+.pv__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  border: 0;
+  background: rgba(30, 15, 22, 0.55);
+  cursor: zoom-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pv__image { transition: none; }
+}

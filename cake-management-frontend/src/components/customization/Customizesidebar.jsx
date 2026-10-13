@@ -1,9 +1,9 @@
 import {
-  Cake, Check, ChevronRight, ClipboardList, Heart, Layers,
+  Cake, CakeSlice, Check, ChevronRight, ClipboardList, Heart, Layers,
   MessageSquare, Palette, Pencil, Ruler,
 } from "lucide-react";
 import { formatPrice, formatTiers } from "../../data/helpers";
-import { TIERS } from "../../data/Options";
+import { TIERS, FLAVORS, FROSTINGS } from "../../data/Options";
 import { getImageUrl } from "../../utils/imageUrl";
 
 const jumpTo = (id) =>
@@ -16,6 +16,8 @@ export default function CustomizeSidebar({ template, cfg, onChangeTemplate }) {
   }));
   const color = template.colors.find((c) => c.id === cfg.colorId);
   const tier = TIERS.find((t) => t.value === cfg.tier);
+  const flavor = FLAVORS.find((f) => f.id === cfg.flavor);
+  const frosting = FROSTINGS.find((f) => f.id === cfg.frosting);
 
   const rows = [
     { icon: MessageSquare, label: "Message", target: "cz-message", value: cfg.message || "None" },
@@ -31,7 +33,20 @@ export default function CustomizeSidebar({ template, cfg, onChangeTemplate }) {
       ),
     },
     { icon: Ruler, label: "Size", target: "cz-size", value: `${cfg.size} Inch` },
-    { icon: Layers, label: "Tier", target: "cz-tier", value: `${tier?.label} Tier` },
+    // tier.label is already "1 Tier", so no extra "Tier" text here
+    { icon: Layers, label: "Tier", target: "cz-tier", value: tier?.label },
+    {
+      icon: Cake,
+      label: "Sponge",
+      target: "cz-flavor",
+      value: (
+        <>
+          <span className="cz-dot" style={{ background: flavor?.dot }} />
+          {flavor?.label}
+        </>
+      ),
+    },
+    { icon: CakeSlice, label: "Frosting", target: "cz-frosting", value: frosting?.label },
   ];
 
   return (

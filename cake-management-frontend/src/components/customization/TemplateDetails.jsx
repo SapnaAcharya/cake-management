@@ -1,68 +1,49 @@
-import { Brush, ArrowRight, Layers3, Ruler, Clock } from "lucide-react";
-import ColorSwatches from "./ColorSwatches.jsx";
+import { Brush, ArrowRight, Clock } from "lucide-react";
 import PriceRow from "./PriceRow.jsx";
-import { formatTiers, formatSizes, formatPrep } from "../../data/helpers.js";
+import { formatPrep } from "../../data/helpers.js";
 import "../../styles/template.css";
 
-export default function TemplateDetails({
-  template,
-  colorId,
-  onColorChange,
-  onUseTemplate,
-}) {
-  const { name, description, basePrice, colors, popular, tiers, sizes, prepHours} = template;
-
-   const stats = [
-    { icon: Layers3, value: formatTiers(tiers), label: "Tiers" },
-    { icon: Ruler, value: formatSizes(sizes), label: "Available Sizes" },
-    { icon: Clock, value: formatPrep(prepHours), label: "Prep Time" },
-  ];
+export default function TemplateDetails({ template, onUseTemplate }) {
+  const { name, description, basePrice, popular, prepHours } = template;
 
   return (
     <aside className="details">
-      <h2 className="details__heading">Template Details</h2>
+      {/* Scrollable content */}
+      <div className="details__body">
+        <header className="details__top">
+          <h2 className="details__title">
+            {name}
+            {popular && <span className="details__pill">Popular</span>}
+          </h2>
+        </header>
 
-      <div className="details__top">
-        <h3 className="details__title">
-          {name}
-          {popular && <span className="details__pill">Popular</span>}
-        </h3>
-      </div>
-
-
-      <ul className="stats">
-        {stats.map(({ icon: Icon, value, label }) => (
-          <li key={label} className="stats__item">
-            <Icon size={22} strokeWidth={1.5} />
-            <div>
-              <strong>{value}</strong>
-              <span>{label}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
-
-       <section className="stage__about">
-        <h3 className="section-title">About This Template</h3>
-        <p>{description}</p>
-      </section>
-
-      <hr className="details__rule" />
-      <ColorSwatches active={colorId} onChange={onColorChange} colors={colors} />
-      <hr className="details__rule" />
-      <PriceRow price={basePrice} />
-
-      <div className="details__note">
-        <p>
-          This is a template design. You can customize colors, text, toppings and more on the next step.
+        <p className="details__meta">
+          <Clock size={16} strokeWidth={1.6} />
+          Prep time: {formatPrep(prepHours)}
         </p>
+
+        <section className="details__about">
+          <h3 className="section-title">About This Template</h3>
+          <p>{description}</p>
+        </section>
+
+        <div className="details__note">
+          <p>
+            This is a template design. You can customize colors, text, toppings
+            and more on the next step.
+          </p>
+        </div>
       </div>
 
-      <button type="button" className="details__cta" onClick={onUseTemplate}>
-        <Brush size={20} strokeWidth={1.8} />
-        Use This Template
-        <ArrowRight size={18} strokeWidth={2} />
-      </button>
+      {/* Always visible */}
+      <footer className="details__footer">
+        <PriceRow price={basePrice} />
+        <button type="button" className="details__cta" onClick={onUseTemplate}>
+          <Brush size={20} strokeWidth={1.8} />
+          Use This Template
+          <ArrowRight size={18} strokeWidth={2} />
+        </button>
+      </footer>
     </aside>
   );
 }

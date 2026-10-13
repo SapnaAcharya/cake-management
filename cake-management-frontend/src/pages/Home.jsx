@@ -11,47 +11,60 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Truck, CakeSlice, Palette, ShieldCheck } from "lucide-react";
 import "../styles/Home.css";
 
-// HERO SLIDER DATA
 const heroSlides = [
-    {
-        id: 1,
-        image: "/images/banners/banner1.PNG",
-        eyebrow: "Fresh • Delicious • Handmade",
-        title: "The Perfect Cake",
-        titleLine2: "for Every Moment",
-        description:
-            "Explore our delicious collection of cakes made with love and the finest ingredients.",
-        primaryButtonText: "Shop Cakes",
-        primaryButtonLink: "/cakes",
-        secondaryButtonText: "Design Your Cake",
-        secondaryButtonLink: "/design-by-template",
-    },
-    {
-        id: 2,
-        image: "/images/banners/banner2.PNG",
-        eyebrow: "Made For Your Special Moments",
-        title: "Celebrate With",
-        titleLine2: "Something Sweet",
-        description:
-            "Discover beautiful cakes made for birthdays, celebrations and unforgettable moments.",
-        primaryButtonText: "Shop Cakes",
-        primaryButtonLink: "/cakes",
-        secondaryButtonText: "Design Your Cake",
-        secondaryButtonLink: "/design-by-template",
-    },
-    {
-        id: 3,
-        image: "/images/banners/banner3.PNG",
-        eyebrow: "Design • Customize • Celebrate",
-        title: "Create Your Dream",
-        titleLine2: "Cake",
-        description:
-            "Choose your flavor, frosting, decorations and message to create a cake that's uniquely yours.",
-        primaryButtonText: "Shop Cakes",
-        primaryButtonLink: "/cakes",
-        secondaryButtonText: "Design Your Cake",
-        secondaryButtonLink: "/design-by-template",
-    },
+  {
+    id: 1,
+    image: "/images/banners/banner8.PNG",
+    eyebrow: "CUSTOM CAKES",
+    title: "Create Your",
+    titleLine2: "Dream Cake",
+    description:
+      "Choose your flavor, frosting, decorations and message to create a cake that's uniquely yours.",
+    primaryButtonText: "Shop Cakes",
+    primaryButtonLink: "/cakes",
+    secondaryButtonText: "Design Your Cake",
+    secondaryButtonLink: "/design-by-template",
+
+  },
+  {
+    id: 2,
+    image: "/images/banners/banner9.PNG",
+    eyebrow: "BIRTHDAY CAKES",
+    title: "Make Birthdays",
+    titleLine2: "Extra Special",
+    description:
+      "Delicious, beautiful and made with love. Perfect for every age and celebration.",
+    primaryButtonText: "Explore Birthday Cakes",
+    primaryButtonLink: "/cakes",
+    secondaryButtonText: "Design Your Cake",
+    secondaryButtonLink: "/design-by-template",
+  },
+  {
+    id: 3,
+    image: "/images/banners/banner10.PNG",
+    eyebrow: "THEMED CAKES",
+    title: "For Every",
+    titleLine2: "Special Moment",
+    description:
+      "From anniversaries to graduations, we design cakes that make your moments unforgettable.",
+    primaryButtonText: "Shop Themed Cakes",
+    primaryButtonLink: "/cakes",
+    secondaryButtonText: "Design Your Cake",
+    secondaryButtonLink: "/design-by-template",
+  },
+  {
+    id: 4,
+    image: "/images/banners/banner11.PNG",
+    eyebrow: "PREMIUM FLAVORS",
+    title: "Rich Flavors,",
+    titleLine2: "Unforgettable Taste",
+    description:
+      "From classic favorites to unique creations, find the perfect flavor for your cake.",
+    primaryButtonText: "Explore Flavors",
+    primaryButtonLink: "/cakes",
+    secondaryButtonText: "View All Cakes",
+    secondaryButtonLink: "/cakes",
+  },
 ];
 
 function Home() {
@@ -428,7 +441,7 @@ function Home() {
                                     <div className="cake-card-image">
                                         <img
                                             src={getImageUrl(cake.imageUrl)}
-                                            crossOrigin="anonymous"
+                                       //     crossOrigin="anonymous"
                                             alt={cake.name}
                                             loading="lazy"
                                         />
@@ -443,16 +456,23 @@ function Home() {
                                     </div>
                                 </Link>
                             ))}
-                        </div>
+                         </div>
                     )}
                 </section>
 
                 {/* FEATURED TEMPLATES*/}
-                <section className="featured-templates">
+               <section className="featured-templates">
+                    <div className="templates-header">
                     <div className="section-heading">
                         <span>Design Your Own</span>
                         <h2>Featured Templates</h2>
                     </div>
+
+                    <Link to="/design-by-template" className="templates-view-all">
+            View All Templates
+            <ChevronRight size={16} />
+        </Link>
+    </div>
 
                     <div className="template-grid">
                         {featuredTemplates.map((template) => (

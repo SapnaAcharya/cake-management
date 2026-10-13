@@ -99,14 +99,15 @@ namespace CakeManagementAPI.Services
         }
 
         // Get user orders
-        public async Task<List<UserOrderDto>> GetOrdersAsync (
-            int userId)
+        public async Task<List<UserOrderDto>> GetOrdersAsync(int userId)
         {
             var orders = await _context.Orders
                 .AsNoTracking()
                 .Where(o => o.UserId == userId)
                 .Include(o => o.OrderItems)
-                 .ThenInclude(oi => oi.Cake)
+                    .ThenInclude(oi => oi.Cake)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.CakeTemplate)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
@@ -120,26 +121,21 @@ namespace CakeManagementAPI.Services
                 PaymentMethod = order.PaymentMethod,
                 PaymentStatus = order.PaymentStatus,
 
-                Items = order.OrderItems.Select(item =>
-                    new UserOrderItemDto
-                    {
-                        CakeId = item.CakeId,
+                Items = order.OrderItems.Select(item => new UserOrderItemDto
+                {
+                    CakeId = item.CakeId,
 
-                        CakeName = item.Cake != null
-                           ? item.Cake.Name
-                           : string.Empty,
+                    CakeName = item.Cake?.Name
+                               ?? item.CakeTemplate?.Name
+                               ?? "Custom Cake",
 
-                        ImageUrl = item.Cake != null
-                           ? item.Cake.ImageUrl
-                           : string.Empty,
+                    ImageUrl = item.Cake?.ImageUrl ?? string.Empty,
 
-                        Quantity = item.Quantity,
-                        UnitPrice = item.UnitPrice,
-                        Subtotal = item.Subtotal
-                    })
-                .ToList()
+                    Quantity = item.Quantity,
+                    UnitPrice = item.UnitPrice,
+                    Subtotal = item.Subtotal
+                }).ToList()
             }).ToList();
-
         }
     }
 }

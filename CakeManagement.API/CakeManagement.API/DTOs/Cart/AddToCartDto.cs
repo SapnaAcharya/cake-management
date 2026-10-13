@@ -4,8 +4,11 @@ namespace CakeManagementAPI.DTOs.Cart
 {
     public class AddToCartDto
     {
-        [Required]
-        public int CakeId { get; set; }
+        
+        // Required for a normal cake. Null for a customized cake
+        // (a customized cake is identified by Customization.TemplateId).
+        // The "one of the two is required" rule is checked in CartService.
+        public int? CakeId { get; set; }
 
         [Range(1, 100)]
         public int Quantity { get; set; } = 1;

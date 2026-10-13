@@ -28,6 +28,8 @@ namespace CakeManagementAPI.Services
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.Cake)
+                .Include(c => c.CartItems)
+                .ThenInclude(ci => ci.CakeTemplate)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart == null)
@@ -47,27 +49,56 @@ namespace CakeManagementAPI.Services
 
         // ADD TO CART
         // Handles BOTH normal and customized cakes.
-        // dto.Customization == null  -> normal cake
-        // dto.Customization != null  -> customized cake
+        // dto.Customization == null  -> normal cake (CakeId required)
+        // dto.Customization != null  -> customized cake (no CakeId, uses template)
         public async Task<CartResponseDto> AddToCartAsync(
             int userId,
             AddToCartDto dto)
         {
-            var cake = await _context.Cakes
-                .FirstOrDefaultAsync(c => c.Id == dto.CakeId);
-
-            if (cake == null)
-            {
-                throw new KeyNotFoundException(
-                    "Cake not found.");
-            }
-
             var isCustomized = dto.Customization != null;
 
-            // Stock/availability apply to ready-made cakes only.
-            // Customized cakes are made to order.
-            if (!isCustomized)
+            var cart = await GetOrCreateCartAsync(userId);
+
+            if (isCustomized)
             {
+                // Customized cake: identified by template, no CakeId,
+                // no stock rules (made to order).
+                // Always a NEW cart line, never merged.
+                var snapshot = await _snapshotService
+                    .CreateSnapshotAsync(dto.Customization!);
+
+                var customPrice = await _pricing.CalculateAsync(dto.Customization!);
+
+                var customItem = new CartItem
+                {
+                    CartId = cart.Id,
+                    CakeId = null,
+                    Quantity = dto.Quantity,
+                    CakeTemplateId = snapshot.TemplateId,
+                    CustomUnitPrice = customPrice,
+                    CustomizationJson = _snapshotService.ToJson(snapshot)
+                };
+
+                cart.CartItems.Add(customItem);
+            }
+            else
+            {
+                // Normal cake: CakeId is required
+                if (dto.CakeId == null)
+                {
+                    throw new ArgumentException(
+                        "CakeId is required for normal cakes.");
+                }
+
+                var cake = await _context.Cakes
+                    .FirstOrDefaultAsync(c => c.Id == dto.CakeId.Value);
+
+                if (cake == null)
+                {
+                    throw new KeyNotFoundException(
+                        "Cake not found.");
+                }
+
                 if (!cake.IsAvailable)
                 {
                     throw new InvalidOperationException(
@@ -79,35 +110,8 @@ namespace CakeManagementAPI.Services
                     throw new InvalidOperationException(
                         "Requested quantity is greater than available stock.");
                 }
-            }
 
-            var cart = await GetOrCreateCartAsync(userId);
-
-            if (isCustomized)
-            {
-                // Customized cake: always a NEW cart line, never merged
-                var snapshot = await _snapshotService
-                    .CreateSnapshotAsync(dto.Customization!);
-
-                var customPrice = await _pricing.CalculateAsync(dto.Customization!);
-
-                //var customPrice = await CalculateCustomPriceAsync(snapshot);
-
-                var customItem = new CartItem
-                {
-                    CartId = cart.Id,
-                    CakeId = dto.CakeId,
-                    Quantity = dto.Quantity,
-                    CakeTemplateId = snapshot.TemplateId,
-                    CustomUnitPrice = customPrice,
-                    CustomizationJson = _snapshotService.ToJson(snapshot)
-                };
-
-                cart.CartItems.Add(customItem);
-            }
-            else
-            {
-                // Normal cake: merge with existing NORMAL line
+                // Merge with existing NORMAL line
                 var existingItem = cart.CartItems
                     .FirstOrDefault(ci =>
                         ci.CakeId == dto.CakeId &&
@@ -171,15 +175,15 @@ namespace CakeManagementAPI.Services
                     "Cart item not found.");
             }
 
-            if (cartItem.Cake == null)
-            {
-                throw new KeyNotFoundException(
-                    "Cake not found.");
-            }
-
             // Stock rules apply to normal cakes only
             if (cartItem.CustomizationJson == null)
             {
+                if (cartItem.Cake == null)
+                {
+                    throw new KeyNotFoundException(
+                        "Cake not found.");
+                }
+
                 if (!cartItem.Cake.IsAvailable)
                 {
                     throw new InvalidOperationException(
@@ -294,24 +298,27 @@ namespace CakeManagementAPI.Services
         private CartResponseDto MapCartToDto(Cart cart)
         {
             var items = cart.CartItems
-                .Where(ci => ci.Cake != null)
                 .Select(ci =>
                 {
                     // Customized lines use CustomUnitPrice,
                     // normal lines use the cake's price
-                    var unitPrice = ci.CustomUnitPrice ?? ci.Cake!.Price;
+                    var unitPrice = ci.CustomUnitPrice ?? ci.Cake?.Price ?? 0m;
 
                     return new CartItemResponseDto
                     {
                         CartItemId = ci.Id,
                         CakeId = ci.CakeId,
-                        CakeName = ci.Cake!.Name,
-                        ImageUrl = ci.Cake.ImageUrl,
+
+                        CakeName = ci.Cake?.Name
+                                   ?? ci.CakeTemplate?.Name
+                                   ?? "Custom Cake",
+
+                        ImageUrl = ci.Cake?.ImageUrl ?? string.Empty,
                         Price = unitPrice,
                         Quantity = ci.Quantity,
                         Subtotal = unitPrice * ci.Quantity,
 
-                        // New fields for customized cake
+                        // Customized cake fields
                         IsCustomized = ci.CustomizationJson != null,
                         Customization = ci.CustomizationJson == null
                               ? null

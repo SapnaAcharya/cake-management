@@ -178,17 +178,20 @@ export function stageView(template, cfg, baseline, decorations = []) {
   const t = (cfg.size - minSize) / (maxSize - minSize || 1);
   const sizeScale = +(0.8 + 0.2 * t).toFixed(3);
 
-  const parts = [
-  COLOR_TINTS[cfg.colorId],
-  hasVariantPhotos ? "none" : (FLAVOR_TINTS?.[cfg.flavor] ?? "none"),
-  FROSTING_TINTS?.[cfg.frosting] ?? "none",
-].filter((f) => f && f !== "none");
+//   const parts = [
+//   COLOR_TINTS[cfg.colorId],
+//   hasVariantPhotos ? "none" : (FLAVOR_TINTS?.[cfg.flavor] ?? "none"),
+//   FROSTING_TINTS?.[cfg.frosting] ?? "none",
+// ].filter((f) => f && f !== "none");
+  // Only the colour changes the photo. Flavour and frosting do not.
+const tint = COLOR_TINTS[cfg.colorId] ?? "none";
 
   return {
     gallery,
     useDrawnCake,
     tierNote,
-    tint: parts.length ? parts.join(" ") : "none",
+    // tint: parts.length ? parts.join(" ") : "none",
+    tint,
     sizeScale,
     overlays: decorations
       .filter(

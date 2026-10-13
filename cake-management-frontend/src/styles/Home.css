@@ -20,6 +20,7 @@
 /* ---------- Layout ---------- */
 .home-page {
   min-height: 100vh;
+  overflow-x: clip;
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: 'Work Sans', sans-serif;
@@ -34,15 +35,26 @@
 /* ==========================================================================
    Hero slider
    ========================================================================== */
-.hero {
+/* .hero {
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: 420px;
   margin-bottom: var(--space-5);
   overflow: hidden;
   border-radius: 24px;
   background: #f5eeee;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+} */
+ .hero {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-top: -24px;                    /* removes the gap under the navbar */
+  margin-bottom: var(--space-5);
+  height: clamp(420px, 32vw, 560px);
+  overflow: hidden;
+  background: #f5eeee;
 }
 
 .hero-image {
@@ -608,70 +620,291 @@
 }
 
 /* ==========================================================================
-   Custom cake promo
+   "View All Templates" link in the Featured Templates header
+   Paste this at the VERY BOTTOM of Home.css.
+   Same look as the "View All" link on Popular Cakes.
    ========================================================================== */
-.custom-promo {
-  margin: 80px 0;
-  padding: 80px 40px;
-  border-radius: 24px;
-  background: linear-gradient(135deg, #fff1f6, #fff9fb);
+
+.home-page .templates-header {
+  position: relative;
+  margin-bottom: var(--space-4, 32px);
 }
 
-.custom-promo-content { text-align: center; }
+/* the wrapper now owns the spacing below the heading */
+.home-page .templates-header .section-heading {
+  margin-bottom: 0;
+}
 
-.home-page .custom-promo-content h2 {
-  margin: 8px 0 12px;
-  font-family: 'Fraunces', serif;
-  font-size: 32px;
+.home-page .templates-view-all {
+  position: absolute;               /* sits on the right edge of the header */
+  right: 0;
+  bottom: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #9a2c5d;
+  font-size: 14px;
   font-weight: 600;
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.home-page .templates-view-all:hover {
+  gap: 8px;
+  color: #74204a;
+}
+
+.home-page .templates-view-all:focus-visible {
+  outline: 2px solid #9a2c5d;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Mobile: put the link under the heading, centered */
+@media (max-width: 640px) {
+  .home-page .templates-view-all {
+    position: static;
+    justify-content: center;
+    margin-top: 12px;
+  }
+}
+
+/* ==========================================================================
+   Custom cake promo
+   ========================================================================== */
+/* ==========================================================================
+   CUSTOM CAKE PROMO - full width
+   Paste this at the VERY BOTTOM of Home.css. Home.jsx needs no changes.
+   ========================================================================== */
+
+/* ---------- Band: edge to edge, like the hero ---------- */
+/* .home-page .custom-promo {
+  margin: 80px calc(-1 * var(--page-gutter, 32px));   pulls out into the side space */
+  /* margin-top: 56px;
+  margin-bottom: 0;
+  padding: 56px var(--page-gutter, 32px);
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(209, 71, 122, 0.12), transparent 42%),
+    radial-gradient(circle at 92% 88%, rgba(154, 44, 93, 0.10), transparent 40%),
+    linear-gradient(135deg, #fff1f6, #fff9fb);
+} */
+
+/* .home-page .custom-promo-content h2 {
+  margin: 8px 0 14px;
+  font-size: clamp(30px, 3.4vw, 44px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
 }
 
 .home-page .custom-promo-content p {
-  max-width: 480px;
+  max-width: 560px;
+  font-size: 16px;
+  line-height: 1.7;
+} */ 
+.home-page .custom-promo {
+  margin: 56px calc(-1 * var(--page-gutter, 32px)) 0;
+  padding: 56px var(--page-gutter, 32px) 60px;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(209, 71, 122, 0.12), transparent 42%),
+    radial-gradient(circle at 92% 88%, rgba(154, 44, 93, 0.10), transparent 40%),
+    linear-gradient(135deg, #fff1f6, #fff9fb);
+}
+ 
+.home-page .custom-promo-content {
+  text-align: center;
+}
+ 
+.home-page .custom-promo-content h2 {
+  margin: 8px 0 14px;
+  font-family: 'Fraunces', serif;
+  font-size: clamp(30px, 3.4vw, 44px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+ 
+.home-page .custom-promo-content p {
+  max-width: 560px;
   margin: 0 auto;
-  color: var(--color-ink-muted);
-  line-height: 1.6;
+  color: #7c6670;
+  font-size: 16px;
+  line-height: 1.7;
 }
 
-.custom-flow {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin: 30px 0;
+/* ---------- The 4 steps stretch across the whole width ----------
+   7 children = 4 cards + 3 arrows, so the cards share the space equally */
+/* .home-page .custom-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  align-items: stretch;
+  gap: 20px;
+  margin: 44px 0;
 }
 
 .home-page .custom-flow div {
-  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 26px 18px;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: 18px;
   background: #fff;
-  font-size: 13px;
+  box-shadow: 0 10px 24px -16px rgba(120, 60, 80, 0.35);
+  color: var(--color-ink);
+  font-size: 16px;
   font-weight: 600;
+  text-align: center;
 }
 
 .home-page .custom-flow span {
   align-self: center;
   color: var(--color-accent);
+  font-size: 24px;
+  font-weight: 700;
+} */
+ .home-page .custom-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  align-items: stretch;
+  gap: 20px;
+  margin: 32px 0 34px;
+}
+ 
+.home-page .custom-flow div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 26px 18px;
+  border: 1px solid #ece2e5;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 24px -16px rgba(120, 60, 80, 0.35);
+  color: #251320;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+ 
+.home-page .custom-flow span {
+  align-self: center;
+  color: #9a2c5d;
+  font-size: 24px;
   font-weight: 700;
 }
 
-.home-page .promo-btn {
-  height: 46px;
-  padding: 0 28px;
-  border: none;
-  border-radius: 8px;
-  background: var(--color-accent);
-  color: #fff;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
+/* ---------- Button ---------- */
+/* .home-page .promo-btn {
+  height: 52px;
+  padding: 0 38px;
+  border-radius: 999px;
+  font-size: 15px;
+  box-shadow: 0 12px 22px -12px rgba(154, 44, 93, 0.7);
 }
 
-.home-page .promo-btn:hover  { background: var(--color-accent-dark); }
-.home-page .promo-btn:active { transform: scale(0.98); }
+.home-page .promo-btn:hover {
+  transform: translateY(-1px);
+} */
+ .home-page .promo-btn {
+  display: flex;                 /* with margin auto, this centers the button */
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  height: 52px;
+  padding: 0 38px;
+  border: none;
+  border-radius: 999px;
+  background: #9a2c5d;
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 12px 22px -12px rgba(154, 44, 93, 0.7);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+ 
+.home-page .promo-btn:hover {
+  background: #74204a;
+  transform: translateY(-1px);
+}
+ 
+.home-page .promo-btn:active {
+  transform: scale(0.98);
+}
+ 
+.home-page .promo-btn:focus-visible {
+  outline: 2px solid #74204a;
+  outline-offset: 3px;
+}
+ 
+/* ---------- Space before the next section ---------- */
+.home-page .why-us {
+  margin-top: 56px;
+}
+
+/* ---------- Tablet: 2 x 2 cards, arrows hidden ---------- */
+@media (max-width: 900px) {
+  .home-page .custom-flow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .home-page .custom-flow span {
+    display: none;
+  }
+}
+
+/* ---------- Mobile ---------- */
+/* @media (max-width: 640px) {
+  .home-page .custom-promo {
+    margin: 48px calc(-1 * var(--page-gutter, 16px));
+    padding: 56px var(--page-gutter, 16px);
+  }
+
+  .home-page .custom-flow div {
+    padding: 20px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .home-page .custom-flow {
+    grid-template-columns: 1fr;
+  }
+} */
+ @media (max-width: 640px) {
+  .home-page .custom-promo {
+    margin: 36px calc(-1 * var(--page-gutter, 16px)) 0;
+    padding: 40px var(--page-gutter, 16px) 44px;
+  }
+ 
+  .home-page .custom-flow {
+    margin: 24px 0 26px;
+  }
+ 
+  .home-page .custom-flow div {
+    padding: 20px 12px;
+    font-size: 14px;
+  }
+ 
+  .home-page .why-us {
+    margin-top: 36px;
+  }
+}
+ 
+@media (max-width: 420px) {
+  .home-page .custom-flow {
+    grid-template-columns: 1fr;
+  }
+}
+ 
+@media (prefers-reduced-motion: reduce) {
+  .home-page .promo-btn {
+    transition: none;
+  }
+}
 
 /* ==========================================================================
    Why choose us
@@ -894,4 +1127,138 @@
 .home-page .popular-grid a.cake-card:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
+}
+
+/* ==========================================================================
+   FULL-WIDTH HOME PAGE
+   Paste this at the VERY BOTTOM of Home.css.
+   (Use this instead of Home.hero-fullwidth.css, not together with it.)
+   Every rule starts with .home-page so it wins over the older rules above.
+   ========================================================================== */
+
+/* One value controls the side space of the whole page.
+   Smaller = content closer to the screen edges. */
+:root {
+  --page-gutter: clamp(16px, 4vw, 64px);
+}
+
+/* ---------- 1. All content uses the full width ---------- */
+.home-page .home-content {
+  max-width: none;
+  padding: 24px var(--page-gutter) 64px;
+}
+
+/* ---------- 2. Navbar lines up with the content (home page only) ---------- */
+.home-page .navbar-inner {
+  max-width: none;
+  padding-left: var(--page-gutter);
+  padding-right: var(--page-gutter);
+}
+
+/* ---------- 3. Hero runs edge to edge ---------- */
+.home-page .hero {
+  width: auto;
+  margin: -24px calc(-1 * var(--page-gutter)) 48px;  /* pulls out into the side space */
+  height: clamp(420px, 32vw, 560px);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.home-page .hero-image {
+  object-position: right center;
+}
+
+/* Text starts at the same left edge as the logo and the content below */
+.home-page .hero-text-card {
+  left: var(--page-gutter);
+  width: 560px;
+  max-width: 56%;
+}
+
+.home-page .hero-text h1 {
+  font-size: clamp(36px, 4vw, 56px);
+}
+
+.home-page .hero-arrow-left  { left: 24px; }
+.home-page .hero-arrow-right { right: 24px; }
+
+/* ---------- 4. Feature bar spans the content width ---------- */
+.home-page .trust-bar {
+  max-width: none;
+  margin: -28px 0 40px;
+}
+
+/* ---------- 5. Card grids: clean rows of 4 (8 cakes = 2 full rows) ---------- */
+.home-page .popular-grid,
+.home-page .template-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1100px) {
+  .home-page .popular-grid,
+  .home-page .template-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .home-page .hero-text-card {
+    width: 60%;
+    max-width: 60%;
+  }
+
+  .home-page .hero-text h1 {
+    font-size: clamp(32px, 4.8vw, 44px);
+  }
+}
+
+@media (max-width: 900px) {
+  .home-page .trust-bar {
+    margin: 24px 0 32px;
+  }
+}
+
+@media (max-width: 800px) {
+  .home-page .popular-grid,
+  .home-page .template-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 640px) {
+  .home-page .home-content {
+    padding-top: 16px;
+    padding-bottom: 48px;
+  }
+
+  .home-page .hero {
+    margin-top: -16px;
+  }
+
+  /* keep the text clear of the arrows */
+  .home-page .hero-text-card {
+    left: 56px;
+    right: 56px;
+    width: auto;
+    max-width: none;
+  }
+
+  .home-page .hero-text h1 {
+    font-size: 32px;
+  }
+
+  .home-page .hero-arrow-left  { left: 10px; }
+  .home-page .hero-arrow-right { right: 10px; }
+}
+
+@media (max-width: 520px) {
+  .home-page .popular-grid,
+  .home-page .template-grid {
+    grid-template-columns: 1fr;
+  }
 }
