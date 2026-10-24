@@ -1,4 +1,5 @@
 ﻿using CakeManagement.DTOs.Auth;
+using CakeManagementAPI.DTOs;
 using CakeManagementAPI.DTOs.Auth;
 
 namespace CakeManagementAPI.Services.Interfaces
@@ -10,5 +11,9 @@ namespace CakeManagementAPI.Services.Interfaces
 
         Task<LoginResponseDto> LoginAsync(
             LoginDto dto);
+
+        Task ForgotPasswordAsync(ForgotPasswordDto dto);
+
+        Task ResetPasswordAsync(ResetPasswordDto dto);
     }
 }

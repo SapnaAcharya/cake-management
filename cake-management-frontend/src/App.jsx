@@ -15,6 +15,8 @@ import Customizepage from "./components/customization/Customizepage";
 // Auth
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 // Customer account
 import CartPage from "./pages/CartPage";
@@ -47,6 +49,8 @@ const NO_FOOTER_PREFIXES = [
   "/checkout",
   "/login",
   "/register",
+  "/forgot-password",
+  "/reset-password",
 ];
 
 function AppContent() {
@@ -66,6 +70,8 @@ function AppContent() {
         {/* Auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Customization */}
         <Route path="/design-by-template" element={<DesignByTemplate />} />

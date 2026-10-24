@@ -1,83 +1,59 @@
 # =========================
-# ASP.NET Core
+# ASP.NET Core / .NET
 # =========================
-
 **/bin/
 **/obj/
 **/.vs/
-
-# User-specific Visual Studio files
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
-# ASP.NET local settings
-appsettings.Development.json
+# Local ASP.NET configuration
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/secrets.json
 
+# =========================
 # Environment files
+# =========================
 .env
 .env.*
 !.env.example
-.env.example
-
 
 # =========================
 # React / Node
 # =========================
-
 **/node_modules/
 **/dist/
 **/build/
+dist-ssr/
 
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
-
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-
-# =========================
-# OS files
-# =========================
-
-.DS_Store
-Thumbs.db
-
-
-# =========================
-# IDE
-# =========================
-
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-
-# Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# =========================
+# Logs
+# =========================
+logs/
+*.log
 
-# Editor directories and files
+# =========================
+# IDE / Editor
+# =========================
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
+!.vscode/settings.json
+.idea/
+*.sw?
 *.ntvs*
 *.njsproj
-*.sln
-*.sw?
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db

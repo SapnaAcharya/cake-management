@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.Threading.RateLimiting;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,30 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
+});
+
+// Add rate limiting to the container
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddPolicy("forgot", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(15)
+            }));
+
+    options.AddPolicy("reset", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(5)
+            }));
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -107,6 +132,9 @@ builder.Services.AddScoped<ICakeService, CakeService>();
 // Add auth service to the container
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Add email service to the container
+builder.Services.AddHttpClient<IPasswordResetEmailService, BrevoPasswordResetEmailService>();
+
 // Add cart services to the container
 builder.Services.AddScoped<ICartService, CartService>();
 
@@ -171,6 +199,8 @@ if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("EnableS
 
 // CORS
 app.UseCors("ReactPolicy");
+
+app.UseRateLimiter();
 
 app.UseStaticFiles();
 
