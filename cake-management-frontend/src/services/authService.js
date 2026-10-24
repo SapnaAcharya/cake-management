@@ -59,6 +59,21 @@ const isLoggedIn = () => {
     return Boolean(localStorage.getItem("token"));
 };
 
+const forgotPassword = async (email) => {
+    const response = await api.post("/Auth/forgot-password", { email });
+
+    return response.data;
+};
+
+const resetPassword = async (email, token, newPassword) => {
+  const response = await api.post("/Auth/reset-password", {
+    email,
+    token,
+    newPassword,
+  });
+  return response.data;
+};
+
 export default {
     login,
     register,
@@ -66,4 +81,6 @@ export default {
     getCurrentUser,
     getRole,
     isLoggedIn,
+    forgotPassword,
+    resetPassword,
 };

@@ -38,6 +38,8 @@ namespace CakeManagementAPI.Data
         public DbSet<CakeTemplateColor> CakeTemplateColors { get; set; }
 
         public DbSet<CakeTemplateFeature> CakeTemplateFeatures { get; set; }
+
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -179,6 +181,24 @@ namespace CakeManagementAPI.Data
             modelBuilder.Entity<Decoration>(entity =>
             {
                 entity.Property(e => e.Price).HasPrecision(18, 2);
+            });
+
+            // Password reset tokens
+            modelBuilder.Entity<PasswordResetToken>(entity =>
+            {
+                entity.HasKey(t => t.Id);
+
+                entity.Property(t => t.TokenHash)
+                .IsRequired()
+                .HasMaxLength(64);
+
+                entity.HasIndex(t => t.TokenHash)
+                .IsUnique();
+
+                entity.HasOne(t => t.User)
+                .WithMany()
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

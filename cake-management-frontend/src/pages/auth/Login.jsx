@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, Cake } from "lucide-react";
 import authService from "../../services/authService";
 import "../../styles/Login.css";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -16,6 +17,19 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Banner shown after a successful password reset
+  const [resetSuccess, setResetSuccess] = useState(
+    !!location.state?.passwordReset
+  );
+
+  // Clear the router state so the banner does not return on page refresh
+  useEffect(() => {
+    if (location.state?.passwordReset) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -41,6 +55,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError("");
+    setResetSuccess(false);
 
     const validationErrors = validate();
     setErrors(validationErrors);
@@ -48,65 +63,54 @@ function Login() {
 
     setLoading(true);
     try {
+      const data = await authService.login(
+        formData.email.trim(),
+        formData.password
+      );
 
-    const data = await authService.login(
-    formData.email,
-    formData.password
-);
+      const token = data.token;
 
-console.log("LOGIN RESPONSE:", data);
+      const user = data.user
+        ? data.user
+        : {
+            id: data.id,
+            name: data.name,
+            fullName: data.fullName,
+            email: data.email,
+            role: data.role,
+          };
 
-const token = data.token;
+      const role = user.role || data.role;
 
-// Support both possible backend response formats:
-// 1. { user: { role: "Admin", ... } }
-// 2. { role: "Admin", ... }
-const user = data.user
-    ? data.user
-    : {
-        id: data.id,
-        name: data.name,
-        fullName: data.fullName,
-        email: data.email,
-        role: data.role,
-    };
+      if (!token) {
+        throw new Error("Token was not returned by the server.");
+      }
 
-const role = user.role || data.role;
+      if (!role) {
+        throw new Error("User role was not returned by the server.");
+      }
 
-if (!token) {
-    throw new Error("Token was not returned by the server.");
-}
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user");
 
-if (!role) {
-    throw new Error("User role was not returned by the server.");
-}
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("role");
+      sessionStorage.removeItem("user");
 
-// Clear old login data before saving the new session
-localStorage.removeItem("token");
-localStorage.removeItem("role");
-localStorage.removeItem("user");
+      const storage = formData.keepSignedIn ? localStorage : sessionStorage;
 
-sessionStorage.removeItem("token");
-sessionStorage.removeItem("role");
-sessionStorage.removeItem("user");
+      storage.setItem("token", token);
+      storage.setItem("role", role);
+      storage.setItem("user", JSON.stringify(user));
 
-// Save according to Remember me
-const storage = formData.keepSignedIn
-    ? localStorage
-    : sessionStorage;
-
-storage.setItem("token", token);
-storage.setItem("role", role);
-storage.setItem("user", JSON.stringify(user));
-
-// Redirect based on backend-provided role
-if (role.toLowerCase() === "admin") {
-    navigate("/admin");
-} else if (role.toLowerCase() === "customer") {
-    navigate("/");
-} else {
-    setServerError("Unknown user role.");
-}
+      if (role.toLowerCase() === "admin") {
+        navigate("/admin");
+      } else if (role.toLowerCase() === "customer") {
+        navigate("/");
+      } else {
+        setServerError("Unknown user role.");
+      }
     } catch (err) {
       setServerError(
         err.response?.data?.message || "Invalid email or password."
@@ -130,33 +134,53 @@ if (role.toLowerCase() === "admin") {
               <p className="auth-subtitle">Login to your account to continue</p>
             </div>
 
+            {resetSuccess && (
+              <div className="auth-form-success">
+                Password updated successfully! Please login again with your new
+                password!
+              </div>
+            )}
+
             {serverError && <div className="auth-form-error">{serverError}</div>}
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="auth-field">
                 <label htmlFor="email">Email Address</label>
-                <div className={`auth-input ${errors.email ? "input-error" : ""}`}>
+                <div
+                  className={`auth-input ${errors.email ? "input-error" : ""}`}
+                >
                   <Mail size={16} className="auth-input-icon" />
                   <input
                     id="email"
                     name="email"
                     type="email"
+                    autoComplete="email"
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleChange}
                   />
                 </div>
-                {errors.email && <div className="field-error">{errors.email}</div>}
+                {errors.email && (
+                  <div className="field-error">{errors.email}</div>
+                )}
               </div>
 
               <div className="auth-field">
-                <label htmlFor="password">Password</label>
-                <div className={`auth-input ${errors.password ? "input-error" : ""}`}>
+                <div className="auth-label-row">
+                  <label htmlFor="password">Password</label>
+                  <Link to="/forgot-password">Forgot password?</Link>
+                </div>
+                <div
+                  className={`auth-input ${
+                    errors.password ? "input-error" : ""
+                  }`}
+                >
                   <Lock size={16} className="auth-input-icon" />
                   <input
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
@@ -170,7 +194,9 @@ if (role.toLowerCase() === "admin") {
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                {errors.password && <div className="field-error">{errors.password}</div>}
+                {errors.password && (
+                  <div className="field-error">{errors.password}</div>
+                )}
               </div>
 
               <div className="auth-row">
@@ -183,7 +209,6 @@ if (role.toLowerCase() === "admin") {
                   />
                   Remember me
                 </label>
-                <Link to="/forgot-password">Forgot password?</Link>
               </div>
 
               <button type="submit" className="btn-auth" disabled={loading}>

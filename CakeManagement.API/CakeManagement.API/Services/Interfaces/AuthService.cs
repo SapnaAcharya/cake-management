@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Hosting;
 using System.Text;
 
 namespace CakeManagementAPI.Services
@@ -18,13 +20,20 @@ namespace CakeManagementAPI.Services
         private readonly IConfiguration _configuration;
         private readonly PasswordHasher<User> _passwordHasher;
 
+        private readonly IPasswordResetEmailService _passwordResetEmailService;
+
+        private readonly IWebHostEnvironment _environment;
         public AuthService(
             AppDbContext context,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IPasswordResetEmailService passwordResetEmailService,
+            IWebHostEnvironment environment)
         {
             _context = context;
             _configuration = configuration;
+            _passwordResetEmailService = passwordResetEmailService;
             _passwordHasher = new PasswordHasher<User>();
+            _environment = environment;
         }
 
         // REGISTER
@@ -118,6 +127,171 @@ namespace CakeManagementAPI.Services
                 Email = user.Email,
                 Role = user.Role
             };
+        }
+
+        // FORGOT PASSWORD
+        public async Task ForgotPasswordAsync(
+            ForgotPasswordDto dto)
+        {
+            var email = dto.Email.Trim().ToLowerInvariant();
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            // Do not reveal whether the email is registered.
+            if (user == null)
+            {
+                return;
+            }
+
+            var now = DateTime.UtcNow;
+            var rawToken = GeneratePasswordResetToken();
+            var tokenHash = HashPasswordResetToken(rawToken);
+
+            // Invalidate older, unused reset tokens.
+            var previousTokens = await _context.PasswordResetTokens
+                .Where(t =>
+                    t.UserId == user.Id &&
+                    t.UsedAtUtc == null)
+                .ToListAsync();
+
+            foreach (var previousToken in previousTokens)
+            {
+                previousToken.UsedAtUtc = now;
+            }
+
+            var resetToken = new PasswordResetToken
+            {
+                UserId = user.Id,
+                TokenHash = tokenHash,
+                CreatedAtUtc = now,
+                ExpiresAtUtc = now.AddMinutes(30)
+            };
+
+            _context.PasswordResetTokens.Add(resetToken);
+
+            // Save the token before sending the email.
+            await _context.SaveChangesAsync();
+
+            var frontendBaseUrl = _configuration["Frontend:BaseUrl"];
+
+if (string.IsNullOrWhiteSpace(frontendBaseUrl) ||
+    !Uri.TryCreate(
+        frontendBaseUrl,
+        UriKind.Absolute,
+        out var frontendUri))
+{
+    throw new InvalidOperationException(
+        "Frontend:BaseUrl must be a valid absolute URL.");
+}
+
+if (frontendUri.Scheme != Uri.UriSchemeHttp &&
+    frontendUri.Scheme != Uri.UriSchemeHttps)
+{
+    throw new InvalidOperationException(
+        "Frontend:BaseUrl must use HTTP or HTTPS.");
+}
+
+if (!string.IsNullOrEmpty(frontendUri.UserInfo) ||
+    !string.IsNullOrEmpty(frontendUri.Query) ||
+    !string.IsNullOrEmpty(frontendUri.Fragment) ||
+    frontendUri.AbsolutePath != "/")
+{
+    throw new InvalidOperationException(
+        "Frontend:BaseUrl must contain only the scheme and hostname.");
+}
+
+if (_environment.IsProduction() &&
+    frontendUri.Scheme != Uri.UriSchemeHttps)
+{
+    throw new InvalidOperationException(
+        "Frontend:BaseUrl must use HTTPS in production.");
+}
+
+var allowedHosts = _configuration
+    .GetSection("Frontend:AllowedHosts")
+    .Get<string[]>() ?? Array.Empty<string>();
+
+if (!allowedHosts.Contains(
+        frontendUri.Host,
+        StringComparer.OrdinalIgnoreCase))
+{
+    throw new InvalidOperationException(
+        "Frontend:BaseUrl hostname is not trusted.");
+}
+
+var frontendBaseUrlValidated =
+    frontendUri.GetLeftPart(UriPartial.Authority);
+
+            var resetUrl =
+                $"{frontendBaseUrlValidated}/reset-password" +
+                $"?email={Uri.EscapeDataString(user.Email)}" +
+                $"&token={Uri.EscapeDataString(rawToken)}";
+
+            await _passwordResetEmailService
+                .SendPasswordResetEmailAsync(
+                    user.Email,
+                    resetUrl);
+        }
+
+        // RESET PASSWORD
+        public async Task ResetPasswordAsync(
+            ResetPasswordDto dto)
+        {
+            var email = dto.Email.Trim().ToLowerInvariant();
+            var tokenHash = HashPasswordResetToken(dto.Token);
+            var now = DateTime.UtcNow;
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                throw new InvalidOperationException(
+                    "The reset link is invalid or has expired.");
+            }
+
+            var resetToken = await _context.PasswordResetTokens
+                .FirstOrDefaultAsync(t =>
+                    t.UserId == user.Id &&
+                    t.TokenHash == tokenHash &&
+                    t.UsedAtUtc == null &&
+                    t.ExpiresAtUtc > now);
+
+            if (resetToken == null)
+            {
+                throw new InvalidOperationException(
+                    "The reset link is invalid or has expired.");
+            }
+
+            user.PasswordHash = _passwordHasher.HashPassword(
+                user,
+                dto.NewPassword);
+
+            // Make this reset token unusable after the password changes.
+            resetToken.UsedAtUtc = now;
+
+            await _context.SaveChangesAsync();
+        }
+
+        // GENERATE A CRYPTOGRAPHICALLY SECURE RESET TOKEN
+        private static string GeneratePasswordResetToken()
+        {
+            var randomBytes = RandomNumberGenerator.GetBytes(32);
+
+            return Convert.ToBase64String(randomBytes)
+                .TrimEnd('=')
+                .Replace('+', '-')
+                .Replace('/', '_');
+        }
+
+        // HASH RESET TOKEN BEFORE STORING OR LOOKING IT UP
+        private static string HashPasswordResetToken(string token)
+        {
+            var hash = SHA256.HashData(
+                Encoding.UTF8.GetBytes(token));
+
+            return Convert.ToHexString(hash).ToLowerInvariant();
         }
 
         // GENERATE JWT TOKEN
