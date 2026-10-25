@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,7 +55,8 @@ builder.Services.AddRateLimiter(options =>
             _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 5,
-                Window = TimeSpan.FromMinutes(15)
+                Window = TimeSpan.FromMinutes(15),
+                QueueLimit = 0
             }));
 
     options.AddPolicy("reset", context =>
@@ -63,8 +65,19 @@ builder.Services.AddRateLimiter(options =>
             _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 10,
-                Window = TimeSpan.FromMinutes(5)
+                Window = TimeSpan.FromMinutes(5),
+                QueueLimit = 0
             }));
+
+    options.AddPolicy("ContactForm", context =>
+       RateLimitPartition.GetFixedWindowLimiter(
+           context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+           _ => new FixedWindowRateLimiterOptions
+           {
+               PermitLimit = 5,
+               Window = TimeSpan.FromMinutes(1),
+               QueueLimit = 0
+           }));
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -134,6 +147,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add email service to the container
 builder.Services.AddHttpClient<IPasswordResetEmailService, BrevoPasswordResetEmailService>();
+
+// Add contact service to the container
+builder.Services.AddHttpClient<IContactEmailService, ContactEmailService>();
 
 // Add cart services to the container
 builder.Services.AddScoped<ICartService, CartService>();
