@@ -40,6 +40,8 @@ namespace CakeManagementAPI.Data
         public DbSet<CakeTemplateFeature> CakeTemplateFeatures { get; set; }
 
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+
+        public DbSet<EmailVerificationOtp> EmailVerificationOtps { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -133,6 +135,20 @@ namespace CakeManagementAPI.Data
                 .HasForeignKey(oi => oi.CakeTemplateId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<EmailVerificationOtp>()
+                .HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<EmailVerificationOtp>()
+                .HasIndex(o => new { o.UserId, o.ExpiresAtUtc });
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.GoogleSubject)
+                .IsUnique()
+                .HasFilter("\"GoogleSubject\" IS NOT NULL");
+
             // Decimal precision
             modelBuilder.Entity<Cake>()
                 .Property(c => c.Price)
@@ -157,6 +173,11 @@ namespace CakeManagementAPI.Data
             // Unique email
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
+                .IsUnique();
+
+            // allows multiple null values in a normal unique index
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.GoogleSubject)
                 .IsUnique();
 
             // One cart per user

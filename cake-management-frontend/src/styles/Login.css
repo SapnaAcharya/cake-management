@@ -266,7 +266,7 @@
 
 .btn-auth {
   width: 100%;
-  padding: 12.5px;
+  padding: 11px;
   margin-top: 6px;
   border: none;
   border-radius: 9px;
@@ -315,6 +315,39 @@
   text-decoration: underline;
 }
 
+/* ---------- Divider and Google button ---------- */
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8C7681;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #EBDDE1;
+}
+
+.google-login-wrap {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  justify-content: center;
+  color-scheme: light; /* stops a dark background behind the button in dark mode */
+}
+
+.google-login-wrap.is-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 /* ==========================================================================
    Responsive
    ========================================================================== */
@@ -338,7 +371,7 @@
   }
 
   .btn-auth {
-    padding: 13px;
+    padding: 11px;
     font-size: 14.5px;
   }
 }

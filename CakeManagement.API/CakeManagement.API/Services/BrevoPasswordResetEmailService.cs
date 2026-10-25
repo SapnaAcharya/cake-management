@@ -17,6 +17,7 @@ namespace CakeManagementAPI.Services
             _configuration = configuration;
         }
 
+        // 1. Password Reset Email
         public async Task SendPasswordResetEmailAsync(
             string email,
             string resetUrl)
@@ -125,6 +126,88 @@ namespace CakeManagementAPI.Services
             {
                 throw new HttpRequestException(
                     $"Brevo email request failed with status " +
+                    $"{(int)response.StatusCode}.");
+            }
+        }
+
+        // 2. Email Verification OTP
+        public async Task SendEmailVerificationOtpAsync(
+         string email,
+         string otp)
+        {
+            var apiKey = _configuration["Brevo:ApiKey"];
+            var senderEmail = _configuration["Brevo:SenderEmail"];
+
+            if (string.IsNullOrWhiteSpace(apiKey) ||
+                string.IsNullOrWhiteSpace(senderEmail))
+            {
+                throw new InvalidOperationException(
+                    "Brevo API key or sender email is not configured.");
+            }
+
+            var safeOtp = System.Net.WebUtility.HtmlEncode(otp);
+            var year = DateTime.UtcNow.Year;
+
+            var html = $"""
+                <!DOCTYPE html>
+                <html>
+                <body style="font-family:Arial,sans-serif;color:#222;padding:24px">
+                    <div style="max-width:520px;margin:auto">
+                        <h2 style="color:#B5486B">Verify your email</h2>
+                        <p>Welcome to SweetCakes!</p>
+                        <p>Enter this verification code to confirm your email address:</p>
+                        <div style="padding:20px;background:#f9f0f3;
+                                    text-align:center;font-size:32px;
+                                    font-weight:bold;letter-spacing:8px">
+                            {safeOtp}
+                        </div>
+                        <p>This code expires in 5 minutes.</p>
+                        <p>If you did not create a SweetCakes account, you can ignore this email.</p>
+                        <p>Thanks,<br>The SweetCakes Team</p>
+                        <p style="font-size:12px;color:#888">
+                            &copy; {year} SweetCakes
+                        </p>
+                    </div>
+                </body>
+                </html>
+                """;
+
+            var text =
+                "Welcome to SweetCakes!\n\n" +
+                $"Your email verification code is: {otp}\n\n" +
+                "This code expires in 5 minutes. " +
+                "If you did not create an account, ignore this email.";
+
+            var emailBody = new
+            {
+                sender = new
+                {
+                    name = "SweetCakes",
+                    email = senderEmail
+                },
+                to = new[]
+                {
+                    new { email }
+                },
+                subject = "Verify your SweetCakes email address",
+                htmlContent = html,
+                textContent = text
+            };
+
+            using var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                "https://api.brevo.com/v3/smtp/email");
+
+            request.Headers.Add("api-key", apiKey);
+            request.Headers.Add("accept", "application/json");
+            request.Content = JsonContent.Create(emailBody);
+
+            using var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(
+                    $"Brevo verification email failed with status " +
                     $"{(int)response.StatusCode}.");
             }
         }

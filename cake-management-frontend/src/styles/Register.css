@@ -225,6 +225,19 @@
   text-decoration: underline;
 }
 
+.otp-expiry {
+  margin-top: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+}
+
+.otp-expiry strong {
+  color: #c05a78;
+  font-weight: 600;
+}
+
 /* ==========================================================================
    Responsive
    ========================================================================== */
