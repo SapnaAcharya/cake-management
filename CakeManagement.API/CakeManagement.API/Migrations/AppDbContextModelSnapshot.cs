@@ -351,6 +351,40 @@ namespace CakeManagementAPI.Migrations
                     b.ToTable("Decorations");
                 });
 
+            modelBuilder.Entity("CakeManagementAPI.Models.EmailVerificationOtp", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OtpHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UsedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "ExpiresAtUtc");
+
+                    b.ToTable("EmailVerificationOtps");
+                });
+
             modelBuilder.Entity("CakeManagementAPI.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -525,6 +559,12 @@ namespace CakeManagementAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("GoogleSubject")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsEmailVerified")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -544,6 +584,10 @@ namespace CakeManagementAPI.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("GoogleSubject")
+                        .IsUnique()
+                        .HasFilter("\"GoogleSubject\" IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -637,6 +681,17 @@ namespace CakeManagementAPI.Migrations
                     b.Navigation("CakeTemplate");
 
                     b.Navigation("Cart");
+                });
+
+            modelBuilder.Entity("CakeManagementAPI.Models.EmailVerificationOtp", b =>
+                {
+                    b.HasOne("CakeManagementAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CakeManagementAPI.Models.Order", b =>

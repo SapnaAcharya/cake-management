@@ -8,6 +8,8 @@
 
         public string Email { get; set; } = string.Empty;
 
+        public bool IsEmailVerified { get; set; } = false;
+
         public string PasswordHash { get; set; } = string.Empty;
 
         public string Role { get; set; } = "Customer";
@@ -16,6 +18,7 @@
 
         public string? Address { get; set; }
 
+        public string? GoogleSubject { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // A customer can have one cart

@@ -6,14 +6,19 @@ namespace CakeManagementAPI.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<LoginResponseDto> RegisterAsync(
-            RegisterDto dto);
-
+        Task RegisterAsync(RegisterDto dto);
         Task<LoginResponseDto> LoginAsync(
             LoginDto dto);
 
+        Task<LoginResponseDto> GoogleLoginAsync(GoogleLoginDto dto);
+
+        Task LinkGoogleAccountAsync(int userId, GoogleLoginDto dto);
         Task ForgotPasswordAsync(ForgotPasswordDto dto);
 
         Task ResetPasswordAsync(ResetPasswordDto dto);
+
+        Task VerifyEmailOtpAsync(VerifyEmailOtpDto dto);
+
+        Task ResendEmailOtpAsync(ResendEmailOtpDto dto);
     }
 }

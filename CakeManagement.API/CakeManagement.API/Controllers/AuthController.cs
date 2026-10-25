@@ -4,6 +4,8 @@ using CakeManagementAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace CakeManagementAPI.Controllers
 {
@@ -20,17 +22,20 @@ namespace CakeManagementAPI.Controllers
             _logger = logger;
         }
 
-        // Register
-        // Post: api/Auth/register
+      // POST: api/Auth/register
         [HttpPost("register")]
-        public async Task<IActionResult> register(
-            RegisterDto dto)
+        public async Task<IActionResult> Register(
+            [FromBody] RegisterDto dto)
         {
             try
             {
-                var result = await _authService.RegisterAsync(dto);
+                await _authService.RegisterAsync(dto);
 
-                return Ok(result);
+                return Ok(new
+                {
+                    message = "Account created. Please check your email for the verification code.",
+                    email = dto.Email.Trim().ToLowerInvariant()
+                });
             }
             catch (InvalidOperationException ex)
             {
@@ -40,6 +45,7 @@ namespace CakeManagementAPI.Controllers
                 });
             }
         }
+
 
         // Login
         // POST: api/Auth/login
@@ -59,6 +65,63 @@ namespace CakeManagementAPI.Controllers
                 {
                     message = ex.Message
                 });
+            }
+        }
+
+        // Googgle signin
+        // Post: /api/auth/google
+        [HttpPost("google")]
+        public async Task<IActionResult> GoogleLogin(
+            [FromBody] GoogleLoginDto dto)
+        {
+            try
+            {
+                var result = await _authService.GoogleLoginAsync(dto);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
+
+        // POST: api/Auth/link-google
+        [Authorize(Roles = "Customer")]
+        [HttpPost("link-google")]
+        public async Task<IActionResult> LinkGoogleAccount(
+            [FromBody] GoogleLoginDto dto)
+        {
+            var userIdValue = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userIdValue, out var userId))
+            {
+                return Unauthorized(new
+                {
+                    message = "Please sign in again."
+                });
+            }
+
+            try
+            {
+                await _authService.LinkGoogleAccountAsync(userId, dto);
+
+                return Ok(new
+                {
+                    message = "Google account linked successfully."
+                });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
             }
         }
 
@@ -118,5 +181,55 @@ namespace CakeManagementAPI.Controllers
                 });
             }
         }
+
+
+        // POST: api/Auth/verify-email
+        [HttpPost("verify-email")]
+        [EnableRateLimiting("reset")]
+        public async Task<IActionResult> VerifyEmail(
+            [FromBody] VerifyEmailOtpDto dto)
+        {
+            try
+            {
+                await _authService.VerifyEmailOtpAsync(dto);
+
+                return Ok(new
+                {
+                    message = "Email verified successfully. You can now sign in."
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+        }
+
+        // POST: api/Auth/resend-email-otp
+        [HttpPost("resend-email-otp")]
+        [EnableRateLimiting("forgot")]
+        public async Task<IActionResult> ResendEmailOtp(
+            [FromBody] ResendEmailOtpDto dto)
+        {
+            try
+            {
+                await _authService.ResendEmailOtpAsync(dto);
+
+                return Ok(new
+                {
+                    message = "If an unverified account exists for that email, a verification code will be sent."
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+        }
+
     }
 }

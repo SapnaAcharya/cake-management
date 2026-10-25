@@ -55,13 +55,24 @@ function Register() {
 
     setLoading(true);
     try {
-      await authService.register({
-        name: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-      });
+      // await authService.register({
+      //   name: formData.fullName,
+      //   email: formData.email,
+      //   password: formData.password,
+      // });
 
-      navigate("/login");
+      // navigate("/login");
+      const result = await authService.register({
+  name: formData.fullName,
+  email: formData.email.trim().toLowerCase(),
+  password: formData.password,
+});
+
+navigate("/verify-email", {
+  state: {
+    email: result.email || formData.email.trim().toLowerCase(),
+  },
+});
     } catch (err) {
       setServerError(
         err.response?.data?.message || "Something went wrong. Please try again."

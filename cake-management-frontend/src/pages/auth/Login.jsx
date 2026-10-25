@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, Cake } from "lucide-react";
 import authService from "../../services/authService";
+import { GoogleLogin } from "@react-oauth/google";
 import "../../styles/Login.css";
 
 function Login() {
@@ -22,6 +23,25 @@ function Login() {
   const [resetSuccess, setResetSuccess] = useState(
     !!location.state?.passwordReset
   );
+
+  const googleWrapRef = useRef(null);
+const [googleWidth, setGoogleWidth] = useState(360);
+
+// Make the Google button match the width of the form
+useEffect(() => {
+  const el = googleWrapRef.current;
+  if (!el) return;
+
+  const update = () => {
+    const w = Math.floor(el.getBoundingClientRect().width);
+    setGoogleWidth(Math.min(400, Math.max(200, w)));
+  };
+
+  update();
+  const observer = new ResizeObserver(update);
+  observer.observe(el);
+  return () => observer.disconnect();
+}, []);
 
   // Clear the router state so the banner does not return on page refresh
   useEffect(() => {
@@ -120,6 +140,74 @@ function Login() {
     }
   };
 
+  
+const handleGoogleSuccess = async (credentialResponse) => {
+  setServerError("");
+  setResetSuccess(false);
+
+  const idToken = credentialResponse.credential;
+  console.log("GOOGLE ID TOKEN:", idToken);
+
+  if (!idToken) {
+    setServerError("Google did not return an ID token. Please try again.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const data = await authService.googleLogin(idToken);
+
+    const token = data.token;
+    const role = data.role || data.user?.role;
+
+    const user = {
+      id: data.userId ?? data.user?.id ?? data.id,
+      name: data.name ?? data.user?.name ?? data.fullName ?? "",
+      email: data.email ?? data.user?.email ?? "",
+      role,
+    };
+
+    if (!token || !role) {
+      throw new Error("The server did not return a token or user role.");
+    }
+
+    if (!["admin", "customer"].includes(role.toLowerCase())) {
+      throw new Error("Unknown user role.");
+    }
+
+    // Clear any previous session before saving the new one.
+    for (const storage of [localStorage, sessionStorage]) {
+      storage.removeItem("token");
+      storage.removeItem("role");
+      storage.removeItem("user");
+    }
+
+    // Match the existing Remember me behavior.
+    const storage = formData.keepSignedIn
+      ? localStorage
+      : sessionStorage;
+
+    storage.setItem("token", token);
+    storage.setItem("role", role);
+    storage.setItem("user", JSON.stringify(user));
+
+    if (role.toLowerCase() === "admin") {
+      navigate("/admin");
+    } else {
+      navigate("/");
+    }
+  } catch (err) {
+    setServerError(
+      err.response?.data?.message ||
+        err.message ||
+        "Google sign-in failed. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
     <div className="auth-page">
       <div className="auth-shell">
@@ -142,6 +230,30 @@ function Login() {
             )}
 
             {serverError && <div className="auth-form-error">{serverError}</div>}
+
+            
+<div
+  ref={googleWrapRef}
+  className={`google-login-wrap ${loading ? "is-disabled" : ""}`}
+>
+  <GoogleLogin
+    onSuccess={handleGoogleSuccess}
+    onError={() => {
+      setServerError(
+        "Google sign-in could not be completed. Please try again."
+      );
+    }}
+    theme="outline"
+    size="large"
+    shape="rectangular"
+    text="continue_with"
+    width={String(googleWidth)}
+  />
+</div>
+
+ <div className="auth-divider">
+              <span>OR USE EMAIL</span>
+            </div>
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="auth-field">

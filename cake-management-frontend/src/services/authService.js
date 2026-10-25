@@ -59,6 +59,30 @@ const isLoggedIn = () => {
     return Boolean(localStorage.getItem("token"));
 };
 
+
+const verifyEmail = async (email, otp) => {
+    const response = await api.post("/Auth/verify-email", {
+        email,
+        otp,
+    });
+
+    return response.data;
+};
+
+const resendEmailOtp = async (email) => {
+    const response = await api.post("/Auth/resend-email-otp", {
+        email,
+    });
+
+    return response.data;
+};
+
+
+const googleLogin = async (idToken) => {
+    const response = await api.post("/Auth/google", { idToken });
+    return response.data;
+};
+
 const forgotPassword = async (email) => {
     const response = await api.post("/Auth/forgot-password", { email });
 
@@ -76,7 +100,10 @@ const resetPassword = async (email, token, newPassword) => {
 
 export default {
     login,
+    googleLogin,
     register,
+    verifyEmail,
+    resendEmailOtp,
     logout,
     getCurrentUser,
     getRole,
