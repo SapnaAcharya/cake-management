@@ -47,6 +47,7 @@ export const updateOrderStatus = async (id, status) => {
     return await response.json();
 };
 
+// eslint-disable-next-line no-unused-vars
 const AdminOrderService = {
     getAllOrders,
     getOrderById,
