@@ -8,6 +8,7 @@ import templateService from "../services/CakeTemplateService";
 import { mapApiTemplateToViewModel } from "../utils/mapApiTemplate";
 import { CATEGORY } from "../data/categories";
 import "../styles/template.css";
+import "../styles/templateresponsive.css";
 
 export default function DesignByTemplate() {
   const navigate = useNavigate();
