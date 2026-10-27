@@ -1,0 +1,448 @@
+
+/* =========================================
+   SWEETCAKES — CUSTOMIZE SIDEBAR
+   Matches CustomizeSidebar.jsx
+========================================= */
+
+.cz-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  color: #33232d;
+  font-family: inherit;
+}
+
+/* =========================================
+   SHARED CARD
+========================================= */
+
+.cz-card {
+  min-width: 0;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #eee2e8;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(70, 30, 50, 0.025);
+}
+
+/* Card headings */
+
+.cz-card__title,
+.cz-tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  color: #2d2029;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.cz-card__title svg {
+  flex-shrink: 0;
+  color: #33232d;
+}
+
+.cz-tag {
+  color: #a32864;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Shared pink check icon */
+
+.cz-check {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 23px;
+  height: 23px;
+  color: #ffffff;
+  background: #a52a65;
+  border-radius: 50%;
+}
+
+/* =========================================
+   SELECTED DESIGN
+========================================= */
+
+.cz-selected {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cz-selected__img {
+  display: block;
+  width: 96px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center;
+  background: #f8f3f5;
+  border-radius: 12px;
+}
+
+.cz-selected__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.cz-selected__name {
+  width: 100%;
+  margin: 2px 0 8px;
+  color: #33232d;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.cz-selected__meta {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.cz-selected__meta li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 0;
+  color: #887783;
+  border-bottom: 1px solid #f0e6eb;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.cz-selected__meta li:last-child {
+  border-bottom: none;
+}
+
+.cz-selected__meta svg {
+  flex-shrink: 0;
+  color: #917987;
+}
+
+.cz-cap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cz-selected__price {
+  margin: 10px 0 8px;
+  color: #a52a65;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.cz-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  max-width: 100%;
+  padding: 3px 0;
+  color: #a52a65;
+  background: transparent;
+  border: none;
+  font: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.cz-link:hover {
+  color: #7d1748;
+}
+
+.cz-link svg {
+  flex-shrink: 0;
+}
+
+.cz-link:focus-visible {
+  outline: 2px solid #a52a65;
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+/* =========================================
+   DESIGN INCLUDES
+========================================= */
+
+.cz-includes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.cz-includes li {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  color: #887783;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.cz-includes .cz-check {
+  width: 22px;
+  height: 22px;
+}
+
+/* =========================================
+   CURRENT SELECTION
+========================================= */
+
+.cz-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.cz-rows > li {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.cz-row {
+  display: grid;
+  grid-template-columns: 20px minmax(48px, auto) minmax(0, 1fr) 15px;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 0;
+  color: #6f5b67;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #f4edf1;
+  border-radius: 0;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.cz-rows > li:last-child .cz-row {
+  border-bottom: none;
+}
+
+.cz-row > svg:first-child {
+  flex-shrink: 0;
+  color: #a17d90;
+}
+
+.cz-row > svg:last-child {
+  flex-shrink: 0;
+  color: #b8a5b0;
+  transition:
+    transform 160ms ease,
+    color 160ms ease;
+}
+
+.cz-row__label {
+  min-width: 0;
+  color: #85717d;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.cz-row__value {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  color: #46323f;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.cz-row:hover {
+  color: #a52a65;
+}
+
+.cz-row:hover > svg:first-child,
+.cz-row:hover > svg:last-child {
+  color: #a52a65;
+}
+
+.cz-row:hover > svg:last-child {
+  transform: translateX(2px);
+}
+
+.cz-row:focus-visible {
+  position: relative;
+  outline: 2px solid #c45a8b;
+  outline-offset: 2px;
+  border-radius: 5px;
+}
+
+/* =========================================
+   COLOR SWATCHES
+   Used for cake color, sponge color,
+   and the message color summary.
+========================================= */
+
+.cz-dot {
+  display: inline-block;
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(65, 37, 51, 0.13);
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+/* Message text + selected message color */
+
+.cz-message-summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.cz-message-summary__text {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cz-message-summary .cz-dot {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+.cz-side button:focus-visible {
+  outline-color: #a52a65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cz-side *,
+  .cz-side *::before,
+  .cz-side *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================
+   RESPONSIVE LAYOUT
+========================================= */
+
+/* Narrow desktop / tablet */
+
+@media (max-width: 1100px) {
+  .cz-card {
+    padding: 13px;
+  }
+
+  .cz-selected {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .cz-selected__img {
+    width: 76px;
+  }
+
+  .cz-row {
+    grid-template-columns: 18px minmax(42px, auto) minmax(0, 1fr) 14px;
+    gap: 7px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 640px) {
+  .cz-side {
+    gap: 10px;
+  }
+
+  .cz-card {
+    padding: 14px;
+    border-radius: 13px;
+  }
+
+  .cz-card__title,
+  .cz-tag {
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+
+  .cz-selected {
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .cz-selected__img {
+    width: 84px;
+  }
+
+  .cz-selected__name {
+    font-size: 13px;
+  }
+
+  .cz-selected__price {
+    font-size: 16px;
+  }
+
+  .cz-includes {
+    gap: 10px;
+  }
+
+  .cz-row {
+    grid-template-columns: 20px minmax(50px, auto) minmax(0, 1fr) 14px;
+    gap: 8px;
+    padding: 11px 0;
+  }
+
+  .cz-row__label,
+  .cz-row__value {
+    font-size: 12px;
+  }
+}

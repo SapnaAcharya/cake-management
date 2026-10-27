@@ -3,7 +3,7 @@ import { CATEGORY } from "./categories";
 
 const CURRENCY = "Rs."; 
 
-export const formatPrice = (n) => `${CURRENCY} ${n.toLocaleString()}`;
+export const formatPrice = (n) => `${CURRENCY} ${(Number(n) || 0).toLocaleString("en-IN")}`;
 export const formatTiers = (n) => `${n} Tier${n > 1 ? "s" : ""}`;
 export const formatSizes = (sizes) => sizes.map((s) => `${s}"`).join(" / ");
 export const formatPrep = ({ min, max }) =>

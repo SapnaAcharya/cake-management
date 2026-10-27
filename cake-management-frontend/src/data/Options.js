@@ -15,6 +15,15 @@ export const MAX_PRICE = 2;
 export const MAX_CANDLES = 12;
 export const MAX_MESSAGE_LENGTH = 100;
 
+export const MESSAGE_COLORS = [
+  { id: "white", label: "White", hex: "#ffffff" },
+  { id: "pink",  label: "Pink",  hex: "#e11d6a" },
+  { id: "red",   label: "Red",   hex: "#c8102e" },
+  { id: "brown", label: "Brown", hex: "#4a2a1e" },
+  { id: "gold",  label: "Gold",  hex: "#c9a227" },
+  { id: "navy",  label: "Navy",  hex: "#1f1b4d" },
+];
+
 export const TIERS = [
   { value: 1, label: "1 Tier"},
   { value: 2, label: "2 Tiers"},
@@ -102,11 +111,13 @@ export function initialConfig(template, initialColorId) {
   return {
     message: "",
     font: FONT_STYLES[0].id,
+    messageColor: MESSAGE_COLORS[0].hex,
     colorId: chosen?.id ?? "pink",
     colorDbId: chosen?.dbId ?? null,
     colorHex: chosen?.hex ?? "#ff5c8a",
     size: template?.sizes?.[0] ?? SIZES[0].value,
-    tier: template?.tiers ?? 1,
+    // tier: template?.tiers ?? 1,
+    tier: 1,
     flavor: FLAVORS[0].id,
     frosting: FROSTINGS[0].id,
     decorations: [],
@@ -125,10 +136,10 @@ export function candlePositions(count) {
 export function calcPrice(template, cfg, decorations = []) {
   const size = SIZES.find((s) => s.value === cfg.size);
   const lines = [
-    { label: `Base Cake (${cfg.size}")`, amount: template.basePrice + (size?.extra ?? 0) },
+    { label: `Base Cake (${cfg.size}")`, amount: (Number(template.basePrice) || 0) + (size?.extra ?? 0) },
   ];
 
-  const extraTiers = Math.max(0, cfg.tier - template.tiers);
+  const extraTiers = Math.max(0, cfg.tier - 1);
   if (extraTiers > 0) {
     lines.push({ label: `Extra tiers (${extraTiers})`, amount: extraTiers * EXTRA_TIER_PRICE });
   }
@@ -143,7 +154,7 @@ export function calcPrice(template, cfg, decorations = []) {
   if (decos.length) {
     lines.push({
       label: `Decorations (${decos.map((d) => d.name).join(" + ")})`,
-      amount: decos.reduce((sum, d) => sum + Number(d.price), 0),
+      amount: decos.reduce((sum, d) => sum + (Number(d.price) || 0), 0),
     });
   }
 
@@ -167,11 +178,14 @@ export function stageView(template, cfg, baseline, decorations = []) {
         ? img.gallery
         : [img.preview];
 
-  const useDrawnCake = cfg.tier !== template.tiers && !tierPhotos?.length;
+  // const useDrawnCake = cfg.tier !== template.tiers && !tierPhotos?.length;
 
-  const tierNote = useDrawnCake
-    ? `Illustration · your ${cfg.tier}-tier cake (original design has ${template.tiers} tier${template.tiers === 1 ? "" : "s"})`
-    : "";
+  // const tierNote = useDrawnCake
+  //   ? `Illustration · your ${cfg.tier}-tier cake (original design has ${template.tiers} tier${template.tiers === 1 ? "" : "s"})`
+  //   : "";
+  const useDrawnCake = !tierPhotos?.length && !img.gallery?.length && !img.preview;
+
+  const tierNote = useDrawnCake ? `Illustration · your ${cfg.tier}-tier cake` : "";
 
   const minSize = SIZES[0].value;
   const maxSize = SIZES[SIZES.length - 1].value;
@@ -207,5 +221,6 @@ const tint = COLOR_TINTS[cfg.colorId] ?? "none";
       }),
     candles: candlePositions(cfg.candles),
     fontFamily: FONT_STYLES.find((f) => f.id === cfg.font)?.family,
+    messageColor: cfg.messageColor,
   };
 }

@@ -448,7 +448,7 @@ function CakeDetails() {
                                     className="cake-details-btn secondary"
                                     onClick={handleCustomize}
                                 >
-                                    Customize this cake
+                                    Customize Cake
                                 </button>
                             </div>
                         </div>

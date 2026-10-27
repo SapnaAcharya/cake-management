@@ -2,9 +2,10 @@ import {
   Cake, CakeSlice, Check, ChevronRight, ClipboardList, Heart, Layers,
   MessageSquare, Palette, Pencil, Ruler,
 } from "lucide-react";
-import { formatPrice, formatTiers } from "../../data/helpers";
+import { formatPrice } from "../../data/helpers";
 import { TIERS, FLAVORS, FROSTINGS } from "../../data/Options";
 import { getImageUrl } from "../../utils/imageUrl";
+// import "../../styles/Customizesidebar.css";
 
 const jumpTo = (id) =>
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -20,7 +21,29 @@ export default function CustomizeSidebar({ template, cfg, onChangeTemplate }) {
   const frosting = FROSTINGS.find((f) => f.id === cfg.frosting);
 
   const rows = [
-    { icon: MessageSquare, label: "Message", target: "cz-message", value: cfg.message || "None" },
+    // { icon: MessageSquare, label: "Message", target: "cz-message", value: cfg.message || "None" },
+    {
+  icon: MessageSquare,
+  label: "Message",
+  target: "cz-message",
+  value: (
+    <span className="cz-message-summary">
+      <span className="cz-message-summary__text">
+        {cfg.message || "None"}
+      </span>
+      {cfg.message && (
+        <span
+          className="cz-dot"
+          style={{
+            background: cfg.messageColor ?? "#ffffff",
+            border: "1px solid #ded5db",
+          }}
+          title={`Message color: ${cfg.messageColor ?? "#ffffff"}`}
+        />
+      )}
+    </span>
+  ),
+},
     {
       icon: Palette,
       label: "Color",
@@ -63,7 +86,7 @@ export default function CustomizeSidebar({ template, cfg, onChangeTemplate }) {
             <h3 className="cz-selected__name">{template.name}</h3>
             <ul className="cz-selected__meta">
               <li><Cake size={16} strokeWidth={1.6} /> <span className="cz-cap">{template.category}</span></li>
-              <li><Layers size={16} strokeWidth={1.6} /> {formatTiers(template.tiers)}</li>
+              <li><Layers size={16} strokeWidth={1.6} /> {tier?.label}</li>
               <li><Heart size={16} strokeWidth={1.6} /> {template.styleName ?? "Classic Design"}</li>
             </ul>
             <p className="cz-selected__price">{formatPrice(template.basePrice)}</p>
