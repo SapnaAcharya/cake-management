@@ -83,10 +83,13 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  width: 100%;
+  max-width: 440px;      /* medium size, change to 400 to 480 as you like */
+  margin: 0 auto;
 }
 .cake-details-page .cake-details-media {
   overflow: hidden;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   background: #f1e9ec;
   border: 1px solid var(--color-border);
   border-radius: 20px;
