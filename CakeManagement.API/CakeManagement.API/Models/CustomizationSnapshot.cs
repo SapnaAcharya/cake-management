@@ -15,6 +15,8 @@ public class CustomizationSnapshot
     public string? ColorHex { get; set; }
     public string? Message { get; set; }
     public string? Font { get; set; }
+
+    public string? TextColor { get; set;}
     public string? Sponge { get; set; }
     public string? Frosting { get; set; }
     public int Candles { get; set; }
