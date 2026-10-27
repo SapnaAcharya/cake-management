@@ -24,6 +24,10 @@ namespace CakeManagementAPI.DTOs.Cart
         [MaxLength(50)]
         public string? Font { get; set; }
 
+        [MaxLength(20)]
+        [RegularExpression("^#[0-9a-fA-F]{6}$")]
+        public string? TextColor { get; set; }
+
         [MaxLength(50)]
         public string? Sponge { get; set; }
 

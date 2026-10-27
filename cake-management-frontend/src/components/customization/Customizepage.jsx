@@ -173,6 +173,7 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
       colorHex: cfg.colorHex,
       message: cfg.message,
       font: cfg.font,
+      textColor: cfg.textColor,
       sponge: cfg.flavor,
       frosting: cfg.frosting,
       candles: cfg.candles,
