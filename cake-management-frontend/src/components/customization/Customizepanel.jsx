@@ -5,7 +5,8 @@ import {
 } from "lucide-react";
 import { formatPrice } from "../../data/helpers";
 import {
-  DECORATION_CATEGORY_ORDER, FLAVORS, FONT_STYLES, FROSTINGS, MAX_CANDLES, MAX_MESSAGE_LENGTH, SIZES, TIERS,
+  DECORATION_CATEGORY_ORDER, FLAVORS, FONT_STYLES, FROSTINGS, MAX_CANDLES,
+   MAX_MESSAGE_LENGTH, MESSAGE_COLORS, SIZES, TIERS,
 } from "../../data/Options";
 import { getImageUrl } from "../../utils/imageUrl";
 
@@ -129,6 +130,71 @@ export default function CustomizePanel({
                 <span className="cz-font__name">{f.label}</span>
               </Pill>
             ))}
+          </div>
+
+              {/* More fonts — moved above Text color */}
+          {FONT_STYLES.length > FONT_PREVIEW_COUNT && (
+            <button
+              type="button"
+              className="cz-more"
+              onClick={() => setShowAllFonts((v) => !v)}
+            >
+              {showAllFonts
+                ? "Show fewer fonts"
+                : `More fonts (${FONT_STYLES.length - FONT_PREVIEW_COUNT})`}
+            </button>
+          )}
+
+            {/* Message text color */}
+          <div className="cz-msg-color">
+            <p className="cz-deco-group__title">Text color</p>
+            <div className="cz-swatches">
+              {MESSAGE_COLORS.map((c) => {
+                const on = cfg.messageColor?.toLowerCase() === c.hex;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    className={`cz-swatch ${on ? "cz-swatch--on" : ""}`}
+                    aria-label={`${c.label} text`}
+                    aria-pressed={on}
+                    onClick={() => onChange({ messageColor: c.hex })}
+                  >
+                    <span
+                      className="cz-swatch__fill"
+                      style={{ background: c.hex, border: "1px solid rgba(0,0,0,.15)" }}
+                    >
+                      {on && (
+                        <Check
+                          size={14}
+                          strokeWidth={3}
+                          color={c.hex === "#ffffff" ? "#333" : "#fff"}
+                        />
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
+
+              <label
+                className="cz-swatch cz-swatch--picker"
+                aria-label="Pick a custom text color"
+                style={{ position: "relative" }}
+              >
+                <input
+                  type="color"
+                  value={cfg.messageColor ?? "#ffffff"}
+                  onChange={(e) => onChange({ messageColor: e.target.value })}
+                  style={{ opacity: 0, position: "absolute", inset: 0, cursor: "pointer" }}
+                />
+                <span
+                  className="cz-swatch__fill"
+                  style={{ background: cfg.messageColor ?? "#ffffff" }}
+                >
+                  <Palette size={14} />
+                </span>
+              </label>
+            </div>
           </div>
 
           {FONT_STYLES.length > FONT_PREVIEW_COUNT && (

@@ -7,8 +7,8 @@ import { stageView } from "../../data/Options";
 import TierCake from "./TierCake";
 import { getImageUrl } from "../../utils/imageUrl";
 
-const ZOOM_STEP = 0.25;
-const ZOOM_MAX = 2;
+// const ZOOM_STEP = 0.25;
+// const ZOOM_MAX = 2;
 
 export default function CustomizeStage({ template, cfg, baseline, decorations }) {
   const [index, setIndex] = useState(0);
@@ -52,6 +52,16 @@ export default function CustomizeStage({ template, cfg, baseline, decorations })
     active?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }, [safeIndex, useDrawnCake]);
 
+const ZOOM_STEP = 0.25;
+const ZOOM_MAX = 2;
+
+// light colors get a dark shadow, dark colors get a light one, so the text stays readable on the photo
+const isLight = (hex = "#ffffff") => {
+  const n = parseInt(hex.replace("#", ""), 16);
+  const lum = 0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255);
+  return lum > 150;
+};
+
   return (
     <section className={`cz-stage ${expanded ? "cz-stage--expanded" : ""}`} aria-label="Cake preview">
       {/* Canvas: cake + overlays zoom together so decorations stay on the cake */}
@@ -92,8 +102,22 @@ export default function CustomizeStage({ template, cfg, baseline, decorations })
                   />
                 ))}
 
-                {cfg.message && (
+                {/* {cfg.message && (
                   <p className="cz-message" style={{ fontFamily: view.fontFamily }}>
+                    {cfg.message}
+                  </p>
+                )} */}
+                                {cfg.message && (
+                  <p
+                    className="cz-message"
+                    style={{
+                      fontFamily: view.fontFamily,
+                      color: cfg.messageColor ?? "#ffffff",
+                      textShadow: isLight(cfg.messageColor)
+                        ? "0 1px 3px rgba(0,0,0,.55)"
+                        : "0 1px 3px rgba(255,255,255,.65)",
+                    }}
+                  >
                     {cfg.message}
                   </p>
                 )}

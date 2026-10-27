@@ -82,6 +82,7 @@ export default function CustomizePage() {
 
 function Customizer({ template, cakeId, cake, initialColorId }) {
   const navigate = useNavigate();
+  const cakeIdNum = cakeId && cakeId !== "undefined" ? Number(cakeId) : null;
 
   const [baseline] = useState(() => initialConfig(template, initialColorId));
   const [cfg, setCfg] = useState(baseline);
@@ -148,7 +149,7 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
     setCfg((current) => ({ ...current, ...patch }));
   };
 
-  const price = useMemo(() => calcPrice(template, cfg), [template, cfg, decorations]);
+  const price = useMemo(() => calcPrice(template, cfg, decorations), [template, cfg, decorations]);
 
   const changeTemplate = () =>
     navigate(templatePage(cakeId), {
@@ -163,7 +164,8 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
     const customization = {
-      cakeId: Number(cakeId),
+      // cakeId: Number(cakeId),
+      cakeId: cakeIdNum,
       templateId: template.id,
       size: cfg.size,
       tiers: cfg.tier,
@@ -187,7 +189,8 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
       if (!token) {
         const updatedGuestCart = addToGuestCart(
           {
-            id: Number(cakeId),
+            // id: Number(cakeId),
+            id: cakeIdNum ?? `template-${template.id}`,
             name: template.name,
             imageUrl: template.images.thumb,
             price: price.total,
@@ -205,7 +208,7 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
       }
 
       // Logged-in user
-      const updatedCart = await cartService.addToCart(Number(cakeId), 1, null, customization);
+      const updatedCart = await cartService.addToCart(cakeIdNum, 1, null, customization);
 
       setCartCount(updatedCart.items.reduce((t, i) => t + i.quantity, 0));
       setAdded(true);
