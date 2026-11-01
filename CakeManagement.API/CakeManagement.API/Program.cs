@@ -146,7 +146,16 @@ builder.Services.AddScoped<ICakeService, CakeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add email service to the container
-builder.Services.AddHttpClient<IPasswordResetEmailService, BrevoPasswordResetEmailService>();
+builder.Services.AddHttpClient<BrevoPasswordResetEmailService>();
+
+builder.Services.AddScoped<IPasswordResetEmailService>(
+    sp => sp.GetRequiredService<BrevoPasswordResetEmailService>());
+
+builder.Services.AddScoped<ICourseEnrollmentEmailService>(
+    sp => sp.GetRequiredService<BrevoPasswordResetEmailService>());
+
+// Add training enrollment service to the container
+builder.Services.AddScoped<TrainingEnrollmentService>();
 
 // Add contact service to the container
 builder.Services.AddHttpClient<IContactEmailService, ContactEmailService>();
@@ -184,6 +193,20 @@ builder.Services.AddScoped<ICustomizationSnapshotService, CustomizationSnapshotS
 // Add Customization Service to the container
 builder.Services.AddScoped<ICustomizationService, CustomizationService>();
 
+// Add training package services the container
+builder.Services.AddScoped<ITrainingPackageService, TrainingPackageService>();
+
+// Add trainer services to the conatiner
+builder.Services.AddScoped<ITrainerService, TrainerService>();
+
+// Add training batch services to the container
+builder.Services.AddScoped<ITrainingBatchService, TrainingBatchService>();
+
+// Add enrollment services to the container
+builder.Services.AddScoped<TrainingEnrollmentService>(); 
+
+builder.Services.AddScoped<EnrollmentEmailVerificationService>();   
+
 var app = builder.Build();
 
 // Render sits behind a proxy that terminates HTTPS
@@ -191,6 +214,7 @@ var forwardedOptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 };
+
 forwardedOptions.KnownNetworks.Clear();
 forwardedOptions.KnownProxies.Clear();
 app.UseForwardedHeaders(forwardedOptions);

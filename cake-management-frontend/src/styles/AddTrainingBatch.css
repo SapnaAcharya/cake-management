@@ -1,0 +1,255 @@
+
+.add-training-batch {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px;
+  color: #252525;
+}
+
+.atb-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.atb-eyebrow {
+  margin: 0 0 8px;
+  color: #a45c65;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.atb-page-header h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.atb-subtitle {
+  margin: 10px 0 0;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.atb-back-link {
+  flex-shrink: 0;
+  color: #914b55;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.atb-back-link:hover {
+  text-decoration: underline;
+}
+
+.atb-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.atb-section {
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e9e5e5;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 3%);
+}
+
+.atb-section h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.atb-section > p {
+  margin: 8px 0 22px;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.atb-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.atb-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.atb-field-full {
+  grid-column: 1 / -1;
+}
+
+.atb-field label {
+  color: #333;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.atb-field label span {
+  color: #c13e4c;
+}
+
+.atb-field input,
+.atb-field select,
+.atb-field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 12px;
+  color: #292929;
+  background: #fff;
+  border: 1px solid #d9d5d5;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.atb-field textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.atb-field input:focus,
+.atb-field select:focus,
+.atb-field textarea:focus {
+  border-color: #a45c65;
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(164 92 101 / 12%);
+}
+
+.atb-field small {
+  color: #777;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.atb-capacity-field {
+  max-width: 360px;
+}
+
+.atb-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 4px 0 12px;
+}
+
+.atb-cancel-button,
+.atb-submit-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.atb-cancel-button {
+  color: #444;
+  background: #fff;
+  border: 1px solid #d8d3d3;
+}
+
+.atb-cancel-button:hover {
+  background: #f7f5f5;
+}
+
+.atb-submit-button {
+  color: #fff;
+  background: #984f59;
+  border: 1px solid #984f59;
+}
+
+.atb-submit-button:hover:not(:disabled) {
+  background: #7e3d47;
+  border-color: #7e3d47;
+}
+
+.atb-submit-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.atb-alert {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  color: #8b2635;
+  background: #fff0f1;
+  border: 1px solid #f0c6cb;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.atb-state {
+  padding: 32px;
+  color: #777;
+  background: #fff;
+  border: 1px solid #e9e5e5;
+  border-radius: 12px;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .add-training-batch {
+    padding: 18px 14px;
+  }
+
+  .atb-page-header {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .atb-page-header h1 {
+    font-size: 25px;
+  }
+
+  .atb-section {
+    padding: 18px;
+  }
+
+  .atb-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .atb-field-full {
+    grid-column: auto;
+  }
+
+  .atb-capacity-field {
+    max-width: none;
+  }
+
+  .atb-form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .atb-cancel-button,
+  .atb-submit-button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

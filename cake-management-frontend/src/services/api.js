@@ -7,11 +7,14 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token") ||
+                      sessionStorage.getItem("token");
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
+        console.log("REQUEST:", config.method, config.url, "token present:", !!token);
 
         return config;
     },

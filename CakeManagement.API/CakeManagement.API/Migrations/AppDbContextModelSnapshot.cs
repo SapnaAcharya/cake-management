@@ -351,6 +351,52 @@ namespace CakeManagementAPI.Migrations
                     b.ToTable("Decorations");
                 });
 
+            modelBuilder.Entity("CakeManagementAPI.Models.EmailVerificationCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("VerificationTokenExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("VerificationTokenHash")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("VerificationTokenUsed")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailVerificationCodes");
+                });
+
             modelBuilder.Entity("CakeManagementAPI.Models.EmailVerificationOtp", b =>
                 {
                     b.Property<int>("Id")
@@ -541,6 +587,127 @@ namespace CakeManagementAPI.Migrations
                     b.ToTable("PhoneVerifications");
                 });
 
+            modelBuilder.Entity("CakeManagementAPI.Models.Trainer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Qualifications")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Trainers");
+                });
+
+            modelBuilder.Entity("CakeManagementAPI.Models.TrainingBatch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ScheduleDetails")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TrainerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TrainingPackageId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerId");
+
+                    b.HasIndex("TrainingPackageId");
+
+                    b.ToTable("TrainingBatches");
+                });
+
+            modelBuilder.Entity("CakeManagementAPI.Models.TrainingPackage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("DurationInDays")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Fee")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LearningOutcomes")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SkillLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TrainingPackages");
+                });
+
             modelBuilder.Entity("CakeManagementAPI.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -590,6 +757,56 @@ namespace CakeManagementAPI.Migrations
                         .HasFilter("\"GoogleSubject\" IS NOT NULL");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TrainingEnrollment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("City")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExperienceLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TrainingBatchId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TrainingId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("WhatsApp")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainingBatchId");
+
+                    b.ToTable("TrainingEnrollments");
                 });
 
             modelBuilder.Entity("CakeManagementAPI.Models.Cake", b =>
@@ -740,6 +957,36 @@ namespace CakeManagementAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CakeManagementAPI.Models.TrainingBatch", b =>
+                {
+                    b.HasOne("CakeManagementAPI.Models.Trainer", "Trainer")
+                        .WithMany("Batches")
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CakeManagementAPI.Models.TrainingPackage", "TrainingPackage")
+                        .WithMany("Batches")
+                        .HasForeignKey("TrainingPackageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Trainer");
+
+                    b.Navigation("TrainingPackage");
+                });
+
+            modelBuilder.Entity("TrainingEnrollment", b =>
+                {
+                    b.HasOne("CakeManagementAPI.Models.TrainingBatch", "TrainingBatch")
+                        .WithMany()
+                        .HasForeignKey("TrainingBatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("TrainingBatch");
+                });
+
             modelBuilder.Entity("CakeManagementAPI.Models.Cake", b =>
                 {
                     b.Navigation("CartItems");
@@ -771,6 +1018,16 @@ namespace CakeManagementAPI.Migrations
             modelBuilder.Entity("CakeManagementAPI.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("CakeManagementAPI.Models.Trainer", b =>
+                {
+                    b.Navigation("Batches");
+                });
+
+            modelBuilder.Entity("CakeManagementAPI.Models.TrainingPackage", b =>
+                {
+                    b.Navigation("Batches");
                 });
 
             modelBuilder.Entity("CakeManagementAPI.Models.User", b =>

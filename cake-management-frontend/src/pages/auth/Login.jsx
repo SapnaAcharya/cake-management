@@ -82,27 +82,18 @@ useEffect(() => {
     if (Object.keys(validationErrors).length > 0) return;
 
     setLoading(true);
-    try {
+ 
+
+      try {
       const data = await authService.login(
         formData.email.trim(),
-        formData.password
+        formData.password,
+        formData.keepSignedIn
       );
 
-      const token = data.token;
+      const role = data.user?.role || data.role;
 
-      const user = data.user
-        ? data.user
-        : {
-            id: data.id,
-            name: data.name,
-            fullName: data.fullName,
-            email: data.email,
-            role: data.role,
-          };
-
-      const role = user.role || data.role;
-
-      if (!token) {
+      if (!data.token) {
         throw new Error("Token was not returned by the server.");
       }
 
@@ -110,35 +101,34 @@ useEffect(() => {
         throw new Error("User role was not returned by the server.");
       }
 
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      localStorage.removeItem("user");
-
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("role");
-      sessionStorage.removeItem("user");
-
-      const storage = formData.keepSignedIn ? localStorage : sessionStorage;
-
-      storage.setItem("token", token);
-      storage.setItem("role", role);
-      storage.setItem("user", JSON.stringify(user));
-
       if (role.toLowerCase() === "admin") {
         navigate("/admin");
+      // } else if (role.toLowerCase() === "customer") {
+      //   navigate("/");
+      // } 
       } else if (role.toLowerCase() === "customer") {
-        navigate("/");
-      } else {
+  const returnTo = location.state?.from;
+
+  if (returnTo) {
+    navigate(returnTo, { replace: true });
+  } else {
+    navigate("/", { replace: true });
+  }
+}
+      else {
+        authService.logout();
         setServerError("Unknown user role.");
       }
     } catch (err) {
       setServerError(
-        err.response?.data?.message || "Invalid email or password."
+        err.response?.data?.message ||
+          err.message ||
+          "Invalid email or password."
       );
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   
 const handleGoogleSuccess = async (credentialResponse) => {
@@ -192,11 +182,22 @@ const handleGoogleSuccess = async (credentialResponse) => {
     storage.setItem("role", role);
     storage.setItem("user", JSON.stringify(user));
 
+    // if (role.toLowerCase() === "admin") {
+    //   navigate("/admin");
+    // } else {
+    //   navigate("/");
+    // }
     if (role.toLowerCase() === "admin") {
-      navigate("/admin");
-    } else {
-      navigate("/");
-    }
+  navigate("/admin", { replace: true });
+} else {
+  const returnTo = location.state?.from;
+
+  if (returnTo) {
+    navigate(returnTo, { replace: true });
+  } else {
+    navigate("/", { replace: true });
+  }
+}
   } catch (err) {
     setServerError(
       err.response?.data?.message ||

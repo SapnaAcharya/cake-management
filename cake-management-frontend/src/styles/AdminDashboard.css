@@ -88,6 +88,15 @@
   box-shadow: 0 0 0 3px rgba(226, 122, 147, 0.15);
 }
 
+.batch-schedule {
+    display: inline-block;
+    max-width: 230px;
+    white-space: normal;
+    line-height: 1.5;
+    font-size: 13px;
+    color: #555;
+}
+
 /* ---------- Table ---------- */
 
 .manage-cakes-table-wrap {
@@ -122,7 +131,6 @@
 .manage-cakes-table tbody tr:last-child td {
   border-bottom: none;
 }
-
 .cake-thumb {
   width: 40px;
   height: 40px;
@@ -194,6 +202,334 @@
   justify-content: center;
   font-size: 12px;
   background: #f3f4f6;
+}
+
+
+/* Training package form */
+
+.training-form-card {
+    padding: 28px;
+}
+
+.training-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.training-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.training-form-field label {
+    color: #292524;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.training-form-field input:not([type="checkbox"]),
+.training-form-field select,
+.training-form-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border: 1px solid #dedbd8;
+    border-radius: 8px;
+    background: #fff;
+    color: #292524;
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.training-form-field input:focus,
+.training-form-field select:focus,
+.training-form-field textarea:focus {
+    border-color: #b76e79;
+    box-shadow: 0 0 0 3px rgb(183 110 121 / 12%);
+}
+
+.training-form-field textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.training-form-field small {
+    color: #78716c;
+    font-size: 12px;
+}
+
+.training-form-full {
+    grid-column: 1 / -1;
+}
+
+.training-active-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.training-active-toggle input {
+    width: 16px;
+    height: 16px;
+    accent-color: #a84f63;
+}
+
+.training-form-error {
+    margin-bottom: 22px;
+    padding: 12px 15px;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 14px;
+}
+
+.training-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid #eee9e6;
+}
+
+.training-form-actions button,
+.training-form-card form button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.admin-summary-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.admin-summary-card {
+    background: #fff;
+    border: 1px solid #f0e4ea;
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.admin-summary-card span {
+    font-size: 13px;
+    color: #8a7a84;
+}
+
+.admin-summary-card strong {
+    font-size: 24px;
+    color: #2a2233;
+}
+
+.cell-sub {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: #8a7a84;
+}
+
+.training-image-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+/* ---------- Training package image ---------- */
+
+.training-image-upload {
+    width: 100%;
+}
+
+/* Empty-state upload box (a <label> for the hidden file input) */
+.training-form-field label.training-image-upload-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 28px 16px;
+    border: 2px dashed #e2c9d4;
+    border-radius: 12px;
+    background: #fdf8fa;
+    color: #8a7a84;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.training-form-field label.training-image-upload-box:hover {
+    border-color: #8E2A63;
+    background: #faf0f5;
+    color: #8E2A63;
+}
+
+/* Preview of the selected / existing image */
+.training-image-preview {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.training-image-preview img {
+    width: 180px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #EDE8EE;
+    display: block;
+}
+
+.training-remove-image {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid #f0c4c4;
+    border-radius: 8px;
+    background: #FBECEC;
+    color: #D9433F;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.training-remove-image:hover {
+    opacity: 0.8;
+}
+
+/* Thumbnail in the Manage Training Packages table */
+.training-table-thumb {
+    width: 56px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #EDE8EE;
+    display: block;
+}
+
+.training-no-image {
+    font-size: 12px;
+    color: #B7A3AE;
+}
+
+@media (max-width: 700px) {
+    .admin-summary-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .training-form-card {
+        padding: 18px;
+    }
+
+    .training-form-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .training-form-full {
+        grid-column: auto;
+    }
+
+    .training-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .training-form-actions button {
+        width: 100%;
+    }
+}
+
+.training-image-preview img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+}
+
+/* 4-card summary row (registrations) */
+.admin-summary-row--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+    .admin-summary-row--4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Extra pill color for Pending / Unpaid */
+.status-pill.pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+/* Status filter dropdown next to the search box */
+.admin-filter-select {
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #f0e4ea;
+    border-radius: 10px;
+    background: #fff;
+    color: #2a2233;
+    font: inherit;
+}
+
+/* Small select under a status pill inside a table cell */
+.admin-inline-select {
+    display: block;
+    margin-top: 6px;
+    padding: 4px 8px;
+    border: 1px solid #f0e4ea;
+    border-radius: 8px;
+    background: #fff;
+    color: #2a2233;
+    font: inherit;
+    font-size: 12px;
+}
+
+/* Save button in the table */
+.admin-save-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #8b3a5a;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Success message (the shared "status" box already has an error variant) */
+.manage-cakes-status.success {
+    color: #047857;
+    background: #ecfdf5;
 }
 
 /* ---------- Footer / pagination ---------- */

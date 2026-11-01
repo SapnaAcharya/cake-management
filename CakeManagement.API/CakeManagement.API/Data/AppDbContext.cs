@@ -41,7 +41,19 @@ namespace CakeManagementAPI.Data
 
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
+        public DbSet<TrainingPackage> TrainingPackages { get; set; }
+
+        public DbSet<Trainer> Trainers { get; set; }
+
+        public DbSet<TrainingBatch> TrainingBatches { get; set; }
+
         public DbSet<EmailVerificationOtp> EmailVerificationOtps { get; set; }
+        
+        public DbSet<TrainingEnrollment> TrainingEnrollments { get; set; }
+
+        // email verification for enrollment
+        public DbSet<EmailVerificationCode> EmailVerificationCodes => Set<EmailVerificationCode>();
+       // public DbSet<TrainingSession> TrainingSessions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -140,6 +152,37 @@ namespace CakeManagementAPI.Data
                 .WithMany()
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // TrainingPackage -> TrainingBatch
+            modelBuilder.Entity<TrainingBatch>()
+                .HasOne(b => b.TrainingPackage)
+                .WithMany(p => p.Batches)
+                .HasForeignKey(b => b.TrainingPackageId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Trainer -> TrainingBatch
+            modelBuilder.Entity<TrainingBatch>()
+                .HasOne(b => b.Trainer)
+                .WithMany(t => t.Batches)
+                .HasForeignKey(b => b.TrainerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Training Batch -> TrainingEnrollment
+            modelBuilder.Entity<TrainingEnrollment>()
+                .HasOne(e => e.TrainingBatch)
+                .WithMany()
+                .HasForeignKey(e => e.TrainingBatchId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Training package fee precision
+            modelBuilder.Entity<TrainingPackage>()
+                .Property(p => p.Fee)
+                .HasPrecision(18, 2);
+
+            // Training packages unique
+            modelBuilder.Entity<TrainingPackage>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
 
             modelBuilder.Entity<EmailVerificationOtp>()
                 .HasIndex(o => new { o.UserId, o.ExpiresAtUtc });
