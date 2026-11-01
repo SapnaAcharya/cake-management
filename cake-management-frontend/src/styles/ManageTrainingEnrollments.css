@@ -1,0 +1,412 @@
+/* Details modal for the Manage Training Enrollments page */
+
+.enrollment-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(42, 22, 32, 0.5);
+}
+
+.enrollment-details-modal {
+    width: 100%;
+    max-width: 750px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.enrollment-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 22px;
+    border-bottom: 1px solid #EDE8EE;
+}
+
+.enrollment-modal-header h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    color: #2A1620;
+}
+
+.enrollment-modal-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #8C7681;
+}
+
+.enrollment-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 7px;
+    background: #F4F0F3;
+    color: #6B6270;
+    cursor: pointer;
+}
+
+.enrollment-modal-close:hover {
+    opacity: 0.75;
+}
+
+.enrollment-details-content {
+    padding: 22px;
+}
+
+.enrollment-detail-section {
+    margin-bottom: 24px;
+}
+
+.enrollment-detail-section:last-child {
+    margin-bottom: 0;
+}
+
+.enrollment-detail-section h3 {
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #EDE8EE;
+    font-size: 15px;
+    color: #8E2A63;
+}
+
+.enrollment-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.enrollment-detail-grid > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+}
+
+.enrollment-detail-grid label {
+    font-size: 12px;
+    color: #9A8F97;
+}
+
+.enrollment-detail-grid strong {
+    font-size: 13.5px;
+    color: #2A1620;
+    overflow-wrap: anywhere;
+}
+
+.enrollment-schedule-detail {
+    grid-column: 1 / -1;
+}
+
+.enrollment-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 22px;
+    border-top: 1px solid #EDE8EE;
+}
+
+.enrollment-modal-footer button {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #8E2A63;
+    color: #fff;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.enrollment-modal-footer button:hover {
+    background: #6E1F4C;
+}
+
+@media (max-width: 650px) {
+    .enrollment-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .enrollment-modal-overlay {
+        padding: 10px;
+    }
+}
+
+/* =========================================
+   Manage Training Enrollments
+   Extra styles on top of AdminDashboard.css
+========================================= */
+
+/* ---------- Summary cards ---------- */
+
+.enrollment-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.enrollment-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid #f0e4ea;
+    border-radius: 14px;
+}
+
+.enrollment-summary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+}
+
+.enrollment-summary-icon.total-icon {
+    background: #f8e9f1;
+    color: #8E2A63;
+}
+
+.enrollment-summary-icon.confirmed-icon {
+    background: #D8F9EA;
+    color: #1A9A5C;
+}
+
+.enrollment-summary-icon.pending-icon {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.enrollment-summary-card h3 {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #8a7a84;
+}
+
+.enrollment-summary-card h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2a2233;
+}
+
+/* ---------- Status dropdown next to the search box ---------- */
+
+.enrollment-status-filter {
+    height: 46px;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    min-width: 190px;
+    padding: 0 38px 0 16px;
+    border: 1.5px solid #EBDDE1;
+    border-radius: 9px;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%236B6270' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14.5px;
+    color: #2A1620;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.enrollment-status-filter:hover {
+    border-color: #d48a9a;
+}
+
+.enrollment-status-filter:focus {
+    outline: none;
+    border-color: #e27a93;
+    box-shadow: 0 0 0 3px rgba(226, 122, 147, 0.15);
+}
+
+/* ---------- Two-line table cells ---------- */
+
+.enrollment-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.enrollment-cell span {
+    font-size: 12px;
+    color: #8a7a84;
+}
+
+/* first line of a contact cell (the email) keeps normal text styling */
+.enrollment-cell span:first-child {
+    font-size: 13.5px;
+    color: #4A4550;
+}
+
+/* ---------- Details modal ---------- */
+
+.enrollment-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(42, 22, 32, 0.5);
+}
+
+.enrollment-details-modal {
+    width: 100%;
+    max-width: 750px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.enrollment-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 22px;
+    border-bottom: 1px solid #EDE8EE;
+}
+
+.enrollment-modal-header h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    color: #2A1620;
+}
+
+.enrollment-modal-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #8C7681;
+}
+
+.enrollment-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 7px;
+    background: #F4F0F3;
+    color: #6B6270;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.enrollment-modal-close:hover {
+    opacity: 0.75;
+}
+
+.enrollment-details-content {
+    padding: 22px;
+}
+
+.enrollment-detail-section {
+    margin-bottom: 24px;
+}
+
+.enrollment-detail-section:last-child {
+    margin-bottom: 0;
+}
+
+.enrollment-detail-section h3 {
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #EDE8EE;
+    font-size: 15px;
+    color: #8E2A63;
+}
+
+.enrollment-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.enrollment-detail-grid > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+}
+
+.enrollment-detail-grid label {
+    font-size: 12px;
+    color: #9A8F97;
+}
+
+.enrollment-detail-grid strong {
+    font-size: 13.5px;
+    color: #2A1620;
+    overflow-wrap: anywhere;
+}
+
+.enrollment-schedule-detail {
+    grid-column: 1 / -1;
+}
+
+.enrollment-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 22px;
+    border-top: 1px solid #EDE8EE;
+}
+
+.enrollment-modal-footer button {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #8E2A63;
+    color: #fff;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.enrollment-modal-footer button:hover {
+    background: #6E1F4C;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 700px) {
+    .enrollment-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .enrollment-status-filter {
+        width: 100%;
+    }
+}
+
+@media (max-width: 650px) {
+    .enrollment-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .enrollment-modal-overlay {
+        padding: 10px;
+    }
+}

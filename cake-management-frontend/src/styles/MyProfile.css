@@ -265,6 +265,20 @@
     margin-top: 4px;
 }
 
+/* My Training tab inside the account page */
+.profile-training-card {
+    min-width: 0;
+}
+
+.profile-training-card .my-training-page {
+    padding: 0;
+    margin: 0;
+}
+
+.profile-training-card .my-training-header {
+    padding-top: 0;
+}
+
 /* ================================
    RESPONSIVE
 ================================ */
