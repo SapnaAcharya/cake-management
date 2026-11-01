@@ -151,9 +151,6 @@ builder.Services.AddHttpClient<BrevoPasswordResetEmailService>();
 builder.Services.AddScoped<IPasswordResetEmailService>(
     sp => sp.GetRequiredService<BrevoPasswordResetEmailService>());
 
-builder.Services.AddScoped<ICourseEnrollmentEmailService>(
-    sp => sp.GetRequiredService<BrevoPasswordResetEmailService>());
-
 // Add training enrollment service to the container
 builder.Services.AddScoped<TrainingEnrollmentService>();
 
@@ -200,12 +197,7 @@ builder.Services.AddScoped<ITrainingPackageService, TrainingPackageService>();
 builder.Services.AddScoped<ITrainerService, TrainerService>();
 
 // Add training batch services to the container
-builder.Services.AddScoped<ITrainingBatchService, TrainingBatchService>();
-
-// Add enrollment services to the container
-builder.Services.AddScoped<TrainingEnrollmentService>(); 
-
-builder.Services.AddScoped<EnrollmentEmailVerificationService>();   
+builder.Services.AddScoped<ITrainingBatchService, TrainingBatchService>(); 
 
 var app = builder.Build();
 

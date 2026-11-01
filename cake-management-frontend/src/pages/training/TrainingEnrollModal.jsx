@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { GraduationCap, X } from "lucide-react";
 
 import {
-    sendEnrollmentOtp,
-    verifyEnrollmentEmail,
     enrollInTraining
 } from "../../services/training/trainingEnrollmentService";
 
@@ -27,15 +25,7 @@ export default function TrainingEnrollModal({
 }) {
     const [form, setForm] = useState(EMPTY_FORM);
 
-    const [otp, setOtp] = useState("");
-    const [verificationToken, setVerificationToken] = useState("");
-
-    const [sendingOtp, setSendingOtp] = useState(false);
-    const [verifyingOtp, setVerifyingOtp] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-
-    const [otpSent, setOtpSent] = useState(false);
-    const [emailVerified, setEmailVerified] = useState(false);
 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
@@ -43,7 +33,9 @@ export default function TrainingEnrollModal({
     // Close on Escape and lock page scroll
     useEffect(() => {
         const onKey = (e) => {
-            if (e.key === "Escape") onClose();
+            if (e.key === "Escape" && !submitting) {
+                onClose();
+            }
         };
 
         document.addEventListener("keydown", onKey);
@@ -55,7 +47,7 @@ export default function TrainingEnrollModal({
             document.removeEventListener("keydown", onKey);
             document.body.style.overflow = previousOverflow;
         };
-    }, [onClose]);
+    }, [onClose, submitting]);
 
     // Only display open batches
     const openBatches = batches.filter(
@@ -90,99 +82,27 @@ export default function TrainingEnrollModal({
         setError("");
     };
 
-    // Step 1: Validate email
-    const validateEmail = () => {
-        const email = form.email.trim();
+    // Validate enrollment form
+    const validateEnrollmentForm = () => {
+        if (!form.name.trim()) {
+            setError("Please enter your full name.");
+            return false;
+        }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!email) {
+        if (!form.email.trim()) {
             setError("Please enter your email address.");
             return false;
         }
 
-        if (!emailRegex.test(email)) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(form.email.trim())) {
             setError("Please enter a valid email address.");
             return false;
         }
 
-        return true;
-    };
-
-    // Step 2: Send OTP
-    const handleSendOtp = async () => {
-        setError("");
-
-        if (!validateEmail()) return;
-
-        try {
-            setSendingOtp(true);
-
-            await sendEnrollmentOtp(form.email.trim());
-
-            setOtpSent(true);
-            setOtp("");
-
-        } catch (err) {
-            console.error("SEND OTP ERROR:", err);
-
-            setError(
-                err.response?.data?.message ||
-                "Could not send the verification code. Please try again."
-            );
-        } finally {
-            setSendingOtp(false);
-        }
-    };
-
-    // Step 3: Verify OTP and receive verification token
-    const handleVerifyOtp = async () => {
-        setError("");
-
-        if (!validateEmail()) return;
-
-        if (!/^\d{6}$/.test(otp)) {
-            setError("Please enter the valid six-digit OTP.");
-            return;
-        }
-
-        try {
-            setVerifyingOtp(true);
-
-            const response = await verifyEnrollmentEmail(
-                form.email.trim(),
-                otp.trim()
-            );
-
-            if (!response.verificationToken) {
-                throw new Error("Verification token was not returned.");
-            }
-
-            setVerificationToken(response.verificationToken);
-            setEmailVerified(true);
-
-            setError("");
-
-        } catch (err) {
-            console.error("VERIFY OTP ERROR:", err);
-
-            setError(
-                err.response?.data?.message ||
-                err.message ||
-                "Email verification failed. Please try again."
-            );
-        } finally {
-            setVerifyingOtp(false);
-        }
-    };
-
-    // Step 4: Validate training enrollment form
-    const validateEnrollmentForm = () => {
-        if (
-            !form.name.trim() ||
-            !form.phone.trim()
-        ) {
-            setError("Please fill in your name and phone number.");
+        if (!form.phone.trim()) {
+            setError("Please enter your phone number.");
             return false;
         }
 
@@ -191,15 +111,10 @@ export default function TrainingEnrollModal({
             return false;
         }
 
-        if (!verificationToken) {
-            setError("Please verify your email before enrolling.");
-            return false;
-        }
-
         return true;
     };
 
-    // Step 5: Submit enrollment with verification token
+    // Submit enrollment directly without OTP verification
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -209,17 +124,24 @@ export default function TrainingEnrollModal({
         try {
             setSubmitting(true);
 
-            await enrollInTraining({
+            const enrollmentData = {
                 trainingId: Number(trainingId),
                 trainingBatchId: Number(form.trainingBatchId),
                 name: form.name.trim(),
                 email: form.email.trim(),
                 phone: form.phone.trim(),
-                whatsApp: form.whatsApp.trim(),
-                city: form.city.trim(),
-                experienceLevel: form.experienceLevel,
-                verificationToken: verificationToken
-            });
+                whatsApp: form.whatsApp.trim() || null,
+                city: form.city.trim() || null,
+                experienceLevel: form.experienceLevel || "Beginner"
+            };
+
+            const response = await enrollInTraining(enrollmentData);
+
+            if (response.success === false) {
+                throw new Error(
+                    response.message || "Training enrollment failed."
+                );
+            }
 
             setSuccess(true);
 
@@ -228,6 +150,7 @@ export default function TrainingEnrollModal({
 
             setError(
                 err.response?.data?.message ||
+                err.message ||
                 "Training enrollment failed. Please try again."
             );
         } finally {
@@ -239,7 +162,7 @@ export default function TrainingEnrollModal({
         <div
             className="enroll-overlay"
             onMouseDown={(e) =>
-                e.target === e.currentTarget && onClose()
+                e.target === e.currentTarget && !submitting && onClose()
             }
         >
             <div
@@ -260,6 +183,7 @@ export default function TrainingEnrollModal({
                         className="enroll-close"
                         onClick={onClose}
                         aria-label="Close"
+                        disabled={submitting}
                     >
                         <X size={20} />
                     </button>
@@ -341,325 +265,173 @@ export default function TrainingEnrollModal({
                         onSubmit={handleSubmit}
                         noValidate
                     >
+                        {/* CUSTOMER INFORMATION */}
 
-                        {/* STAGE 1: EMAIL VERIFICATION */}
-                        {!emailVerified && (
-                            <>
-                                <div className="enroll-full">
-                                    <h3>Verify Your Email Address</h3>
+                        <div className="enroll-full">
+                            <h3>Training Enrollment Details</h3>
 
-                                    <p>
-                                        Please verify your email address
-                                        before proceeding with your
-                                        training enrollment.
-                                    </p>
-                                </div>
+                            <p>
+                                Please complete the form below to register
+                                for your selected training course.
+                            </p>
+                        </div>
 
-                                <label className="enroll-field enroll-full">
-                                    <span>
-                                        Email Address <em>*</em>
-                                    </span>
+                        {/* FULL NAME */}
+                        <label className="enroll-field enroll-full">
+                            <span>
+                                Full Name <em>*</em>
+                            </span>
 
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={form.email}
-                                        onChange={(e) => {
-                                            const value = e.target.value;
+                            <input
+                                name="name"
+                                value={form.name}
+                                onChange={handleChange}
+                                placeholder="Enter your full name"
+                                autoFocus
+                                required
+                            />
+                        </label>
 
-                                            setForm((prev) => ({
-                                                ...prev,
-                                                email: value
-                                            }));
+                        {/* EMAIL */}
+                        <label className="enroll-field enroll-full">
+                            <span>
+                                Email Address <em>*</em>
+                            </span>
 
-                                            // Reset verification if email changes
-                                            setOtpSent(false);
-                                            setOtp("");
-                                            setVerificationToken("");
-                                            setError("");
-                                        }}
-                                        placeholder="your@email.com"
-                                        autoFocus
-                                        disabled={sendingOtp || verifyingOtp}
-                                    />
-                                </label>
+                            <input
+                                type="email"
+                                name="email"
+                                value={form.email}
+                                onChange={handleChange}
+                                placeholder="your@email.com"
+                                required
+                            />
+                        </label>
 
-                                {/* SEND OTP BUTTON */}
-                                <div className="enroll-full">
-                                    <button
-                                        type="button"
-                                        className="enroll-submit"
-                                        onClick={handleSendOtp}
-                                        disabled={
-                                            sendingOtp ||
-                                            verifyingOtp
-                                        }
+                        {/* PHONE */}
+                        <label className="enroll-field">
+                            <span>
+                                Phone Number <em>*</em>
+                            </span>
+
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={form.phone}
+                                onChange={handleChange}
+                                placeholder="Your phone number"
+                                required
+                            />
+                        </label>
+
+                        {/* WHATSAPP */}
+                        <label className="enroll-field">
+                            <span>WhatsApp</span>
+
+                            <input
+                                type="tel"
+                                name="whatsApp"
+                                value={form.whatsApp}
+                                onChange={handleChange}
+                                placeholder="Your WhatsApp number"
+                            />
+                        </label>
+
+                        {/* CITY */}
+                        <label className="enroll-field">
+                            <span>City</span>
+
+                            <input
+                                name="city"
+                                value={form.city}
+                                onChange={handleChange}
+                                placeholder="Your city"
+                            />
+                        </label>
+
+                        {/* EXPERIENCE LEVEL */}
+                        <label className="enroll-field">
+                            <span>Experience Level</span>
+
+                            <select
+                                name="experienceLevel"
+                                value={form.experienceLevel}
+                                onChange={handleChange}
+                            >
+                                <option value="Beginner">
+                                    Beginner
+                                </option>
+
+                                <option value="Intermediate">
+                                    Intermediate
+                                </option>
+
+                                <option value="Advanced">
+                                    Advanced
+                                </option>
+                            </select>
+                        </label>
+
+                        {/* TRAINING BATCH SELECTION */}
+                        <label className="enroll-field enroll-full">
+                            <span>
+                                Select Training Batch <em>*</em>
+                            </span>
+
+                            <select
+                                name="trainingBatchId"
+                                value={form.trainingBatchId}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">
+                                    Choose your training batch
+                                </option>
+
+                                {openBatches.map((batch) => (
+                                    <option
+                                        key={batch.id}
+                                        value={batch.id}
                                     >
-                                        {sendingOtp
-                                            ? "Sending OTP..."
-                                            : otpSent
-                                                ? "Resend OTP"
-                                                : "Send OTP to Email"}
-                                    </button>
+                                        {formatDate(batch.startDate)}
+                                        {" - "}
+                                        {formatDate(batch.endDate)}
+                                    </option>
+                                ))}
+                            </select>
 
-                                    {otpSent && (
-                                        <p>
-                                            A verification code has been
-                                            sent to{" "}
-                                            <strong>{form.email}</strong>.
-                                            Please check your inbox.
-                                        </p>
-                                    )}
-                                </div>
+                            {openBatches.length === 0 && (
+                                <small>
+                                    No open training batches are
+                                    currently available.
+                                </small>
+                            )}
+                        </label>
 
-                                {/* OTP INPUT */}
-                                {otpSent && (
-                                    <>
-                                        <label className="enroll-field enroll-full">
-                                            <span>
-                                                Enter Verification Code{" "}
-                                                <em>*</em>
-                                            </span>
+                        {/* SELECTED BATCH INFORMATION */}
+                        {selectedBatch && (
+                            <div className="selected-batch-details enroll-full">
+                                <h4>Training Schedule</h4>
 
-                                            <input
-                                                type="text"
-                                                inputMode="numeric"
-                                                maxLength={6}
-                                                value={otp}
-                                                onChange={(e) => {
-                                                    setOtp(
-                                                        e.target.value
-                                                            .replace(/\D/g, "")
-                                                            .slice(0, 6)
-                                                    );
+                                <p>
+                                    <strong>Start Date:</strong>{" "}
+                                    {formatDate(selectedBatch.startDate)}
+                                </p>
 
-                                                    setError("");
-                                                }}
-                                                placeholder="Enter 6-digit OTP"
-                                                autoComplete="one-time-code"
-                                            />
+                                <p>
+                                    <strong>End Date:</strong>{" "}
+                                    {formatDate(selectedBatch.endDate)}
+                                </p>
 
-                                            <small>
-                                                The OTP is valid for
-                                                5 minutes.
-                                            </small>
-                                        </label>
-
-                                        <div className="enroll-full">
-                                            <button
-                                                type="button"
-                                                className="enroll-submit"
-                                                onClick={handleVerifyOtp}
-                                                disabled={
-                                                    verifyingOtp ||
-                                                    sendingOtp
-                                                }
-                                            >
-                                                {verifyingOtp
-                                                    ? "Verifying Email..."
-                                                    : "Verify Email"}
-                                            </button>
-                                        </div>
-                                    </>
-                                )}
-                            </>
+                                <p>
+                                    <strong>Time Schedule:</strong>{" "}
+                                    {selectedBatch.scheduleDetails}
+                                </p>
+                            </div>
                         )}
 
-                        {/* STAGE 2: FULL ENROLLMENT FORM */}
-                        {emailVerified && (
-                            <>
-                                <div className="enroll-full">
-                                    <h3>Email Verified Successfully!</h3>
-
-                                    <p>
-                                        Your email{" "}
-                                        <strong>{form.email}</strong>{" "}
-                                        has been verified. Please complete
-                                        your training enrollment details.
-                                    </p>
-                                </div>
-
-                                <label className="enroll-field enroll-full">
-                                    <span>
-                                        Full Name <em>*</em>
-                                    </span>
-
-                                    <input
-                                        name="name"
-                                        value={form.name}
-                                        onChange={handleChange}
-                                        placeholder="Enter your full name"
-                                        autoFocus
-                                    />
-                                </label>
-
-                                <label className="enroll-field">
-                                    <span>
-                                        Email Address
-                                    </span>
-
-                                    <input
-                                        type="email"
-                                        value={form.email}
-                                        readOnly
-                                    />
-                                </label>
-
-                                <label className="enroll-field">
-                                    <span>
-                                        Phone Number <em>*</em>
-                                    </span>
-
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        value={form.phone}
-                                        onChange={handleChange}
-                                        placeholder="Your phone number"
-                                    />
-                                </label>
-
-                                <label className="enroll-field">
-                                    <span>WhatsApp</span>
-
-                                    <input
-                                        type="tel"
-                                        name="whatsApp"
-                                        value={form.whatsApp}
-                                        onChange={handleChange}
-                                        placeholder="Your WhatsApp number"
-                                    />
-                                </label>
-
-                                <label className="enroll-field">
-                                    <span>City</span>
-
-                                    <input
-                                        name="city"
-                                        value={form.city}
-                                        onChange={handleChange}
-                                        placeholder="Your city"
-                                    />
-                                </label>
-
-                                <label className="enroll-field">
-                                    <span>Experience Level</span>
-
-                                    <select
-                                        name="experienceLevel"
-                                        value={form.experienceLevel}
-                                        onChange={handleChange}
-                                    >
-                                        <option value="Beginner">
-                                            Beginner
-                                        </option>
-
-                                        <option value="Intermediate">
-                                            Intermediate
-                                        </option>
-
-                                        <option value="Advanced">
-                                            Advanced
-                                        </option>
-                                    </select>
-                                </label>
-
-                                {/* TRAINING BATCH SELECTION */}
-                                <label className="enroll-field enroll-full">
-                                    <span>
-                                        Select Training Batch <em>*</em>
-                                    </span>
-
-                                    <select
-                                        name="trainingBatchId"
-                                        value={form.trainingBatchId}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">
-                                            Choose your training batch
-                                        </option>
-
-                                        {openBatches.map((batch) => (
-                                            <option
-                                                key={batch.id}
-                                                value={batch.id}
-                                            >
-                                                {formatDate(batch.startDate)}
-                                                {" - "}
-                                                {formatDate(batch.endDate)}
-                                            </option>
-                                        ))}
-                                    </select>
-
-                                    {openBatches.length === 0 && (
-                                        <small>
-                                            No open training batches are
-                                            currently available.
-                                        </small>
-                                    )}
-                                </label>
-
-                                {/* SELECTED BATCH INFORMATION */}
-                                {selectedBatch && (
-                                    <div className="selected-batch-details enroll-full">
-                                        <h4>Training Schedule</h4>
-
-                                        <p>
-                                            <strong>Start Date:</strong>{" "}
-                                            {formatDate(selectedBatch.startDate)}
-                                        </p>
-
-                                        <p>
-                                            <strong>End Date:</strong>{" "}
-                                            {formatDate(selectedBatch.endDate)}
-                                        </p>
-
-                                        <p>
-                                            <strong>Time Schedule:</strong>{" "}
-                                            {selectedBatch.scheduleDetails}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* ERROR MESSAGE */}
-                                {error && (
-                                    <p
-                                        className="enroll-error enroll-full"
-                                        role="alert"
-                                    >
-                                        {error}
-                                    </p>
-                                )}
-
-                                {/* ENROLLMENT ACTIONS */}
-                                <div className="enroll-actions enroll-full">
-                                    <button
-                                        type="button"
-                                        className="enroll-cancel"
-                                        onClick={onClose}
-                                    >
-                                        Cancel
-                                    </button>
-
-                                    <button
-                                        type="submit"
-                                        className="enroll-submit"
-                                        disabled={
-                                            submitting ||
-                                            openBatches.length === 0
-                                        }
-                                    >
-                                        {submitting
-                                            ? "Submitting Enrollment..."
-                                            : "Complete Enrollment"}
-                                    </button>
-                                </div>
-                            </>
-                        )}
-
-                        {/* ERROR MESSAGE FOR EMAIL/OTP STAGE */}
-                        {!emailVerified && error && (
+                        {/* ERROR MESSAGE */}
+                        {error && (
                             <p
                                 className="enroll-error enroll-full"
                                 role="alert"
@@ -668,18 +440,30 @@ export default function TrainingEnrollModal({
                             </p>
                         )}
 
-                        {/* CANCEL BUTTON */}
-                        {!emailVerified && (
-                            <div className="enroll-actions enroll-full">
-                                <button
-                                    type="button"
-                                    className="enroll-cancel"
-                                    onClick={onClose}
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        )}
+                        {/* ENROLLMENT ACTIONS */}
+                        <div className="enroll-actions enroll-full">
+                            <button
+                                type="button"
+                                className="enroll-cancel"
+                                onClick={onClose}
+                                disabled={submitting}
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                type="submit"
+                                className="enroll-submit"
+                                disabled={
+                                    submitting ||
+                                    openBatches.length === 0
+                                }
+                            >
+                                {submitting
+                                    ? "Submitting Enrollment..."
+                                    : "Complete Enrollment"}
+                            </button>
+                        </div>
 
                     </form>
                 )}

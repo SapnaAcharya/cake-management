@@ -12,9 +12,5 @@ namespace CakeManagementAPI.DTOs.Training
         public string? WhatsApp { get; set; }
         public string? City { get; set; }
         public string? ExperienceLevel { get; set; }
-
-        // Required email verification token
-        [Required]
-        public string VerificationToken { get; set; } = "";
     }
 }
