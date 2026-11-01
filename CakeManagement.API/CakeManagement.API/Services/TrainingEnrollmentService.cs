@@ -1,6 +1,5 @@
 ﻿using CakeManagementAPI.Data;
 using CakeManagementAPI.Models;
-using CakeManagementAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CakeManagementAPI.DTOs.Training;
 
@@ -9,20 +8,16 @@ namespace CakeManagementAPI.Services
     public class TrainingEnrollmentService
     {
         private readonly AppDbContext _context;
-        private readonly ICourseEnrollmentEmailService _emailService;
-        private readonly ILogger<TrainingEnrollmentService> _logger;
 
-        public TrainingEnrollmentService(
-            AppDbContext context,
-            ICourseEnrollmentEmailService emailService,
-            ILogger<TrainingEnrollmentService> logger)
+        public TrainingEnrollmentService(AppDbContext context)
         {
             _context = context;
-            _emailService = emailService;
-            _logger = logger;
         }
 
+        // ============================================
         // CREATE CUSTOMER TRAINING ENROLLMENT
+        // ============================================
+
         public async Task<TrainingEnrollment> CreateAsync(
             TrainingEnrollment enrollment)
         {
@@ -92,73 +87,24 @@ namespace CakeManagementAPI.Services
                     "Sorry, this training batch is full.");
             }
 
-            // 8. Confirm enrollment
+            // 8. Create enrollment without email verification
             enrollment.Status = "Confirmed";
             enrollment.CreatedAt = DateTime.UtcNow;
             enrollment.TrainingBatch = batch;
 
             _context.TrainingEnrollments.Add(enrollment);
 
-            // Save enrollment inside the controller's transaction
+            // 9. Save enrollment to database
             await _context.SaveChangesAsync();
 
-            // Email will be sent after the transaction commits
             return enrollment;
         }
 
-        // SEND CONFIRMATION EMAIL AFTER DATABASE COMMIT
-        public async Task SendConfirmationEmailAsync(int enrollmentId)
-        {
-            try
-            {
-                // Load saved enrollment with batch and package details
-                var enrollment = await _context.TrainingEnrollments
-                    .AsNoTracking()
-                    .Include(e => e.TrainingBatch)
-                        .ThenInclude(b => b.TrainingPackage)
-                    .FirstOrDefaultAsync(e => e.Id == enrollmentId);
+        // ============================================
+        // GET ALL CUSTOMER TRAINING ENROLLMENTS
+        // ADMIN
+        // ============================================
 
-                if (enrollment == null)
-                {
-                    _logger.LogWarning(
-                        "Cannot send confirmation email. Enrollment {EnrollmentId} was not found.",
-                        enrollmentId);
-
-                    return;
-                }
-
-                var batch = enrollment.TrainingBatch;
-                var package = batch?.TrainingPackage;
-
-                if (batch == null || package == null)
-                {
-                    _logger.LogWarning(
-                        "Training details are missing for enrollment {EnrollmentId}.",
-                        enrollmentId);
-
-                    return;
-                }
-
-                // Send confirmation email
-                await _emailService.SendCourseEnrollmentEmailAsync(
-                    enrollment.Email,
-                    enrollment.Name,
-                    package.Name,
-                    batch.StartDate,
-                    batch.EndDate,
-                    batch.ScheduleDetails);
-            }
-            catch (Exception ex)
-            {
-                // Email failure must not undo a committed enrollment
-                _logger.LogError(
-                    ex,
-                    "Enrollment confirmation email failed for enrollment {EnrollmentId}",
-                    enrollmentId);
-            }
-        }
-
-        // GET ALL CUSTOMER TRAINING ENROLLMENTS FOR ADMIN
         public async Task<List<TrainingEnrollmentAdminDto>>
             GetAllEnrollmentsAsync()
         {
@@ -196,7 +142,11 @@ namespace CakeManagementAPI.Services
                 .ToListAsync();
         }
 
-        // GET ONE CUSTOMER ENROLLMENT BY ID
+        // ============================================
+        // GET CUSTOMER ENROLLMENT BY ID
+        // ADMIN
+        // ============================================
+
         public async Task<TrainingEnrollmentAdminDto?>
             GetEnrollmentByIdAsync(int id)
         {
@@ -235,5 +185,6 @@ namespace CakeManagementAPI.Services
         }
     }
 }
+
 
 
