@@ -85,17 +85,27 @@ export default function DesignByTemplate() {
         <div className="dbt-body">
           <aside className="sidebar">
             <div className="sidebar__head">
-              <h1 className="sidebar__title">Choose a Template</h1>
+              <h1 className="sidebar__title">Design by Template</h1>
+              <p className="sidebar__lead">
+                Choose from our ready-made designs and make it your own.
+              </p>
             </div>
-            <div className="template-skeleton-grid">
+            <div className="template-skeleton-grid" aria-hidden="true">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="template-skeleton-card" />
               ))}
             </div>
           </aside>
+
           <div className="preview-col">
-            <div className="ps" style={{ background: "var(--surface-2)" }} />
+            <div
+              className="ps ps--skeleton"
+              style={{ background: "var(--surface-2)" }}
+              aria-hidden="true"
+            />
           </div>
+
+          <aside className="details details--skeleton" aria-hidden="true" />
         </div>
       </div>
     );

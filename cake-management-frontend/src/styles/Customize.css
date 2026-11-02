@@ -3,28 +3,49 @@
    File: src/styles/Customize.css
    --------------------------------------------------------------------------
    CONTENTS
-     0. Tokens & page shell
+     0. Page resets, tokens & page shell
      1. Shared primitives
      2. Left column (selected design, includes, current selection)
      3. Stage (canvas, photo, overlays, tier cake, tools, zoom bar, thumbs)
      4. Options panel (sections, pills, chips, swatches, candles, date)
-     5. Footer: total + Add to cart (sticky)
+     5. Footer: total + Add to cart
      6. Loading state
-     7. Responsive
+     7. Misc (note, row label, font picker)
 
-   The header (navbar + step bar) now comes from the shared Header
-   component and template.css, so all .cz-header / .cz-brand / .cz-steps /
-   .cz-action-pill rules were removed.
+   This file holds the DESKTOP layout only (three columns, page fits the
+   window). Every tablet / phone rule lives in customizeresponsive.css,
+   which must be imported AFTER this file.
 
-   IMPORTANT: keep --cz-col-left / --cz-col-right / --cz-gap the same as
-   the column widths used in template.css (.dbt-body, .steps-bar) so both
-   pages line up exactly.
+   The header (navbar + step bar) comes from the shared Header component
+   and template.css.
    ========================================================================== */
 
 
 /* ==========================================================================
-   0. TOKENS & PAGE SHELL
+   0. PAGE RESETS, TOKENS & PAGE SHELL
    ========================================================================== */
+
+/* The Vite / CRA starter centres <body> and caps #root at 1280px. template.css
+   only fixes that for pages that render .dbt, so do the same for .cz. */
+html:has(.cz),
+body:has(.cz) {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  display: block;
+  place-items: initial;
+}
+#root:has(.cz),
+#__next:has(.cz) {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
 .cz {
   /* colour */
   --cz-navy: #1f1b3a;
@@ -32,7 +53,8 @@
   --cz-glass-shadow: 0 4px 16px rgba(255, 120, 160, 0.14);
   --cz-stage-bg: linear-gradient(180deg, #f9d6de 0%, #fbe3e8 60%, #f8d8df 100%);
 
-  /* layout (match template.css) */
+  /* layout (the steps bar in the header uses these too, see
+     customizeresponsive.css) */
   --cz-col-left: 300px;
   --cz-col-right: 410px;
   --cz-gap: 16px;
@@ -346,6 +368,10 @@
   overflow: hidden;
   border-radius: var(--radius-lg);
   background: var(--cz-stage-bg);
+  /* Lets the bottom bar react to the stage's own width (see
+     customizeresponsive.css) instead of the screen width */
+  container-type: inline-size;
+  container-name: czstage;
 }
 .cz-stage--expanded {
   position: fixed;
@@ -934,30 +960,25 @@
 .cz-msg-color {
   margin-top: 14px;
 }
-
 .cz-msg-color .cz-deco-group__title {
   margin-bottom: 10px;
   font-weight: 700;
   color: #000000;
 }
-
 .cz-msg-color .cz-swatches {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
 }
-
 .cz-msg-color .cz-swatch {
   flex: 0 0 38px;
 }
-
 .cz-msg-color .cz-swatch--picker {
   position: relative;
   overflow: hidden;
   cursor: pointer;
 }
-
 .cz-msg-color .cz-swatch--picker input[type="color"] {
   width: 100%;
   height: 100%;
@@ -1180,7 +1201,8 @@
 
 
 /* ==========================================================================
-   5. FOOTER — total on the left, Add to cart on the right (sticky)
+   5. FOOTER — total on the left, Add to cart on the right
+   (on tablets / phones customizeresponsive.css pins it to the screen)
    ========================================================================== */
 .cz-panel__foot {
   flex: none;
@@ -1299,84 +1321,8 @@
 
 
 /* ==========================================================================
-   7. RESPONSIVE
+   7. MISC
    ========================================================================== */
-@media (max-width: 1280px) {
-  .cz {
-    --cz-col-left: 270px;
-    --cz-col-right: 380px;
-  }
-  .cz-zoom {
-    gap: 14px;
-    padding: 0 18px;
-  }
-}
-
-/* Tablet / small laptop: stack columns, page scrolls, Add to cart stays
-   pinned to the bottom of the screen */
-@media (max-width: 1100px) {
-  html,
-  body {
-    overflow: auto;
-  }
-  .cz {
-    height: auto;
-    min-height: 100vh;
-  }
-  .cz-body {
-    grid-template-columns: 1fr;
-    grid-template-rows: none;
-  }
-  .cz-stage {
-    order: -1;
-    min-height: 460px;
-  }
-  .cz-side {
-    overflow: visible;
-  }
-  .cz-panel {
-    overflow: visible;
-  }
-  .cz-panel__scroll {
-    overflow: visible;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-  .cz-panel__foot {
-    position: sticky;
-    bottom: 0;
-    z-index: 10;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  }
-}
-
-@media (max-width: 720px) {
-  .cz-body {
-    padding: 12px;
-  }
-  .cz-stage {
-    min-height: 400px;
-  }
-  .cz-stage__bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .cz-zoom {
-    justify-content: center;
-    height: 48px;
-  }
-  .cz-thumbs {
-    display: none;
-  }
-  .cz-tc__plate {
-    height: 10px;
-  }
-  .cz-tc .cz-candle {
-    width: 5px;
-    height: 20px;
-  }
-}
-
 .cz-note {
   position: absolute;
   left: 50%;
@@ -1395,20 +1341,19 @@
   z-index: 2;
 }
 
-   .cz-row__label { min-width: 64px; }
-   .cz-row__value {
-     display: flex;
-     align-items: center;
-     gap: 6px;
-     min-width: 0;
-     font-size: 13px;
-     white-space: nowrap;
-   }
+.cz-row__label {
+  min-width: 64px;
+}
+.cz-row__value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 13px;
+  white-space: nowrap;
+}
 
-
-/* ==========================================================================
-   FONT PICKER — compact grid + "More fonts" link
-   ========================================================================== */
+/* ---- Font picker: compact grid + "More fonts" link ---- */
 .cz-font-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
