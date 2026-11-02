@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "./TemplateHeader"; // same folder: components/customization
 import CustomizeSidebar from "./Customizesidebar";
@@ -12,37 +12,76 @@ import { mapApiTemplateToViewModel } from "../../utils/mapApiTemplate";
 import { initialConfig, calcPrice } from "../../data/Options";
 import "../../styles/template.css";
 import "../../styles/Customize.css";
+import "../../styles/customizeresponsive.css"; // must stay last
 
 // matches the route in App.jsx
 const templatePage = (cakeId) =>
   cakeId ? `/design-by-template/${cakeId}` : "/design-by-template";
 
+const getToken = () =>
+  localStorage.getItem("token") || sessionStorage.getItem("token");
+
+const countItems = (cart) =>
+  (cart?.items || []).reduce((total, item) => total + (item.quantity || 0), 0);
+
+/**
+ * Media queries only work when the page has a viewport meta tag.
+ * If index.html forgot it, add it here so phones don't render at ~980px.
+ */
+function useEnsureViewportMeta() {
+  useEffect(() => {
+    let meta = document.querySelector('meta[name="viewport"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "viewport";
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", "width=device-width, initial-scale=1");
+  }, []);
+}
+
 export default function CustomizePage() {
   const { cakeId, templateId } = useParams();
   const { state } = useLocation();
 
-  const [template, setTemplate] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  useEnsureViewportMeta();
+
+  const [templateState, setTemplateState] = useState(() => ({
+    templateId,
+    template: null,
+    loading: Boolean(templateId),
+    error: null,
+  }));
 
   useEffect(() => {
     let isMounted = true;
 
     // /customize/:cakeId has no templateId -> send the user to pick one
     if (!templateId) {
-      return;
+      return undefined;
     }
 
     templateService
       .getTemplateById(templateId)
       .then((data) => {
-        if (isMounted) setTemplate(mapApiTemplateToViewModel(data));
+        if (isMounted) {
+          setTemplateState({
+            templateId,
+            template: mapApiTemplateToViewModel(data),
+            loading: false,
+            error: null,
+          });
+        }
       })
       .catch((err) => {
-        if (isMounted) setError(err.message);
-      })
-      .finally(() => {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setTemplateState({
+            templateId,
+            template: null,
+            loading: false,
+            error: err.message || "Failed to load template.",
+          });
+        }
       });
 
     return () => {
@@ -50,9 +89,14 @@ export default function CustomizePage() {
     };
   }, [templateId]);
 
+  const isCurrentTemplate = templateState.templateId === templateId;
+  const template = isCurrentTemplate ? templateState.template : null;
+  const loading = Boolean(templateId) && (!isCurrentTemplate || templateState.loading);
+  const error = isCurrentTemplate ? templateState.error : null;
+
   if (templateId && loading) {
     return (
-      <div className="cz app">
+      <div className="cz">
         <Header step={2} leftTitle="Customize" rightTitle="" variant="customize" />
         <div className="cz-loading">Loading template...</div>
       </div>
@@ -96,6 +140,8 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
   const [decorationsLoading, setDecorationsLoading] = useState(true);
   const [decorationsError, setDecorationsError] = useState("");
 
+  const toastTimer = useRef(null);
+
   useEffect(() => {
     let ignore = false;
 
@@ -104,7 +150,8 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
       setDecorationsError("");
       try {
         const data = await decorationService.getDecorations();
-        if (!ignore) setDecorations(data.items || data || []);
+        const list = Array.isArray(data) ? data : data?.items;
+        if (!ignore) setDecorations(Array.isArray(list) ? list : []);
       } catch (err) {
         if (!ignore) setDecorationsError(err.message || "Failed to load decorations.");
       } finally {
@@ -120,28 +167,35 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
 
   // Load existing cart count on mount
   useEffect(() => {
-    const loadInitialCartCount = async () => {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    let ignore = false;
 
-      if (!token) {
+    const loadInitialCartCount = async () => {
+      if (!getToken()) {
         setCartCount(getGuestCartCount());
         return;
       }
 
       try {
         const cart = await cartService.getCart();
-        setCartCount(cart.items.reduce((total, item) => total + item.quantity, 0));
+        if (!ignore) setCartCount(countItems(cart));
       } catch {
         console.error("Failed to load customer cart");
       }
     };
 
     loadInitialCartCount();
+    return () => {
+      ignore = true;
+    };
   }, []);
+
+  // clear the toast timer when leaving the page
+  useEffect(() => () => clearTimeout(toastTimer.current), []);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2500);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 2500);
   };
 
   const update = (patch) => {
@@ -161,10 +215,11 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
   );
 
   const addToCart = async () => {
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (addingToCart) return; // ignore double taps on phones
+
+    const token = getToken();
 
     const customization = {
-      // cakeId: Number(cakeId),
       cakeId: cakeIdNum,
       templateId: template.id,
       size: cfg.size,
@@ -178,7 +233,7 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
       frosting: cfg.frosting,
       candles: cfg.candles,
       lit: cfg.lit,
-      decorations: cfg.decorations
+      decorations: (cfg.decorations || [])
         .filter((id) => validDecorationIds.has(Number(id)))
         .map((id) => ({ decorationId: Number(id), quantity: 1 })),
     };
@@ -190,7 +245,6 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
       if (!token) {
         const updatedGuestCart = addToGuestCart(
           {
-            // id: Number(cakeId),
             id: cakeIdNum ?? `template-${template.id}`,
             name: template.name,
             imageUrl: template.images.thumb,
@@ -211,7 +265,7 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
       // Logged-in user
       const updatedCart = await cartService.addToCart(cakeIdNum, 1, null, customization);
 
-      setCartCount(updatedCart.items.reduce((t, i) => t + i.quantity, 0));
+      setCartCount(countItems(updatedCart));
       setAdded(true);
       showToast(`${template.name} added to cart`, "success");
       navigate("/cart");
@@ -224,9 +278,9 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
   };
 
   return (
-    <div className="cz app">
+    <div className="cz">
       {toast && (
-        <div className={`toast toast-${toast.type}`} role="status">
+        <div className={`toast toast-${toast.type}`} role="status" aria-live="polite">
           {toast.message}
         </div>
       )}

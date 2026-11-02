@@ -1,0 +1,674 @@
+/* ==========================================================================
+   CUSTOMIZE PAGE: RESPONSIVE STYLES (this page only)
+   File: src/styles/customizeresponsive.css
+
+   Import order in CustomizePage.jsx (do NOT import templateresponsive.css):
+
+     import "../../styles/template.css";            // tokens + header
+     import "../../styles/Customize.css";           // desktop layout
+     import "../../styles/customizeresponsive.css"; // this file, always LAST
+
+   Layouts
+   - 1800px and up  : wider three columns
+   - 1101 to 1799px : three columns, page fits the window
+   - 901 to 1100px  : two columns (summary sticky left, preview over options)
+   - 900px and down : one column (preview, options, summary),
+                      total + Add to cart pinned to the bottom
+   - 720px and down : phone spacing, no thumbnails
+   - 480px and down : compact preview badge and tools
+   - 380px and down : icon-only zoom buttons, tightest spacing
+
+   Every rule is prefixed with .cz so nothing here touches other pages.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   0. SAFETY NETS (all sizes)
+   -------------------------------------------------------------------------- */
+html:has(.cz) {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.cz {
+  overflow-x: clip;               /* clip, not hidden: keeps position: sticky working */
+  max-width: 100vw;
+}
+.cz .cz-body > * {
+  min-width: 0;                   /* grid children can't force sideways overflow */
+}
+.cz img,
+.cz svg {
+  max-width: 100%;
+}
+.cz p,
+.cz h1,
+.cz h2,
+.cz h3,
+.cz li {
+  overflow-wrap: anywhere;        /* long template names / messages never push the layout */
+}
+
+/* Chips and pills may wrap long decoration / flavour names instead of
+   overflowing a fixed height */
+.cz .cz-chip {
+  height: auto;
+  min-height: 32px;
+  padding-block: 4px;
+  max-width: 100%;
+}
+.cz .cz-pill {
+  max-width: 100%;
+}
+
+/* Toast: always visible, never wider than the screen */
+.cz .toast {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  max-width: calc(100vw - 24px);
+  text-align: center;
+}
+
+/* Live-preview badge: long template names are cut with "..." */
+.cz .cz-badge-live {
+  max-width: calc(100% - 120px);
+  min-width: 0;
+}
+.cz .cz-badge-live > div,
+.cz .cz-badge-live p {
+  min-width: 0;
+}
+.cz .cz-badge-live__title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* --------------------------------------------------------------------------
+   1. PREVIEW BAR: wrap by the preview's own width (container query)
+   -------------------------------------------------------------------------- */
+@container czstage (max-width: 560px) {
+  .cz .cz-stage__bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .cz .cz-thumbs {
+    max-width: 100%;
+  }
+  .cz .cz-stage__canvas {
+    bottom: 176px;
+  }
+  .cz .cz-note {
+    bottom: 184px;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   2. DESKTOP (1101px and up)
+   -------------------------------------------------------------------------- */
+
+/* Header titles line up with the three columns below */
+@media (min-width: 1101px) {
+  .cz .steps-bar {
+    grid-template-columns: var(--cz-col-left) minmax(0, 1fr) var(--cz-col-right);
+    gap: var(--cz-gap);
+    width: 100%;
+    max-width: var(--cz-max, 1680px);
+    margin-inline: auto;
+    padding-inline: var(--cz-gap);
+  }
+  .cz .cz-body {
+    max-width: var(--cz-max, 1680px);
+  }
+}
+
+/* Small laptops */
+@media (min-width: 1101px) and (max-width: 1280px) {
+  .cz {
+    --cz-col-left: 270px;
+    --cz-col-right: 380px;
+    --cz-gap: 12px;
+  }
+  .cz .cz-zoom {
+    gap: 14px;
+    padding: 0 18px;
+  }
+}
+
+/* Large monitors: wider columns, more room for the cake */
+@media (min-width: 1800px) {
+  .cz {
+    --cz-max: 1840px;
+    --cz-col-left: 340px;
+    --cz-col-right: 460px;
+    --cz-gap: 20px;
+  }
+}
+
+/* Short laptop screens (for example 1366x768): tighter preview so the
+   cake keeps a decent size */
+@media (min-width: 1101px) and (max-height: 760px) {
+  .cz .cz-stage__canvas {
+    top: 76px;
+    bottom: 84px;
+  }
+  .cz .cz-zoom {
+    height: 46px;
+  }
+  .cz .cz-thumbs {
+    height: 64px;
+  }
+  .cz .cz-note {
+    bottom: 88px;
+  }
+}
+
+/* Very short desktop windows: scroll instead of squashing the columns */
+@media (min-width: 1101px) and (max-height: 620px) {
+  .cz {
+    height: auto;
+    min-height: 100dvh;
+  }
+  .cz .cz-body {
+    min-height: 560px;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   3. TABLET (901px to 1100px) and below
+   Two columns. Section 4 stacks everything at 900px and down.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  /* Let the window scroll instead of the body */
+  html:has(.cz),
+  body:has(.cz),
+  #root:has(.cz) {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  html:has(.cz),
+  body:has(.cz) {
+    overflow-x: hidden !important;     /* no stray sideways scroll on phones */
+  }
+
+  .cz {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Header: steps centred, side titles hidden */
+  .cz .steps-bar {
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+    padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .cz .steps-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .cz .steps-bar__title {
+    display: none;
+  }
+
+  /* Summary (left, sticky) | preview over options (right) */
+  .cz .cz-body {
+    grid-template-columns: clamp(240px, 28vw, 300px) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: start;
+    max-width: none;
+    padding: var(--cz-gap);
+  }
+  .cz .cz-body > .cz-side {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    order: 0;
+    position: sticky;
+    top: 12px;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .cz .cz-body > .cz-stage:not(.cz-stage--expanded) {
+    grid-column: 2;
+    grid-row: 1;
+    order: 0;
+    position: relative;
+    top: auto;
+    z-index: auto;
+    /* The photo / cake is absolutely placed inside, so the stage needs a
+       real height of its own */
+    height: clamp(420px, 60vw, 620px);
+    min-height: 0;
+  }
+  .cz .cz-body > .cz-panel {
+    grid-column: 2;
+    grid-row: 2;
+    order: 0;
+    overflow: visible;
+  }
+  .cz .cz-panel__scroll {
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .cz .cz-panel__foot {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   4. STACKED LAYOUT (900px and down)
+   One column: preview, options, summary. Total + Add to cart pinned.
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .cz .steps-bar {
+    justify-content: flex-start;        /* centred overflow would cut off step 1 */
+  }
+  .cz .steps__sep {
+    margin: 0 16px;
+  }
+
+  /* Bottom padding leaves room for the pinned bar */
+  .cz .cz-body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    padding: 12px 12px calc(110px + env(safe-area-inset-bottom, 0px));
+  }
+  .cz .cz-body > .cz-stage:not(.cz-stage--expanded),
+  .cz .cz-body > .cz-panel,
+  .cz .cz-body > .cz-side {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .cz .cz-body > .cz-stage:not(.cz-stage--expanded) {
+    order: 1;
+    height: clamp(460px, 62vw, 580px);
+  }
+  .cz .cz-body > .cz-panel {
+    order: 2;
+  }
+  .cz .cz-body > .cz-side {
+    order: 3;
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* Preview: smaller reserved areas, fewer extras */
+  .cz .cz-stage__canvas {
+    top: 72px;
+    bottom: 68px;
+  }
+  .cz .cz-stage__bar {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+  }
+  .cz .cz-badge-live__sub,
+  .cz .cz-illus {
+    display: none;
+  }
+  .cz .cz-note {
+    bottom: 72px;
+  }
+  .cz .cz-zoom {
+    height: 44px;
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  /* Pinned total + Add to cart. A fixed bar isn't clipped by the panel. */
+  .cz .cz-panel__foot {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom, 0px));
+    border-radius: 0;
+    box-shadow: 0 -6px 20px rgba(37, 19, 32, 0.08);
+  }
+  .cz .cz-foot__row,
+  .cz .cz-breakdown {
+    max-width: 640px;
+    margin-inline: auto;
+  }
+  .cz .cz-breakdown {
+    max-height: 30vh;
+  }
+
+  /* Options body no longer needs the indent under the section title */
+  .cz .cz-sec__body {
+    padding-left: 8px;
+  }
+
+  /* Summary card spreads over the full width: lay the cards side by side
+     when there is room */
+  .cz .cz-body > .cz-side {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: start;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   5. PHONES (720px and down)
+   -------------------------------------------------------------------------- */
+@media (max-width: 720px) {
+  .cz {
+    --gutter: 12px;
+  }
+
+  /* Header */
+  .cz .steps-bar .step {
+    font-size: 13px;
+  }
+  .cz .steps__sep {
+    margin: 0 10px;
+  }
+
+  /* Preview: the stage is about as tall as it is wide, plus the badge and
+     bar areas. The cake then fills the width on any phone. */
+  .cz .cz-body > .cz-stage:not(.cz-stage--expanded) {
+    height: clamp(380px, calc(100vw + 80px), 560px);
+  }
+  .cz .cz-thumbs {
+    display: none;                      /* saves height */
+  }
+  .cz .cz-stage__bar {
+    justify-content: center;
+  }
+  .cz .cz-zoom {
+    width: 100%;
+    justify-content: space-around;
+    height: 48px;
+  }
+  .cz .cz-stage__canvas {
+    top: 68px;
+    bottom: 68px;                       /* beats the 2-row container rule */
+    width: calc(100% - 24px);
+  }
+  .cz .cz-note {
+    bottom: 72px;
+  }
+  .cz .cz-tc__plate {
+    height: 10px;
+  }
+  .cz .cz-tc .cz-candle {
+    width: 5px;
+    height: 20px;
+  }
+
+  /* Options panel */
+  .cz .cz-panel__head {
+    margin: 0 14px;
+  }
+  .cz .cz-panel__scroll {
+    padding: 2px 14px 28px;
+  }
+  .cz .cz-sec__body {
+    padding-left: 0;
+  }
+  .cz .cz-input input,
+  .cz .cz-date input,
+  .cz .cz-textarea {
+    font-size: 16px;                    /* stops iOS zoom on focus */
+  }
+  .cz .cz-font-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Summary */
+  .cz .cz-body > .cz-side {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cz .cz-row {
+    grid-template-columns: 24px 60px minmax(0, 1fr) 16px;
+    gap: 8px;
+  }
+  .cz .cz-row__label {
+    min-width: 0;
+  }
+  .cz .cz-selected__img {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* Footer */
+  .cz .cz-cta {
+    height: 46px;
+  }
+  .cz .cz-foot__total strong {
+    font-size: 18px;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   6. SMALL PHONES (480px and down)
+   The badge (left) and tools (right) share one row: make both smaller so
+   they never collide.
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .cz .cz-badge-live {
+    top: 12px;
+    left: 12px;
+    gap: 8px;
+    padding: 6px 12px;
+    max-width: calc(100% - 104px);
+  }
+  .cz .cz-badge-live__title {
+    font-size: 12px;
+  }
+  .cz .cz-stage__tools {
+    top: 12px;
+    right: 12px;
+    gap: 6px;
+  }
+  .cz .cz-stage__tools .cz-round {
+    width: 36px;
+    height: 36px;
+  }
+  .cz .cz-body > .cz-stage:not(.cz-stage--expanded) {
+    height: clamp(360px, calc(100vw + 60px), 520px);
+  }
+  .cz .cz-stage__canvas {
+    top: 60px;
+  }
+  .cz .cz-panel__name {
+    font-size: 16px;
+  }
+  .cz .cz-sec__title {
+    font-size: 13px;
+  }
+  .cz .cz-swatches {
+    gap: 8px;
+  }
+  .cz .cz-foot__row {
+    gap: 10px;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   7. VERY SMALL PHONES (380px and down)
+   -------------------------------------------------------------------------- */
+@media (max-width: 380px) {
+  .cz .cz-body {
+    padding-inline: 8px;
+  }
+  .cz .cz-foot__total strong {
+    font-size: 16px;
+  }
+  .cz .cz-foot__total small {
+    font-size: 10.5px;
+  }
+  .cz .cz-cta {
+    height: 44px;
+  }
+  .cz .cz-cta__text strong {
+    font-size: 14px;
+  }
+  .cz .cz-zoom {
+    gap: 8px;
+    padding: 0 10px;
+  }
+  .cz .cz-zoom button {
+    font-size: 0;                       /* icons only, labels hidden */
+    gap: 0;
+  }
+  .cz .cz-row {
+    grid-template-columns: 22px 52px minmax(0, 1fr) 14px;
+    gap: 6px;
+    font-size: 12.5px;
+  }
+  .cz .cz-selected {
+    gap: 10px;
+  }
+  .cz .cz-selected__img {
+    width: 68px;
+    height: 68px;
+  }
+  .cz .cz-font-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   8. PHONES IN LANDSCAPE
+   A pinned bar would cover half the screen.
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) and (max-height: 500px) {
+  .cz .cz-panel__foot {
+    position: static;
+    box-shadow: none;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+  .cz .cz-body {
+    padding-bottom: var(--sp-4);
+  }
+  .cz .cz-body > .cz-stage:not(.cz-stage--expanded) {
+    height: 380px;
+  }
+  .cz .cz-stage__canvas {
+    top: 64px;
+    bottom: 64px;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   9. EXPANDED PREVIEW (full-screen view) on small screens
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .cz .cz-stage--expanded {
+    inset: 0;
+    border-radius: 0;
+    height: 100dvh;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   10. TOUCH DEVICES
+   -------------------------------------------------------------------------- */
+
+/* No sticky hover lift after a tap */
+@media (hover: none) {
+  .cz .cz-swatch:hover,
+  .cz .cz-thumb:hover,
+  .cz .cz-cta:hover {
+    transform: none;
+  }
+}
+
+/* Bigger tap targets (minimum heights, so wrapped text still fits) */
+@media (pointer: coarse) {
+  .cz .cz-pill,
+  .cz .cz-chip {
+    min-height: 40px;
+  }
+  .cz .cz-swatch {
+    width: 44px;
+    height: 44px;
+  }
+  .cz .cz-msg-color .cz-swatch {
+    flex-basis: 44px;
+  }
+  .cz .cz-stepper button {
+    width: 40px;
+    height: 40px;
+  }
+  .cz .cz-round {
+    width: 44px;
+    height: 44px;
+  }
+  .cz .cz-thumbs__arrow {
+    width: 36px;
+    height: 36px;
+  }
+  .cz .cz-sec__head {
+    min-height: 48px;
+  }
+}
+
+/* Keep the compact tools on very small touch screens */
+@media (pointer: coarse) and (max-width: 480px) {
+  .cz .cz-stage__tools .cz-round {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ==========================================================================
+   11. STACKED ORDER (900px and down)
+   Selected Design -> Live Preview -> Options -> rest of the summary
+   Must stay at the END of this file so it overrides the earlier rules.
+   ========================================================================== */
+@media (max-width: 900px) {
+  /* The left column stops being a box, so each card can be ordered alone */
+  .cz .cz-body > .cz-side {
+    display: contents;
+  }
+  .cz .cz-body > .cz-side > * {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  /* 1. Selected Design (first card of the left column) */
+  .cz .cz-body > .cz-side > :first-child {
+    order: 0;
+  }
+
+  /* 2. Live preview */
+  .cz .cz-body > .cz-stage:not(.cz-stage--expanded) {
+    order: 1;
+  }
+
+  /* 3. Options */
+  .cz .cz-body > .cz-panel {
+    order: 2;
+  }
+
+  /* 4. Design Includes, Current Selection, and any other cards */
+  .cz .cz-body > .cz-side > :not(:first-child) {
+    order: 3;
+  }
+}
