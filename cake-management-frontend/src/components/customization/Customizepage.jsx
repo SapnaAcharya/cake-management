@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "./TemplateHeader"; // same folder: components/customization
@@ -15,8 +16,8 @@ import "../../styles/Customize.css";
 import "../../styles/customizeresponsive.css"; // must stay last
 
 // matches the route in App.jsx
-const templatePage = (cakeId) =>
-  cakeId ? `/design-by-template/${cakeId}` : "/design-by-template";
+const templatePage = (cakeSlug) =>
+  cakeSlug ? `/design-by-template/${cakeSlug}` : "/design-by-template";
 
 const getToken = () =>
   localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -41,32 +42,32 @@ function useEnsureViewportMeta() {
 }
 
 export default function CustomizePage() {
-  const { cakeId, templateId } = useParams();
+  const { cakeSlug, templateSlug } = useParams();
   const { state } = useLocation();
 
   useEnsureViewportMeta();
 
   const [templateState, setTemplateState] = useState(() => ({
-    templateId,
+    templateSlug,
     template: null,
-    loading: Boolean(templateId),
+    loading: Boolean(templateSlug),
     error: null,
   }));
 
   useEffect(() => {
     let isMounted = true;
 
-    // /customize/:cakeId has no templateId -> send the user to pick one
-    if (!templateId) {
+    // /customize/:cakeSlug has no templateSlug -> send the user to pick one
+    if (!templateSlug) {
       return undefined;
     }
 
     templateService
-      .getTemplateById(templateId)
+      .getTemplateById(templateSlug)
       .then((data) => {
         if (isMounted) {
           setTemplateState({
-            templateId,
+            templateSlug,
             template: mapApiTemplateToViewModel(data),
             loading: false,
             error: null,
@@ -76,7 +77,7 @@ export default function CustomizePage() {
       .catch((err) => {
         if (isMounted) {
           setTemplateState({
-            templateId,
+            templateSlug,
             template: null,
             loading: false,
             error: err.message || "Failed to load template.",
@@ -87,14 +88,14 @@ export default function CustomizePage() {
     return () => {
       isMounted = false;
     };
-  }, [templateId]);
+  }, [templateSlug]);
 
-  const isCurrentTemplate = templateState.templateId === templateId;
+  const isCurrentTemplate = templateState.templateSlug === templateSlug;
   const template = isCurrentTemplate ? templateState.template : null;
-  const loading = Boolean(templateId) && (!isCurrentTemplate || templateState.loading);
+  const loading = Boolean(templateSlug) && (!isCurrentTemplate || templateState.loading);
   const error = isCurrentTemplate ? templateState.error : null;
 
-  if (templateId && loading) {
+  if (templateSlug && loading) {
     return (
       <div className="cz">
         <Header step={2} leftTitle="Customize" rightTitle="" variant="customize" />
@@ -106,7 +107,7 @@ export default function CustomizePage() {
   if (error || !template) {
     return (
       <Navigate
-        to={templatePage(cakeId)}
+        to={templatePage(cakeSlug)}
         replace
         state={{ cake: state?.cake }}
       />
@@ -117,16 +118,16 @@ export default function CustomizePage() {
     <Customizer
       key={template.id}
       template={template}
-      cakeId={cakeId}
+      cakeSlug={cakeSlug}
       cake={state?.cake}
       initialColorId={state?.colorId}
     />
   );
 }
 
-function Customizer({ template, cakeId, cake, initialColorId }) {
+function Customizer({ template, cakeSlug, cake, initialColorId }) {
   const navigate = useNavigate();
-  const cakeIdNum = cakeId && cakeId !== "undefined" ? Number(cakeId) : null;
+  const cakeSlugNum = cakeSlug && cakeSlug !== "undefined" ? Number(cakeSlug) : null;
 
   const [baseline] = useState(() => initialConfig(template, initialColorId));
   const [cfg, setCfg] = useState(baseline);
@@ -199,15 +200,29 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
   };
 
   const update = (patch) => {
-    setAdded(false);
-    setCfg((current) => ({ ...current, ...patch }));
-  };
+  setAdded(false);
+  setCfg((current) => {
+    const next = { ...current, ...patch };
+
+    if (patch.decorations) {
+      const prev = current.decorations || [];
+      const newlyAdded = patch.decorations.filter((id) => !prev.includes(id));
+
+      // a new one was picked -> keep only that one; otherwise it's a removal
+      next.decorations = newlyAdded.length
+        ? [newlyAdded[newlyAdded.length - 1]]
+        : patch.decorations;
+    }
+
+    return next;
+  });
+};
 
   const price = useMemo(() => calcPrice(template, cfg, decorations), [template, cfg, decorations]);
 
   const changeTemplate = () =>
-    navigate(templatePage(cakeId), {
-      state: { cake, templateId: template.id },
+    navigate(templatePage(cakeSlug), {
+      state: { cake, templateSlug: template.id },
     });
 
   const validDecorationIds = new Set(
@@ -219,14 +234,23 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
 
     const token = getToken();
 
+    const templateId = Number(template.id);
+
+  if (!Number.isInteger(templateId) || templateId <= 0) {
+    showToast("This template is invalid. Please choose a template again.", "error");
+    return;
+  }
+
     const customization = {
-      cakeId: cakeIdNum,
-      templateId: template.id,
+      cakeSlug: cakeSlugNum,
+      templateId,
       size: cfg.size,
       tiers: cfg.tier,
       colorId: cfg.colorDbId,
       colorHex: cfg.colorHex,
       message: cfg.message,
+      messageX: cfg.messageX ?? null,
+      messageY: cfg.messageY ?? null,
       font: cfg.font,
       textColor: cfg.textColor,
       sponge: cfg.flavor,
@@ -243,19 +267,20 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
 
       // Guest user
       if (!token) {
-        const updatedGuestCart = addToGuestCart(
+        addToGuestCart(
           {
-            id: cakeIdNum ?? `template-${template.id}`,
+            id: cakeSlugNum ?? `template-${template.id}`,
             name: template.name,
             imageUrl: template.images.thumb,
             price: price.total,
           },
           1,
-          { customUnitPrice: price.total, cakeTemplateId: template.id },
+          { customUnitPrice: price.total, caketemplateSlug: template.id },
           customization
         );
 
-        setCartCount(updatedGuestCart.reduce((t, i) => t + i.quantity, 0));
+        //setCartCount(updatedGuestCart.reduce((t, i) => t + i.quantity, 0));
+        setCartCount(getGuestCartCount());
         setAdded(true);
         showToast(`${template.name} added to cart`, "success");
         navigate("/cart");
@@ -263,7 +288,7 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
       }
 
       // Logged-in user
-      const updatedCart = await cartService.addToCart(cakeIdNum, 1, null, customization);
+      const updatedCart = await cartService.addToCart(cakeSlugNum, 1, null, customization);
 
       setCartCount(countItems(updatedCart));
       setAdded(true);
@@ -301,6 +326,7 @@ function Customizer({ template, cakeId, cake, initialColorId }) {
           cfg={cfg}
           baseline={baseline}
           decorations={decorations}
+          onChange={update}
         />
         <CustomizePanel
           template={template}

@@ -1,0 +1,367 @@
+:root {
+  --checkout-bg: #FAF6F3;
+  --checkout-surface: #FFFFFF;
+  --checkout-ink: #251320;
+  --checkout-ink-muted: #7C6670;
+  --checkout-accent: #9A2C5D;
+  --checkout-accent-dark: #74204A;
+  --checkout-accent-soft: #F6E8EE;
+  --checkout-border: #ECE2E5;
+  --checkout-danger-bg: #FBE9EC;
+  --checkout-danger-text: #9A2C42;
+  --checkout-success-bg: #E8F4EC;
+  --checkout-success-text: #1F6B3A;
+}
+
+.checkout-page {
+  min-height: 100vh;
+  background: var(--checkout-bg);
+  font-family: 'Work Sans', sans-serif;
+  color: var(--checkout-ink);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 20px;
+  box-sizing: border-box;
+}
+
+.checkout-page *,
+.checkout-page *::before,
+.checkout-page *::after {
+  box-sizing: border-box;
+}
+
+.checkout-container {
+  width: 100%;
+  max-width: 600px;
+  background: var(--checkout-surface);
+  border: 1px solid var(--checkout-border);
+  border-radius: 16px;
+  padding: 40px;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.checkout-header {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--checkout-border);
+}
+
+.checkout-header h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+
+.checkout-header p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--checkout-ink-muted);
+  margin: 0;
+}
+
+/* ==========================================================================
+   Error banner
+   ========================================================================== */
+
+.checkout-error-message {
+  background: var(--checkout-danger-bg);
+  color: var(--checkout-danger-text);
+  border-left: 3px solid var(--checkout-danger-text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   Form and fields
+   ========================================================================== */
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.checkout-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkout-field h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.checkout-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--checkout-ink);
+}
+
+.checkout-field small {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--checkout-ink-muted);
+}
+
+/* Direct children only, so the map search box and buttons inside
+   <LocationPicker> keep the styling from LocationPicker.css. */
+.checkout-field > input,
+.checkout-field > textarea,
+.checkout-field > select {
+  width: 100%;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 14px;
+  color: var(--checkout-ink);
+  border: 1px solid var(--checkout-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: var(--checkout-bg);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.checkout-field > textarea {
+  resize: vertical;
+  min-height: 84px;
+  line-height: 1.5;
+}
+
+.checkout-field > input::placeholder,
+.checkout-field > textarea::placeholder {
+  color: var(--checkout-ink-muted);
+  opacity: 0.7;
+}
+
+.checkout-field > input:focus,
+.checkout-field > textarea:focus,
+.checkout-field > select:focus {
+  border-color: var(--checkout-accent);
+  box-shadow: 0 0 0 3px var(--checkout-accent-soft);
+}
+
+.checkout-field > input:disabled {
+  background: var(--checkout-success-bg);
+  border-color: transparent;
+  color: var(--checkout-success-text);
+  cursor: not-allowed;
+}
+
+/* Secondary buttons placed directly in a field.
+   Direct child only, so map buttons are not affected. */
+.checkout-field > button {
+  align-self: flex-start;
+  background: var(--checkout-accent-soft);
+  color: var(--checkout-accent);
+  border: 1px solid transparent;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.checkout-field > button:hover:not(:disabled) {
+  background: var(--checkout-accent);
+  color: #fff;
+}
+
+.checkout-field > button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Order items and personalized messages
+   ========================================================================== */
+
+.checkout-order {
+  gap: 12px;
+}
+
+.checkout-order-item {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background: var(--checkout-bg);
+  border: 1px solid var(--checkout-border);
+  border-radius: 12px;
+}
+
+.checkout-order-item-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checkout-order-item-head strong {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.checkout-order-qty {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--checkout-ink-muted);
+}
+
+/* Message box inside an order item */
+.checkout-order-item .checkout-field {
+  gap: 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--checkout-border);
+}
+
+.checkout-order-item .checkout-field > textarea {
+  background: var(--checkout-surface);
+}
+
+.checkout-order-item .checkout-field > small {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+/* "Not available for customized cakes" note */
+.checkout-note {
+  display: block;
+  padding: 10px 12px;
+  background: var(--checkout-accent-soft);
+  color: var(--checkout-accent-dark);
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* Selected delivery coordinates */
+.checkout-field > small:only-child {
+  padding: 8px 12px;
+  background: var(--checkout-bg);
+  border: 1px dashed var(--checkout-border);
+  border-radius: 8px;
+}
+
+/* ==========================================================================
+   Actions
+   ========================================================================== */
+
+.checkout-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+  padding-top: 20px;
+  border-top: 1px solid var(--checkout-border);
+}
+
+.checkout-back-btn {
+  background: none;
+  border: 1px solid var(--checkout-border);
+  color: var(--checkout-ink-muted);
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.checkout-back-btn:hover:not(:disabled) {
+  border-color: var(--checkout-ink-muted);
+  color: var(--checkout-ink);
+}
+
+.checkout-back-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.checkout-submit-btn {
+  flex: 1;
+  background: var(--checkout-accent);
+  color: #fff;
+  border: none;
+  padding: 13px;
+  border-radius: 8px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.checkout-submit-btn:hover:not(:disabled) {
+  background: var(--checkout-accent-dark);
+}
+
+.checkout-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Keyboard focus */
+.checkout-back-btn:focus-visible,
+.checkout-submit-btn:focus-visible,
+.checkout-field > button:focus-visible {
+  outline: 2px solid var(--checkout-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkout-page * {
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .checkout-page {
+    padding: 24px 12px;
+  }
+
+  .checkout-container {
+    padding: 24px 16px;
+  }
+
+  .checkout-header h1 {
+    font-size: 24px;
+  }
+
+  .checkout-order-item {
+    padding: 14px;
+  }
+
+  .checkout-field > button {
+    align-self: stretch;
+  }
+
+  .checkout-actions {
+    flex-direction: column-reverse;
+  }
+
+  .checkout-back-btn,
+  .checkout-submit-btn {
+    width: 100%;
+  }
+}

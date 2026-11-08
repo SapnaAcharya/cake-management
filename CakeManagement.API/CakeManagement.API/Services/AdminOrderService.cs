@@ -115,6 +115,11 @@ namespace CakeManagementAPI.Services
 
                 ShippingAddress = order.ShippingAddress,
 
+                // Customers selected delivery location
+                Latitude = order.Latitude,
+
+                Longitude = order.Longitude,
+                
                 PaymentMethod = order.PaymentMethod,
 
                 PaymentStatus = order.PaymentStatus,

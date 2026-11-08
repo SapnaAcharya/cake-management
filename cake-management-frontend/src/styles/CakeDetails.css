@@ -474,6 +474,89 @@
 .cake-details-page .toast-success { background: var(--color-accent); }
 .cake-details-page .toast-error   { background: #b3261e; }
 
+.cake-personalized-message {
+    margin: 22px 0;
+    width: 100%;
+}
+
+.cake-personalized-message label {
+    display: block;
+    margin-bottom: 9px;
+    font-weight: 600;
+    color: #333;
+}
+
+.cake-personalized-message textarea {
+    width: 100%;
+    min-height: 90px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    outline: none;
+}
+
+.cake-personalized-message textarea:focus {
+    border-color: #b76e79;
+}
+
+.personalized-message-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 7px;
+    font-size: 12px;
+    color: #777;
+}
+
+
+/* Estimated cake price breakdown */
+.cake-details-estimated-price {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    background: #f8f7f4;
+    border: 1px solid #e6e2d8;
+    border-radius: 10px;
+}
+
+.cake-details-estimated-price > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.cake-details-estimated-price span {
+    color: #746c5e;
+    font-size: 13px;
+}
+
+.cake-details-estimated-price strong {
+    color: #26221c;
+    font-size: 14px;
+}
+
+.cake-details-estimated-price .estimated-total {
+    padding-top: 12px;
+    border-top: 1px solid #d6d0c1;
+}
+
+.cake-details-estimated-price .estimated-total span {
+    font-weight: 600;
+    color: #26221c;
+}
+
+.cake-details-estimated-price .estimated-total strong {
+    color: #7a2e3a;
+    font-size: 17px;
+}
+
+
 /* ==========================================================================
    Responsive
    ========================================================================== */

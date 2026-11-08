@@ -8,6 +8,7 @@ namespace CakeManagementAPI.Models
 
         public string Name { get; set; } = string.Empty;
 
+        public string Slug { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 
         public string Category { get; set; } = string.Empty;
@@ -16,7 +17,7 @@ namespace CakeManagementAPI.Models
 
         public int Tiers { get; set; }
 
-        [Column(TypeName = "decimal(10,2")]
+        [Column(TypeName = "decimal(10,2)")]
         public decimal BasePrice { get; set; }
 
         public int MinPrepHours { get; set; }

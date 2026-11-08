@@ -3,7 +3,7 @@ using CakeManagementAPI.Models;
 
 public class CustomizationSnapshot
 {
-    public int CakeId { get; set; }
+    public int? CakeId { get; set; }
     public int TemplateId { get; set; }
     public string TemplateName { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }

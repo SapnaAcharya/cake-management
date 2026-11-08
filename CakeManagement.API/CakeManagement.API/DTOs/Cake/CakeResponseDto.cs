@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-
-namespace CakeManagementAPI.DTOs.Cake
+﻿namespace CakeManagementAPI.DTOs.Cake
 {
     public class CakeResponseDto
     {
         public int Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
+
+        public string Slug { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
 
@@ -33,5 +33,17 @@ namespace CakeManagementAPI.DTOs.Cake
         public bool IsBestSeller { get; set; }
 
         public bool IsTrending { get; set; }
+
+        // Personalized cake message settings
+        public bool AllowMessage { get; set; } = false;
+
+        public string MessageLabel { get; set; } = "Personalized Message";
+
+        public string MessagePlaceholder { get; set; } = " Enter your message..";
+
+        public int MaxMessageLength { get; set; } = 100;
+
+        public decimal MessageAdditionalPrice { get; set; }
+
     }
 }

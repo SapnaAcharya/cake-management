@@ -19,6 +19,9 @@ namespace CakeManagementAPI.Models
 
         public string? CustomizationJson { get; set; }
 
+        // Personalized message for normal cakes
+        public string? PersonalizedMessage { get; set; }
+
         // Navigation properties
         public Cart? Cart { get; set; }
 

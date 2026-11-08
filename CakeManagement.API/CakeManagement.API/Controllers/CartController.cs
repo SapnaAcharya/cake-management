@@ -170,6 +170,44 @@ namespace CakeManagementAPI.Controllers
             }
         }
 
+        // UPDATE PERSONALIZED MESSAGE
+        // PUT: api/Cart/items/{cartItemId}/message
+        [HttpPut("items/{cartItemId}/message")]
+        public async Task<IActionResult> UpdatePersonalizedMessage(
+            int cartItemId,
+            [FromBody] UpdatePersonalizedMessageDto dto)
+        {
+            var userId = GetUserId();
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            try
+            {
+                var cart = await _cartService.UpdatePersonalizedMessageAsync(
+                    userId.Value,
+                    cartItemId,
+                    dto.PersonalizedMessage
+                );
+
+                return Ok(cart);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         // REMOVE CART ITEM
         // DELETE: api/Cart/items/{cartItemId}
         [HttpDelete("items/{cartItemId}")]

@@ -87,6 +87,14 @@ namespace CakeManagementAPI.Data
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Order>()
+                 .HasIndex(o => o.PublicId)
+                 .IsUnique();
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.PublicId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
             // User -> Orders
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User)
@@ -192,6 +200,20 @@ namespace CakeManagementAPI.Data
                 .IsUnique()
                 .HasFilter("\"GoogleSubject\" IS NOT NULL");
 
+            modelBuilder.Entity<Cake>()
+                .HasIndex(c => c.Slug)
+                .IsUnique();
+
+            modelBuilder.Entity<CakeTemplate>(entity =>
+            {
+                entity.Property(t => t.Slug)
+                      .IsRequired()
+                      .HasMaxLength(200);
+
+                entity.HasIndex(t => t.Slug)
+                      .IsUnique();
+            });
+
             // Decimal precision
             modelBuilder.Entity<Cake>()
                 .Property(c => c.Price)
@@ -216,11 +238,6 @@ namespace CakeManagementAPI.Data
             // Unique email
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
-                .IsUnique();
-
-            // allows multiple null values in a normal unique index
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.GoogleSubject)
                 .IsUnique();
 
             // One cart per user

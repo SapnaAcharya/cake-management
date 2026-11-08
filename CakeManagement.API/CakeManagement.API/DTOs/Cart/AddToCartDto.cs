@@ -15,5 +15,9 @@ namespace CakeManagementAPI.DTOs.Cart
 
         // Only sent for a customized cake. Null for normal cake
         public CustomizationDto? Customization { get; set; }
+
+         // Only used for normal cakes that allow personalized messages.
+        [StringLength(500)]
+        public string? PersonalizedMessage { get; set; }
     }
 }

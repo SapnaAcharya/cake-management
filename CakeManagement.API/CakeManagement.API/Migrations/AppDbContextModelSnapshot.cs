@@ -30,6 +30,9 @@ namespace CakeManagementAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AllowMessage")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
@@ -60,6 +63,20 @@ namespace CakeManagementAPI.Migrations
                     b.Property<bool>("IsTrending")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("MaxMessageLength")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("MessageAdditionalPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("MessageLabel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("MessagePlaceholder")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -67,6 +84,10 @@ namespace CakeManagementAPI.Migrations
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("integer");
@@ -77,6 +98,9 @@ namespace CakeManagementAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.ToTable("Cakes");
                 });
@@ -91,7 +115,7 @@ namespace CakeManagementAPI.Migrations
 
                     b.Property<decimal>("BasePrice")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -117,12 +141,20 @@ namespace CakeManagementAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<int>("Tiers")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
                         .IsUnique();
 
                     b.ToTable("CakeTemplates");
@@ -273,6 +305,9 @@ namespace CakeManagementAPI.Migrations
                         .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("CustomizationJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PersonalizedMessage")
                         .HasColumnType("text");
 
                     b.Property<int>("Quantity")
@@ -442,6 +477,12 @@ namespace CakeManagementAPI.Migrations
                     b.Property<string>("CustomerName")
                         .HasColumnType("text");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -455,6 +496,11 @@ namespace CakeManagementAPI.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
+
+                    b.Property<Guid>("PublicId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("ShippingAddress")
                         .HasColumnType("text");
@@ -471,6 +517,9 @@ namespace CakeManagementAPI.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PublicId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -494,8 +543,14 @@ namespace CakeManagementAPI.Migrations
                     b.Property<string>("CustomizationJson")
                         .HasColumnType("text");
 
+                    b.Property<decimal>("MessageAdditionalPrice")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("PersonalizedMessage")
+                        .HasColumnType("text");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
