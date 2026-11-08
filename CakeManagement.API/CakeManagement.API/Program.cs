@@ -265,6 +265,7 @@ static string BuildConnectionString(string? raw)
         Username = Uri.UnescapeDataString(userInfo[0]),
         Password = Uri.UnescapeDataString(userInfo[1]),
         Database = uri.AbsolutePath.TrimStart('/'),
-        SslMode = Npgsql.SslMode.Prefer
+        SslMode = Npgsql.SslMode.Require,
+        GssEncryptionMode = Npgsql.GssEncryptionMode.Disable
     }.ConnectionString;
 }
