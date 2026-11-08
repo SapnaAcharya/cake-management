@@ -416,6 +416,18 @@
     opacity: 0.8;
 }
 
+.cake-message-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.cake-message-info small {
+  color: #64748b;
+  font-size: 12px;
+}
+
 /* Thumbnail in the Manage Training Packages table */
 .training-table-thumb {
     width: 56px;
@@ -430,6 +442,184 @@
     font-size: 12px;
     color: #B7A3AE;
 }
+
+
+/* ==================================
+   Personalized Message Configuration
+================================== */
+
+.message-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.message-modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+}
+
+.message-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 22px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.message-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #292929;
+}
+
+.message-modal-header p {
+  margin: 7px 0 0;
+  font-size: 13px;
+  color: #777;
+}
+
+.message-modal-close {
+  border: none;
+  background: transparent;
+  font-size: 26px;
+  cursor: pointer;
+  color: #777;
+}
+
+.message-modal-body {
+  padding: 24px;
+}
+
+.message-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  margin-bottom: 22px;
+  cursor: pointer;
+}
+
+.message-toggle-row strong,
+.message-toggle-row small {
+  display: block;
+}
+
+.message-toggle-row small {
+  color: #777;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.message-toggle-row input {
+  width: 18px;
+  height: 18px;
+  accent-color: #8b4a5c;
+  cursor: pointer;
+}
+
+.message-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+  flex: 1;
+}
+
+.message-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+}
+
+.message-form-group input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.message-form-group input:focus {
+  border-color: #8b4a5c;
+}
+
+.message-form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.message-disabled-note {
+  padding: 14px;
+  background: #f8f4f5;
+  color: #76515d;
+  border-radius: 7px;
+  font-size: 13px;
+}
+
+.message-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 18px 24px;
+  border-top: 1px solid #eee;
+}
+
+.message-cancel-btn,
+.message-save-btn {
+  padding: 10px 18px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.message-cancel-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #555;
+}
+
+.message-save-btn {
+  border: none;
+  background: #8b4a5c;
+  color: #fff;
+}
+
+.message-save-btn:disabled,
+.message-cancel-btn:disabled,
+.message-modal-close:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 550px) {
+  .message-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .message-modal-header,
+  .message-modal-body {
+    padding: 18px;
+  }
+}
+
 
 @media (max-width: 700px) {
     .admin-summary-row {

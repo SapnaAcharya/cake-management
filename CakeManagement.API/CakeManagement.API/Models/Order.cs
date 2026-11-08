@@ -3,6 +3,8 @@
     public class Order
     {
         public int Id { get; set; }
+
+        public Guid PublicId { get; set;} = Guid.NewGuid();
         
         // Nullable because guest orders don't have a registered user
         public int? UserId { get; set; }
@@ -19,6 +21,11 @@
         public string? PhoneNumber { get; set; }
 
         public string? ShippingAddress { get; set; }
+
+        // OpenStreetMap Location picker
+        public double? Latitude { get; set; }
+
+        public double? Longitude { get; set; }
 
         public string PaymentMethod { get; set; } = "CashOnDelivery";
 

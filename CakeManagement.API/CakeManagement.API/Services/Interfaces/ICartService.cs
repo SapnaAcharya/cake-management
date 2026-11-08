@@ -14,6 +14,12 @@ namespace CakeManagementAPI.Services.Interfaces
             int cartItemId,
             int quantity);
 
+        Task<CartResponseDto> UpdatePersonalizedMessageAsync(
+            int userId,
+            int cartItemId,
+            string? personalizedMessage
+            );
+
         Task RemoveCartItemAsync(
             int userId,
             int cartItemId);

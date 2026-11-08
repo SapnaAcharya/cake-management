@@ -434,7 +434,7 @@ function Home() {
                             {filteredCakes.map((cake) => (
                                 <Link
                                     key={cake.id}
-                                    to={`/cakes/${cake.id}`}
+                                    to={`/cakes/${cake.slug}`}
                                     state={{ cake }}
                                     className="cake-card"
                                 >
@@ -478,7 +478,7 @@ function Home() {
                         {featuredTemplates.map((template) => (
                             <Link
                                 key={template.id}
-                                to={`/design-by-template?templateId=${template.id}`}
+                                to={`/design-by-template?templateId=${template.slug ?? template.id}`}
                                 className="template-card"
                             >
                                 {template.imageSrc && (

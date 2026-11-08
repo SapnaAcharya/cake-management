@@ -39,6 +39,10 @@ function ManageOrders() {
 
             const data = await getAllOrders();
 
+                 console.log("Complete API response:", data);
+        console.log("First order:", data?.[0]);
+        console.log("First order PublicId:", data?.[0]?.publicId);
+
             setOrders(Array.isArray(data) ? data : []);
 
         } catch (err) {
@@ -346,7 +350,8 @@ function ManageOrders() {
                             <thead>
                                 <tr>
                                     <th>S.N.</th>
-                                    <th>Order ID</th>
+                                    {/* <th>Order ID</th> */}
+                                    <th>Order Reference</th>
                                     <th>Customer</th>
                                     <th>Order Date</th>
                                     <th>Total Amount</th>
@@ -365,12 +370,22 @@ function ManageOrders() {
                                             <td>
                                                 {index + 1}
                                             </td>
-
+{/* 
                                             <td>
                                                 <strong>
                                                     Order ID: {order.orderId}
                                                 </strong>
-                                            </td>
+                                            </td> */}
+                                            <td>
+    <strong
+        title={order.publicId}
+        className="order-reference"
+    >
+        {order.publicId
+            ? order.publicId.slice(0, 8).toUpperCase()
+            : "—"}
+    </strong>
+</td>
 
                                             <td>
                                                 Customer ID:
@@ -504,10 +519,18 @@ function ManageOrders() {
                         <div className="order-modal-header">
 
                             <div>
-                                <h2>
+                                {/* <h2>
                                     Order ID:
                                     {selectedOrder.orderId}
-                                </h2>
+                                </h2> */}
+                                <h2>
+    Order Details
+</h2>
+
+<p>
+    Order Reference:{" "}
+    <strong>{selectedOrder.publicId || "—"}</strong>
+</p>
 
                                 <p>
                                     Placed on{" "}
@@ -557,7 +580,7 @@ function ManageOrders() {
                                         <select 
                                         className={getStatusClass(selectedOrder.status)}
                                         value={selectedOrder.status}
-                                        disabled={updatingOrderId === selectedOrder.order.orderId}
+                                        disabled={updatingOrderId === selectedOrder.orderId}
                                         onChange={(e) => 
                                             handleStatusChange(selectedOrder.orderId, e.target.value)
                                         }
@@ -599,7 +622,7 @@ function ManageOrders() {
 
                                 {/* Shipping */}
 
-                                <div className="shipping-section">
+                                {/* <div className="shipping-section">
 
                                     <h3>
                                         Shipping Address
@@ -611,10 +634,40 @@ function ManageOrders() {
                                         }
                                     </p>
 
-                                </div>
+                                </div> */}
+
+                                {/* Shipping */}
+<div className="shipping-section">
+    <h3>Shipping Address</h3>
+
+    <p>{selectedOrder.shippingAddress || "—"}</p>
+
+    {selectedOrder.latitude != null &&
+    selectedOrder.longitude != null ? (
+        <div className="delivery-location">
+            <p>
+                <strong>Latitude:</strong> {selectedOrder.latitude}
+            </p>
+            <p>
+                <strong>Longitude:</strong> {selectedOrder.longitude}
+            </p>
+            <a
+                href={`https://www.google.com/maps?q=${selectedOrder.latitude},${selectedOrder.longitude}`}
+                target="_blank"
+                rel="noreferrer"
+            >
+                Open delivery location on map
+            </a>
+        </div>
+    ) : (
+        <p>
+            <small>No map location was saved for this order.</small>
+        </p>
+    )}
+</div>
 
                                 {/* Items */}
-
+{/* 
                                 <div className="order-items-section">
 
                                     <h3>
@@ -678,7 +731,183 @@ function ManageOrders() {
 
                                     </table>
 
+                                </div> */}
+
+                                {/* Ordered Cakes */}
+
+<div className="order-items-section">
+
+    <h3>Ordered Cakes</h3>
+
+    {selectedOrder.items?.length > 0 ? (
+        <div className="admin-ordered-items">
+
+            {selectedOrder.items.map((item) => {
+
+                const personalizedMessage =
+                    item.personalizedMessage?.trim() || "";
+
+                return (
+                    <div
+                        className="admin-order-item"
+                        key={item.orderItemId}
+                    >
+
+                        {/* Cake Information */}
+
+                        <div className="admin-order-item-header">
+
+                            <div>
+                                <strong>{item.cakeName}</strong>
+
+                                <span className="admin-order-item-type">
+                                    {item.isCustomized
+                                        ? "Customized Cake"
+                                        : "Normal Cake"}
+                                </span>
+                            </div>
+
+                            <span>
+                                Quantity: {item.quantity}
+                            </span>
+
+                        </div>
+
+                        {/* Personalized Message */}
+
+                        {!item.isCustomized &&
+                            personalizedMessage && (
+                                <div className="admin-personalized-message">
+
+                                    <h4>Personalized Message</h4>
+
+                                    <p>
+                                        {personalizedMessage}
+                                    </p>
+
                                 </div>
+                            )}
+
+                        {/* Customized Cake Information */}
+
+                        {item.isCustomized && (
+                            <div className="admin-customized-info">
+                                <strong>
+                                    Customized cake
+                                </strong>
+
+                                <p>
+                                    This item was created using
+                                    the customer's cake customization.
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Price Information */}
+
+                        {/* <div className="admin-order-item-pricing">
+
+                            <div>
+                                <span>Unit Price</span>
+
+                                <strong>
+                                    {formatCurrency(item.unitPrice)}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Quantity</span>
+
+                                <strong>
+                                    {item.quantity}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Subtotal</span>
+
+                                <strong>
+                                    {formatCurrency(item.subtotal)}
+                                </strong>
+                            </div>
+
+                        </div> */}
+
+                        
+<div className="admin-order-item-pricing">
+
+    <div>
+        <span>Cake Price</span>
+        <strong>
+            {formatCurrency(
+                Number(item.unitPrice) -
+                Number(item.messageAdditionalPrice || 0)
+            )}
+        </strong>
+    </div>
+
+    {personalizedMessage && !item.isCustomized && (
+        <div>
+            <span>Message Charge (per cake)</span>
+            <strong>
+                {formatCurrency(item.messageAdditionalPrice || 0)}
+            </strong>
+        </div>
+    )}
+
+    <div>
+        <span>Quantity</span>
+        <strong>
+            {item.quantity}
+        </strong>
+    </div>
+
+    <div>
+        <span>Final Unit Price</span>
+        <strong>
+            {formatCurrency(item.unitPrice)}
+        </strong>
+    </div>
+
+    {personalizedMessage && !item.isCustomized && (
+        <div>
+            <span>Total Message Charge</span>
+            <strong>
+                {formatCurrency(
+                    Number(item.messageAdditionalPrice || 0) *
+                    Number(item.quantity)
+                )}
+            </strong>
+        </div>
+    )}
+
+    <div>
+        <span>Subtotal</span>
+        <strong>
+            {formatCurrency(item.subtotal)}
+        </strong>
+    </div>
+
+</div>
+
+
+                        {personalizedMessage && !item.isCustomized && (
+                            <small className="admin-message-price-note">
+                                The unit price includes any applicable
+                                personalized-message charge.
+                            </small>
+                        )}
+
+                    </div>
+                );
+            })}
+
+        </div>
+    ) : (
+        <p>No items found in this order.</p>
+    )}
+
+</div>
 
                                 {/* Total */}
 

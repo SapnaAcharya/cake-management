@@ -25,7 +25,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import MyOrders from "./pages/MyOrders";
-import OrderDetails from "./pages/OrderDetailsPage";
+import OrderDetailsPage from "./pages/OrderDetailsPage";
 import Profile from "./pages/MyProfile";
 
 // Admin
@@ -53,6 +53,7 @@ import AddTrainingBatch from "./pages/admin/AddTrainingBatch";
 import EditTrainingBatch from "./pages/admin/EditTrainingBatch";
 import TrainingCourseDetails from "./pages/training/TrainingCourseDetails";
 import ManageTrainingEnrollments from "./pages/admin/ManageTrainingEnrollments";
+//import OrderDetailsPage from "./pages/OrderDetailsPage";
 
 // Pages that should not show the footer
 const NO_FOOTER_PREFIXES = [
@@ -81,7 +82,7 @@ function AppContent() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/cakes" element={<Cakes />} />
         <Route path="/training" element={<TrainingCourses />} />
-        <Route path="/cakes/:id" element={<CakeDetails />} />
+        <Route path="/cakes/:slug" element={<CakeDetails />} />
 
         {/* Auth */}
         <Route path="/login" element={<Login />} />
@@ -92,16 +93,16 @@ function AppContent() {
 
         {/* Customization */}
         <Route path="/design-by-template" element={<DesignByTemplate />} />
-        <Route path="/design-by-template/:cakeId" element={<DesignByTemplate />} />
-        <Route path="/customize/:cakeId" element={<Customizepage />} />
-        <Route path="/customize/:cakeId/:templateId" element={<Customizepage />} />
+        <Route path="/design-by-template/:cakeSlug" element={<DesignByTemplate />} />
+        {/* <Route path="/customize/:cakeSlug" element={<Customizepage />} /> */}
+        <Route path="/customize/:templateSlug" element={<Customizepage />} />
 
         {/* Customer account */}
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/cart/:slug" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/orders" element={<MyOrders />} />
-        <Route path="/orders/:orderId" element={<OrderDetails />} />
-        <Route path="/orderDetails" element={<OrderDetails />} />
+        <Route path="/orders/:publicId" element={<OrderDetailsPage />} />
         <Route path="/profile" element={<Profile />} />
        
         {/* Training Courses */}

@@ -412,6 +412,156 @@
   background: var(--cart-bg);
 }
 
+
+/* Personalized cake message section */
+/* .cart-personalized-message {
+    width: 100%;
+    margin: 14px 0;
+    padding: 16px;
+    background: #fffaf7;
+    border: 1px solid #eaded7;
+    border-radius: 10px;
+}
+
+.cart-personalized-message label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #49352d;
+}
+
+.cart-personalized-message textarea {
+    width: 100%;
+    min-height: 75px;
+    padding: 12px;
+    border: 1px solid #d8c9c0;
+    border-radius: 7px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.cart-personalized-message textarea:focus {
+    border-color: #a65c45;
+    box-shadow: 0 0 0 2px rgba(166, 92, 69, 0.12);
+}
+
+.cart-personalized-message textarea:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+} */
+ /* Personalized cake message section */
+.cart-personalized-message {
+  width: 100%;
+  max-width: 460px;
+  margin: 0;
+  padding: 12px 14px;
+  background: #fffaf7;
+  border: 1px solid #eaded7;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.cart-personalized-message label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #49352d;
+}
+
+.cart-personalized-message input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #d8c9c0;
+  border-radius: 7px;
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 13.5px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cart-personalized-message input:focus {
+  border-color: #a65c45;
+  box-shadow: 0 0 0 2px rgba(166, 92, 69, 0.12);
+}
+
+.cart-personalized-message input:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.cart-message-footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: #777;
+}
+
+.save-message-btn {
+  margin-top: 10px;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #8d4938;
+  color: white;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.save-message-btn:hover {
+  background: #713829;
+}
+
+.save-message-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cart-message-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #777;
+}
+
+.save-message-btn {
+    margin-top: 12px;
+    padding: 9px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #8d4938;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.save-message-btn:hover {
+    background: #713829;
+}
+
+.save-message-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
 /* ==========================================================================
    Responsive
    ========================================================================== */

@@ -21,6 +21,11 @@ namespace CakeManagementAPI.Models
 
      public string? CustomizationJson { get; set; }
 
+    // Customer's message for normal cakes only.
+    public string? PersonalizedMessage { get; set; }
+
+    public decimal MessageAdditionalPrice { get; set; }
+
     // Naviagtion properties
     public Order? Order { get; set; }
 

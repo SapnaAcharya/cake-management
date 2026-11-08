@@ -81,6 +81,7 @@ export function mapApiTemplateToViewModel(apiTemplate) {
 
   return {
     id: apiTemplate.id,
+    slug: apiTemplate.slug,
     name: apiTemplate.name,
     category: apiTemplate.category,
     popular: apiTemplate.isPopular,

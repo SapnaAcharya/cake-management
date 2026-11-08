@@ -562,6 +562,318 @@
   font-weight: 700;
 }
 
+/* Admin ordered cake items */
+
+/* .admin-ordered-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-order-item {
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.admin-order-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.admin-order-item-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-order-item-header strong {
+    font-size: 15px;
+    color: #292524;
+}
+
+.admin-order-item-header > span {
+    font-size: 13px;
+    color: #666;
+}
+
+.admin-order-item-type {
+    font-size: 12px;
+    color: #78716c;
+}
+
+.admin-personalized-message {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    padding: 13px;
+    margin-bottom: 16px;
+}
+
+.admin-personalized-message h4 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: #9a3412;
+}
+
+.admin-personalized-message p {
+    margin: 0;
+    color: #44403c;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.admin-customized-info {
+    padding: 12px;
+    margin-bottom: 16px;
+    background: #f5f3ff;
+    border-radius: 8px;
+}
+
+.admin-customized-info strong {
+    color: #5b21b6;
+    font-size: 13px;
+}
+
+.admin-customized-info p {
+    margin: 6px 0 0;
+    color: #57534e;
+    font-size: 13px;
+}
+
+.admin-order-item-pricing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.admin-order-item-pricing div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.admin-order-item-pricing span {
+    font-size: 12px;
+    color: #78716c;
+}
+
+.admin-order-item-pricing strong {
+    font-size: 14px;
+    color: #292524;
+}
+
+.admin-message-price-note {
+    display: block;
+    margin-top: 12px;
+    color: #78716c;
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .admin-order-item-header {
+        flex-direction: column;
+    }
+
+    .admin-order-item-pricing {
+        grid-template-columns: 1fr;
+    }
+} */
+
+
+/* -------------------------------------------------------------------- */
+/* Admin ordered cake items                                             */
+/* -------------------------------------------------------------------- */
+
+.admin-ordered-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-order-item {
+    padding: 18px;
+    border: 1px solid var(--order-border);
+    border-radius: var(--order-radius-md);
+    background: var(--order-surface);
+}
+
+.admin-order-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.admin-order-item-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-order-item-header strong {
+    font-size: 15px;
+    color: var(--order-text);
+}
+
+.admin-order-item-header > span {
+    font-size: 13px;
+    color: var(--order-text-muted);
+}
+
+.admin-order-item-type {
+    font-size: 12px;
+    color: var(--order-text-muted);
+}
+
+/* Personalized message */
+
+.admin-personalized-message {
+    background: var(--order-accent-soft);
+    border: 1px solid var(--order-border);
+    border-left: 3px solid var(--order-accent);
+    border-radius: var(--order-radius-sm);
+    padding: 13px;
+    margin-bottom: 16px;
+}
+
+.admin-personalized-message h4 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: var(--order-accent);
+    font-weight: 600;
+}
+
+.admin-personalized-message p {
+    margin: 0;
+    color: var(--order-text);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* Customized cake information */
+
+.admin-customized-info {
+    padding: 12px;
+    margin-bottom: 16px;
+    background: #f5f3ff;
+    border: 1px solid #e9ddff;
+    border-radius: var(--order-radius-sm);
+}
+
+.admin-customized-info strong {
+    color: #5b21b6;
+    font-size: 13px;
+}
+
+.admin-customized-info p {
+    margin: 6px 0 0;
+    color: #57534e;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Price breakdown */
+
+.admin-order-item-pricing {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    padding-top: 16px;
+    border-top: 1px solid var(--order-border);
+}
+
+.admin-order-item-pricing div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.admin-order-item-pricing span {
+    font-size: 12px;
+    color: var(--order-text-muted);
+}
+
+.admin-order-item-pricing strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--order-text);
+    overflow-wrap: anywhere;
+}
+
+/* Final unit price */
+
+.admin-order-item-pricing div:nth-child(4) {
+    padding-top: 10px;
+    border-top: 1px dashed var(--order-border-strong);
+}
+
+.admin-order-item-pricing div:nth-child(4) strong {
+    color: var(--order-accent);
+}
+
+/* Total message charge */
+
+.admin-order-item-pricing div:nth-child(5) {
+    padding-top: 10px;
+    border-top: 1px dashed var(--order-border-strong);
+}
+
+.admin-order-item-pricing div:nth-child(5) strong {
+    color: var(--order-accent);
+}
+
+/* Subtotal */
+
+.admin-order-item-pricing div:last-child {
+    padding: 10px;
+    background: var(--order-bg);
+    border-radius: var(--order-radius-sm);
+}
+
+.admin-order-item-pricing div:last-child strong {
+    color: var(--order-accent);
+    font-size: 15px;
+}
+
+/* Message price note */
+
+.admin-message-price-note {
+    display: block;
+    margin-top: 12px;
+    color: var(--order-text-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Responsive ordered cake cards */
+
+@media (max-width: 600px) {
+    .admin-order-item {
+        padding: 14px;
+    }
+
+    .admin-order-item-header {
+        flex-direction: column;
+    }
+
+    .admin-order-item-pricing {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+}
+
+
 /* -------------------------------------------------------------------- */
 /* Responsive                                                           */
 /* -------------------------------------------------------------------- */

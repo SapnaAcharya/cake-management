@@ -6,6 +6,9 @@ namespace CakeManagement.DTOs.Order
     {
         public int OrderId { get; set; }
 
+        // Public GUID for order reference
+        public Guid PublicId { get; set; }
+
         // Null for guest orders
         public int? UserId { get; set; }
 
@@ -16,6 +19,10 @@ namespace CakeManagement.DTOs.Order
         public string Status { get; set; } = string.Empty;
 
         public string? ShippingAddress { get; set; } = string.Empty;
+
+        public double? Latitude { get; set; }
+
+        public double? Longitude { get; set; }
         public string? PhoneNumber { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
 

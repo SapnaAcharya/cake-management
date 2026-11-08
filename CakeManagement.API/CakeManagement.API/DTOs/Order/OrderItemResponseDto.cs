@@ -17,9 +17,13 @@ namespace CakeManagementAPI.DTOs.Order
         public decimal Subtotal { get; set; }
 
         // Only filled for customized cakes
+
+        public decimal MessageAdditionalPrice { get; set; }
         public bool IsCustomized { get; set; }
 
         public CustomizationSnapshot? Customization { get; set; }
 
+        // Customer's personalized message for normal cakes
+        public string? PersonalizedMessage { get; set; }
     }
 }

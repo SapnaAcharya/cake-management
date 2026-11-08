@@ -20,6 +20,10 @@ namespace CakeManagementAPI.Services.Interfaces
             int userId);
 
         Task<List<OrderResponseDto>> GetAllOrdersAsync();
+
+        Task<OrderResponseDto> GetOrderByPublicIdAsync(int userId, Guid publicId);
+
+        Task<OrderResponseDto> GetGuestOrderByPublicIdAsync(Guid publicId, string phoneNumber);
         Task<OrderResponseDto> GetOrderByIdForAdminAsync(int orderId);
 
         Task<OrderResponseDto> GetGuestOrderByIdAsync(int orderId, string phoneNumber);

@@ -27,6 +27,23 @@ const getTemplates = async () => {
     return await response.json();
 };
 
+// Get template by slug (public)
+const getTemplateBySlug = async (slug) => {
+    const response = await fetch(
+        `${API_BASE_URL}/templates/${encodeURIComponent(slug)}`
+    );
+
+    if (response.status === 404) {
+        throw new Error("Template not found");
+    }
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch template");
+    }
+
+    return await response.json();
+};
+
 // Get template by ID (public)
 const getTemplateById = async (id) => {
     const response = await fetch(`${API_BASE_URL}/templates/${id}`);
@@ -100,6 +117,7 @@ const getFeaturedTemplates = async (count = 6) => {
 const templateService = {
     getTemplates,
     getTemplateById,
+    getTemplateBySlug,
     createTemplate,
     updateTemplate,
     deleteTemplate,

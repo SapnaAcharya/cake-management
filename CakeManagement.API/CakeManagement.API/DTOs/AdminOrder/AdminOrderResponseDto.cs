@@ -18,6 +18,10 @@
 
         public string? ShippingAddress { get; set; }
 
+        // Customers selected delivery pin
+        public double? Latitude { get; set; }
+
+        public double? Longitude { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
 
         public string PaymentStatus { get; set; } = string.Empty;

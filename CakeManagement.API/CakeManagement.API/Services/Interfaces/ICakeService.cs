@@ -9,9 +9,15 @@ namespace CakeManagementAPI.Services.Interfaces
 
         Task<CakeResponseDto?> GetByIdAsync(int id);
 
+        Task<CakeResponseDto?> GetBySlugAsync(string slug);
         Task<CakeResponseDto> CreateAsync(CreateCakeDto dto);
 
         Task<bool> UpdateAsync(int id, UpdateCakeDto dto);
+
+         // Update only the personalized-message settings of a cake
+        Task<bool> UpdateMessageSettingsAsync(
+            int id,
+            UpdateCakeMessageSettingsDto dto);
 
         Task<bool> DeleteAsync(int id);
     }
