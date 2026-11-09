@@ -108,4 +108,6 @@ const guestCartService = {
     getGuestCartCount
 };
 
+export default guestCartService;
+
 

@@ -84,3 +84,5 @@ const orderService = {
     getOrderById
 };
 
+export default orderService;
+

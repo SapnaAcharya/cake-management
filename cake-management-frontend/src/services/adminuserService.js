@@ -28,7 +28,7 @@ export const getAllUsers = async () => {
 
 // GET USER BY ID
 
-const getUserById = async (id) => {
+export const getUserById = async (id) => {
     const response = await fetch(
         `${API_BASE_URL}/AdminUser/users/${id}`,
         {
