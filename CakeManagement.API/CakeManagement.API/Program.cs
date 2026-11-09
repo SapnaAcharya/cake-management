@@ -234,7 +234,16 @@ app.UseCors("ReactPolicy");
 
 app.UseRateLimiter();
 
-app.UseStaticFiles();
+//app.UseStaticFiles();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+        ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=604800";
+    }
+});
 
 app.UseAuthentication();
 
