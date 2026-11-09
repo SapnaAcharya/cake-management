@@ -210,100 +210,6 @@ namespace CakeManagementAPI.Services
                 ?? throw new InvalidOperationException(
                     "Failed to retrieve the created cake.");
         }
-
-        // public async Task<bool> UpdateAsync(
-        //     int id,
-        //     UpdateCakeDto dto)
-        // {
-        //     var cake = await _context.Cakes
-        //         .FirstOrDefaultAsync(c => c.Id == id);
-
-        //     if (cake == null)
-        //     {
-        //         return false;
-        //     }
-
-        //     // Check whether category exists
-        //     var categoryExists = await _context.Categories
-        //         .AnyAsync(c => c.Id == dto.CategoryId);
-
-        //     if (!categoryExists)
-        //     {
-        //         throw new KeyNotFoundException(
-        //             $"Category with id {dto.CategoryId} was not found.");
-        //     }
-
-        //     // Check duplicate cake name
-        //     var duplicate = await _context.Cakes
-        //         .AnyAsync(c =>
-        //             c.Id != id &&
-        //             c.Name.ToLower() == dto.Name.ToLower());
-
-        //     if (duplicate)
-        //     {
-        //         throw new InvalidOperationException(
-        //             "A cake with this name already exists.");
-        //     }
-
-        //     // Update cake information
-        //     cake.Name = dto.Name;
-        //     cake.Description = dto.Description;
-
-        //     // Update personalized cake message settings
-        //     // cake.AllowMessage = dto.AllowMessage;
-        //     // cake.MessageLabel = dto.MessageLabel;
-        //     // cake.MessagePlaceholder = dto.MessagePlaceholder;
-        //     // cake.MaxMessageLength = dto.MaxMessageLength;
-        //     // cake.MessageAdditionalPrice = dto.MessageAdditionalPrice;
-
-        //     cake.Price = dto.Price;
-        //     cake.StockQuantity = dto.StockQuantity;
-        //     cake.IsAvailable = dto.IsAvailable;
-        //     cake.CategoryId = dto.CategoryId;
-        //     cake.UpdatedAt = DateTime.UtcNow;
-
-        //     // Only change these when the request actually sends them.
-        //     if (dto.DesignType != null)
-        //         cake.DesignType = dto.DesignType;
-
-        //     if (dto.AllowMessage.HasValue)
-        //         cake.AllowMessage = dto.AllowMessage.Value;
-
-        //     if (dto.MessageLabel != null)
-        //         cake.MessageLabel = dto.MessageLabel.Trim();
-
-        //     if (dto.MessagePlaceholder != null)
-        //         cake.MessagePlaceholder = dto.MessagePlaceholder.Trim();
-
-        //     if (dto.MaxMessageLength.HasValue)
-        //         cake.MaxMessageLength = dto.MaxMessageLength.Value;
-
-        //     if (dto.MessageAdditionalPrice.HasValue)
-        //         cake.MessageAdditionalPrice = dto.MessageAdditionalPrice.Value;
-        //     cake.CategoryId = dto.CategoryId;
-        //     cake.UpdatedAt = DateTime.UtcNow;
-
-        //     // If a new image was uploaded
-        //     if (dto.Image != null)
-        //     {
-        //         // Keep the old image path
-        //         var oldImageUrl = cake.ImageUrl;
-
-        //         // Save the new image
-        //         var newImageUrl = await SaveImageAsync(dto.Image);
-
-        //         // Update database with new image path
-        //         cake.ImageUrl = newImageUrl;
-
-        //         // Delete old image from wwwroot
-        //         DeleteImage(oldImageUrl);
-
-        //     }
-        //     await _context.SaveChangesAsync();
-
-        //     return true;
-        // }
-
         
 public async Task<bool> UpdateAsync(
     int id,
@@ -467,34 +373,6 @@ public async Task<bool> UpdateMessageSettingsAsync(
     return true;
 }
 
-        //private async Task<string> GenerateUniqueSlugAsync(string name)
-        //{
-        //    // Convert cake name into a URL-friendly slug
-        //    var slug = Regex.Replace(
-        //        name.Trim().ToLowerInvariant(),
-        //        @"[^a-z0-9]+",
-        //        "-"
-        //    ).Trim('-');
-
-        //    if (string.IsNullOrWhiteSpace(slug))
-        //    {
-        //        slug = "cake";
-        //    }
-
-        //    // Ensure that the slug is unique
-        //    var uniqueSlug = slug;
-        //    var counter = 2;
-
-        //    while (await _context.Cakes.AnyAsync(c => c.Slug == uniqueSlug))
-        //    {
-        //        uniqueSlug = $"{slug}-{counter}";
-        //        counter++;
-        //    }
-
-        //    return uniqueSlug;
-        //}
-
-        // After
         private async Task<string> GenerateUniqueSlugAsync(string name)
         {
             var slug = SlugHelper.Generate(name, "cake");

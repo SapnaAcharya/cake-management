@@ -619,23 +619,7 @@ function ManageOrders() {
                                     </div>
 
                                 </div>
-
-                                {/* Shipping */}
-
-                                {/* <div className="shipping-section">
-
-                                    <h3>
-                                        Shipping Address
-                                    </h3>
-
-                                    <p>
-                                        {
-                                            selectedOrder.shippingAddress
-                                        }
-                                    </p>
-
-                                </div> */}
-
+     
                                 {/* Shipping */}
 <div className="shipping-section">
     <h3>Shipping Address</h3>
@@ -665,73 +649,6 @@ function ManageOrders() {
         </p>
     )}
 </div>
-
-                                {/* Items */}
-{/* 
-                                <div className="order-items-section">
-
-                                    <h3>
-                                        Ordered Cakes
-                                    </h3>
-
-                                    <table className="order-items-table">
-
-                                        <thead>
-                                            <tr>
-                                                <th>Cake</th>
-                                                <th>Quantity</th>
-                                                <th>Unit Price</th>
-                                                <th>Subtotal</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-
-                                            {selectedOrder.items?.map(
-                                                (item) => (
-                                                    <tr
-                                                        key={
-                                                            item.orderItemId
-                                                        }
-                                                    >
-
-                                                        <td>
-                                                            <strong>
-                                                                {
-                                                                    item.cakeName
-                                                                }
-                                                            </strong>
-                                                        </td>
-
-                                                        <td>
-                                                            {
-                                                                item.quantity
-                                                            }
-                                                        </td>
-
-                                                        <td>
-                                                            {formatCurrency(
-                                                                item.unitPrice
-                                                            )}
-                                                        </td>
-
-                                                        <td>
-                                                            <strong>
-                                                                {formatCurrency(
-                                                                    item.subtotal
-                                                                )}
-                                                            </strong>
-                                                        </td>
-
-                                                    </tr>
-                                                )
-                                            )}
-
-                                        </tbody>
-
-                                    </table>
-
-                                </div> */}
 
                                 {/* Ordered Cakes */}
 
@@ -804,35 +721,6 @@ function ManageOrders() {
                         )}
 
                         {/* Price Information */}
-
-                        {/* <div className="admin-order-item-pricing">
-
-                            <div>
-                                <span>Unit Price</span>
-
-                                <strong>
-                                    {formatCurrency(item.unitPrice)}
-                                </strong>
-                            </div>
-
-                            <div>
-                                <span>Quantity</span>
-
-                                <strong>
-                                    {item.quantity}
-                                </strong>
-                            </div>
-
-                            <div>
-                                <span>Subtotal</span>
-
-                                <strong>
-                                    {formatCurrency(item.subtotal)}
-                                </strong>
-                            </div>
-
-                        </div> */}
-
                         
 <div className="admin-order-item-pricing">
 

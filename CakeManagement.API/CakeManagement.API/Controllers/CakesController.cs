@@ -117,42 +117,6 @@ namespace CakeManagementAPI.Controllers
                 });
             }
         }
-
-    //     [Authorize(Roles = "Admin")]
-    //     [HttpPatch("{id:int}/message-settings")]
-    //     public async Task<IActionResult> UpdateMessageSettings(
-    // int id, [FromBody] UpdateCakeMessageSettingsDto dto)
-    //     {
-    //         if (dto.AllowMessage && dto.MaxMessageLength < 1)
-    //         {
-    //             return BadRequest(new
-    //             {
-    //                 message = "Max length must be at least 1 when messages are enabled."
-    //             });
-    //         }
-
-    //         var cake = await _context.Cakes.FindAsync(id);
-
-    //         if (cake == null)
-    //         {
-    //             return NotFound(new
-    //             {
-    //                 message = $"Cake with id {id} was not found."
-    //             });
-    //         }
-
-    //         cake.AllowMessage = dto.AllowMessage;
-    //         cake.MessageLabel = dto.MessageLabel?.Trim() ?? "";
-    //         cake.MessagePlaceholder = dto.MessagePlaceholder?.Trim() ?? "";
-    //         cake.MaxMessageLength = dto.MaxMessageLength ?? cake.MaxMessageLength;
-    //         cake.MessageAdditionalPrice = dto.MessageAdditionalPrice;
-    //         cake.UpdatedAt = DateTime.UtcNow;   // remove if your entity has no UpdatedAt
-
-    //         await _context.SaveChangesAsync();
-
-    //         return NoContent();
-    //     }
-
         
 [Authorize(Roles = "Admin")]
 [HttpPatch("{id:int}/message-settings")]

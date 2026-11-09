@@ -94,7 +94,6 @@ function AppContent() {
         {/* Customization */}
         <Route path="/design-by-template" element={<DesignByTemplate />} />
         <Route path="/design-by-template/:cakeSlug" element={<DesignByTemplate />} />
-        {/* <Route path="/customize/:cakeSlug" element={<Customizepage />} /> */}
         <Route path="/customize/:templateSlug" element={<Customizepage />} />
 
         {/* Customer account */}
@@ -110,7 +109,6 @@ function AppContent() {
 
         {/* Admin */}
         <Route path="/admin" element={<AdminOverview />} />
-          {/* <Route index element={<AdminOverview />} /> */}
           <Route path="/admin/cakes" element={<ManageCakes />} />
           <Route path="/admin/cakes/add" element={<AddCake />} />
           <Route path="/admin/cakes/:id/edit" element={<EditCake />} />

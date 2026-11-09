@@ -138,61 +138,6 @@
 
 /* ---------- Order items ---------- */
 
-/* .checkout-order-item {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
-    padding: 16px 18px;
-    background: var(--co-card);
-    border: 1px solid var(--co-border);
-    border-radius: 14px;
-}
-
-.checkout-order-item strong {
-    display: block;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--co-ink);
-}
-
-.checkout-order-item p {
-    margin: 2px 0 0;
-    font-size: 0.95rem;
-    color: var(--co-ink);
-}
-
-/* Personalized message area inside each cake card */
-/* .checkout-order-item .checkout-field {
-    padding-top: 14px;
-    border-top: 1px solid var(--co-border);
-}
-
-.checkout-order-item .checkout-field label {
-    font-size: 0.78rem;
-    letter-spacing: 0.02em;
-}
-
-.checkout-order-item .checkout-field textarea {
-    background: #fff;
-    min-height: 84px;
-} */
-
-/* Character counter and additional charge line */
-/* .checkout-order-item .checkout-field small {
-    display: block;
-} */
-
-/* Note for customized cakes (no message allowed) */
-/* .checkout-order-item > small {
-    padding-top: 10px;
-    border-top: 1px solid var(--co-border);
-    color: var(--co-muted);
-    font-style: italic;
-} */ */
-
-/* ---------- Order items ---------- */
-
 .checkout-order-item {
     display: flex;
     flex-direction: column;

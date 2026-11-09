@@ -13,7 +13,7 @@ import { mapApiTemplateToViewModel } from "../../utils/mapApiTemplate";
 import { initialConfig, calcPrice } from "../../data/Options";
 import "../../styles/template.css";
 import "../../styles/Customize.css";
-import "../../styles/customizeresponsive.css"; // must stay last
+import "../../styles/customizeresponsive.css";
 
 // matches the route in App.jsx
 const templatePage = (cakeSlug) =>

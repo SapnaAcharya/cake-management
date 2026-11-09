@@ -7,6 +7,7 @@ import {
     useMap,
     useMapEvents
 } from "react-leaflet";
+import { MapPin  } from "lucide-react";
 
 import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -304,28 +305,6 @@ const handleCurrentLocation = () => {
                 </p>
             </div>
 
-            {/* Address search */}
-            {/* <form
-                className="location-search"
-                onSubmit={handleSearch}
-            >
-                <input
-                    type="text"
-                    value={searchText}
-                    onChange={(e) =>
-                        setSearchText(e.target.value)
-                    }
-                    placeholder="Search Kathmandu, Lalitpur, Bhaktapur..."
-                />
-
-                <button
-                    type="submit"
-                    disabled={loading || !searchText.trim()}
-                >
-                    Search
-                </button>
-            </form> */}
-
             {/* Address search (a div, because this component sits inside the checkout form) */}
 <div className="location-search">
     <input
@@ -363,7 +342,7 @@ const handleCurrentLocation = () => {
                                 handleSearchResult(result)
                             }
                         >
-                            <span>📍</span>
+                           <MapPin size={18} className="location-result-icon" />  
                             <span>{result.display_name}</span>
                         </button>
                     ))}

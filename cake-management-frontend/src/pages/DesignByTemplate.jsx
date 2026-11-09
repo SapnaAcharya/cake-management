@@ -3,7 +3,7 @@ import {
   useNavigate,
   useParams,
   useLocation,
-  useSearchParams,            // NEW
+  useSearchParams,            
 } from "react-router-dom";
 import Header from "../components/customization/TemplateHeader";
 import TemplateSidebar from "../components/customization/TemplateSidebar";
@@ -112,11 +112,6 @@ export default function DesignByTemplate() {
       );
     }
   };
-
-  // const handleUseTemplate = () =>
-  //   navigate(`/customize/${cakeSlug}/${selected.id}`, {
-  //     state: { cake: cakeFromState },
-  //   });
 
   const handleUseTemplate = () => {
   const templatePart = selected.slug || selected.id;

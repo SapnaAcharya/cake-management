@@ -55,30 +55,6 @@ export const getMyOrders = async () => {
     return await response.json();
 };
 
-// Get one order — for a logged-in customer or a guest (with phone number)
-// export const getOrderById = async (orderId, guestPhoneNumber = null) => {
-//     const token = getToken();
-
-//     let url = `${API_BASE_URL}/Order/${orderId}`;
-//     let headers = getAuthHeaders();
-
-//     // Guest lookup: no token, so authorize via phone number instead
-//     if (!token && guestPhoneNumber) {
-//         url = `${API_BASE_URL}/Order/guest/${orderId}?phoneNumber=${encodeURIComponent(guestPhoneNumber)}`;
-//     }
-
-//     const response = await fetch(url, { headers });
-
-//     if (!response.ok) {
-//         if (response.status === 401 || response.status === 403) {
-//             throw new Error("You're not authorized to view this order.");
-//         }
-//         throw new Error("Failed to load order details.");
-//     }
-
-//     return await response.json();
-// };
-
 // Get one order for a logged-in customer using PublicId
 export const getOrderByPublicId = async (publicId) => {
     if (!publicId) {

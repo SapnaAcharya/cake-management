@@ -8,7 +8,7 @@ import { getImageUrl } from "../utils/imageUrl";
 import cartService from "../services/cartService";
 import { getGuestCartCount } from "../services/guestCartService";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Truck, CakeSlice, Palette, ShieldCheck } from "lucide-react";
+import { Truck, CakeSlice, Palette, ShieldCheck, ArrowRight } from "lucide-react";
 import "../styles/Home.css";
 
 const heroSlides = [
@@ -506,16 +506,16 @@ function Home() {
                         </p>
                          </div>
 
-                        
-        <div className="custom-flow">
-            <div>Choose Template</div>
-            <span aria-hidden="true">→</span>
-            <div>Customize</div>
-            <span aria-hidden="true">→</span>
-            <div>Checkout</div>
-            <span aria-hidden="true">→</span>
-            <div>Order</div>
-        </div>
+                   <div className="custom-flow">
+    {/* <div>Choose Template</div> */}
+    <div><span className="flow-step-number">1</span>Choose Template</div>
+    <ArrowRight size={16} strokeWidth={2.5} className="custom-flow-arrow" aria-hidden="true" />
+    <div>Customize</div>
+    <ArrowRight size={16} strokeWidth={2.5} className="custom-flow-arrow" aria-hidden="true" />
+    <div>Checkout</div>
+    <ArrowRight size={16} strokeWidth={2.5} className="custom-flow-arrow" aria-hidden="true" />
+    <div>Order</div>
+</div>
 
                         <button
                             type="button"

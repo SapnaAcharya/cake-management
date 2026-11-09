@@ -660,6 +660,7 @@
   border-radius: 4px;
 }
 
+
 /* Mobile: put the link under the heading, centered */
 @media (max-width: 640px) {
   .home-page .templates-view-all {
@@ -786,26 +787,40 @@
   font-weight: 600;
   text-align: center;
 }
- 
+/*  
 .home-page .custom-flow span {
   align-self: center;
   color: #9a2c5d;
   font-size: 24px;
   font-weight: 700;
+} */
+
+.home-page .custom-flow .custom-flow-arrow {
+  align-self: center;
+  justify-self: center;
+  box-sizing: content-box;
+  padding: 8px;
+  border-radius: 50%;
+  background: #fff;
+  color: #9a2c5d;
+  box-shadow: 0 6px 14px -6px rgba(120, 60, 80, 0.4);
+}
+
+.home-page .custom-flow .flow-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: #9a2c5d;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 /* ---------- Button ---------- */
-/* .home-page .promo-btn {
-  height: 52px;
-  padding: 0 38px;
-  border-radius: 999px;
-  font-size: 15px;
-  box-shadow: 0 12px 22px -12px rgba(154, 44, 93, 0.7);
-}
-
-.home-page .promo-btn:hover {
-  transform: translateY(-1px);
-} */
  .home-page .promo-btn {
   display: flex;                 /* with margin auto, this centers the button */
   align-items: center;
@@ -851,7 +866,7 @@
     gap: 14px;
   }
 
-  .home-page .custom-flow span {
+  .home-page .custom-flow .custom-flow-arrow {
     display: none;
   }
 }

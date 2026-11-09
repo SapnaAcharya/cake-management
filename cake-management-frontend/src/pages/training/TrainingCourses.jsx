@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { GraduationCap } from "lucide-react";
+import { Search, Clock, Cake, Sparkles, Heart, GraduationCap } from "lucide-react";
 
 import Navbar from "../../components/Navbar";
 import trainingPackageService from "../../services/training/trainingPackageService";
@@ -373,12 +373,12 @@ export default function TrainingCourses() {
                     {/* Search and filters */}
                     <div className="training-course-toolbar">
                         <label className="training-course-search">
-                            <span
-                                className="training-search-icon"
-                                aria-hidden="true"
-                            >
-                                ⌕
-                            </span>
+                        
+                            <Search
+    size={18}
+    className="training-search-icon"
+    aria-hidden="true"
+/>
 
                             <input
                                 type="search"
@@ -489,8 +489,10 @@ export default function TrainingCourses() {
                     {/* Empty state */}
                     {!loading && !error && filteredPackages.length === 0 && (
                         <div className="training-state">
-                            <div className="training-empty-icon">🎂</div>
-
+                            
+<div className="training-empty-icon">
+    <Cake size={48} aria-hidden="true" />
+</div>
                             <h3>
                                 {packages.length === 0
                                     ? "No courses available yet"
@@ -582,9 +584,11 @@ export default function TrainingCourses() {
                                                 </h3>
 
                                                 <p className="training-course-duration">
-                                                    <span aria-hidden="true">
-                                                        ◷
-                                                    </span>
+                                                      <Clock
+        size={16}
+        className="training-duration-icon"
+        aria-hidden="true"
+    />
                                                     {formatDuration(
                                                         course.durationInDays
                                                     )}
@@ -625,7 +629,7 @@ export default function TrainingCourses() {
 
                                 <div className="training-why-items">
                                     <div className="training-why-item">
-                                        <span aria-hidden="true">✦</span>
+                                      <Sparkles size={16} aria-hidden="true" />
 
                                         <div>
                                             <h4>Practical Learning</h4>
@@ -637,7 +641,7 @@ export default function TrainingCourses() {
                                     </div>
 
                                     <div className="training-why-item">
-                                        <span aria-hidden="true">♡</span>
+                                       <Heart size={16} aria-hidden="true" />
 
                                         <div>
                                             <h4>Different Skill Levels</h4>
@@ -649,7 +653,7 @@ export default function TrainingCourses() {
                                     </div>
 
                                     <div className="training-why-item">
-                                        <span aria-hidden="true">◷</span>
+                                      <Clock size={16} aria-hidden="true" />
 
                                         <div>
                                             <h4>Available Schedules</h4>
@@ -671,7 +675,7 @@ export default function TrainingCourses() {
                     aria-label="Benefits of SweetCakes training"
                 >
                     <div className="training-benefit-item">
-                        <span aria-hidden="true">✧</span>
+                       <Sparkles size={16} aria-hidden="true" />
 
                         <div>
                             <h3>Expert Learning</h3>
@@ -680,7 +684,7 @@ export default function TrainingCourses() {
                     </div>
 
                     <div className="training-benefit-item">
-                        <span aria-hidden="true">♡</span>
+                       <Heart size={16} aria-hidden="true" />
 
                         <div>
                             <h3>Learn Your Way</h3>

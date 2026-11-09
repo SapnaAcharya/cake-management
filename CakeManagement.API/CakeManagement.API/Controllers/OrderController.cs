@@ -16,47 +16,7 @@ namespace CakeManagementAPI.Controllers
         {
             _orderService = orderService;
         }
-
-        //// Create order from customer's cart
-        //[HttpPost]
-        //[AllowAnonymous]
-        //public async Task<IActionResult> CreateOrder(
-        //    [FromBody] CreateOrderDto dto)
-        //{
-        //    int? userId = GetUserId();
-
-
-        //    try
-        //    {
-        //        var order = await _orderService.CreateOrderAsync(
-        //            userId,
-        //            dto);
-
-        //        return Ok(order);
-        //    }
-        //    catch (KeyNotFoundException ex)
-        //    {
-        //        return NotFound(new
-        //        {
-        //            message = ex.Message
-        //        });
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            message = ex.Message
-        //        });
-        //    }
-        //    catch (ArgumentException ex)
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            message = ex.Message
-        //        });
-        //    }
-        //}
-
+        
         // Create order from customer's cart
         [HttpPost]
         [AllowAnonymous]

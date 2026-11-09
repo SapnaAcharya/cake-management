@@ -412,48 +412,6 @@
   background: var(--cart-bg);
 }
 
-
-/* Personalized cake message section */
-/* .cart-personalized-message {
-    width: 100%;
-    margin: 14px 0;
-    padding: 16px;
-    background: #fffaf7;
-    border: 1px solid #eaded7;
-    border-radius: 10px;
-}
-
-.cart-personalized-message label {
-    display: block;
-    margin-bottom: 9px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #49352d;
-}
-
-.cart-personalized-message textarea {
-    width: 100%;
-    min-height: 75px;
-    padding: 12px;
-    border: 1px solid #d8c9c0;
-    border-radius: 7px;
-    background: #ffffff;
-    font-family: inherit;
-    font-size: 14px;
-    resize: vertical;
-    outline: none;
-    box-sizing: border-box;
-}
-
-.cart-personalized-message textarea:focus {
-    border-color: #a65c45;
-    box-shadow: 0 0 0 2px rgba(166, 92, 69, 0.12);
-}
-
-.cart-personalized-message textarea:disabled {
-    background: #f5f5f5;
-    cursor: not-allowed;
-} */
  /* Personalized cake message section */
 .cart-personalized-message {
   width: 100%;
