@@ -7,6 +7,8 @@ public interface ICakeTemplateService
 
     Task<CakeTemplate?> GetByIdAsync(int id);
 
+    Task<CakeTemplate?> GetBySlugAsync(string slug);
+
     Task<CakeTemplate> CreateAsync(CreateCakeTemplateDto dto);
 
     Task<CakeTemplate?> UpdateAsync(int id, UpdateCakeTemplateDto dto);

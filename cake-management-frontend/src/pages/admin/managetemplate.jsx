@@ -5,7 +5,7 @@ import templateService from "../../services/admintemplateService";
 import { useNavigate } from "react-router-dom";
 import "../../styles/AdminDashboard.css";
 
-// Your API's `images` field is a flat array of { imageUrl, imageType } rows
+//  API's `images` field is a flat array of { imageUrl, imageType } rows
 // (thumb / preview / gallery), not a flat `imageUrls` array — pull the one we need.
 function getThumbUrl(template) {
   const thumb = (template.images || []).find((img) => img.imageType === "thumb");

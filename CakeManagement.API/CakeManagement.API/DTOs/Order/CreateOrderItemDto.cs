@@ -5,7 +5,6 @@ namespace CakeManagementAPI.DTOs.Order
 {
     public class CreateOrderItemDto
     {
-        [Required]
         public int? CakeId { get; set; }
 
         [Required]
@@ -14,5 +13,8 @@ namespace CakeManagementAPI.DTOs.Order
 
         // Only fro customized cakes in a guest checkout. Null = normal cake.
         public CustomizationDto? Customization { get; set; }
+   
+        // Customer's personalized message for normal cakes
+        public string? PersonalizedMessage { get; set; }
     }
 }

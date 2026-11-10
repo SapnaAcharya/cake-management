@@ -36,5 +36,24 @@ namespace CakeManagementAPI.DTOs.Cake
         public bool IsBestSeller { get; set; }
 
         public bool IsTrending { get; set; }
+
+        // Personalized Cake Message Settings
+        public bool AllowMessage { get; set; } = false;
+
+        [StringLength(100,
+            ErrorMessage = "Message label cannot exceed 100 characters")]
+        public string MessageLabel { get; set; } = "Personalized Message";
+
+        [StringLength(200,
+            ErrorMessage = "Message placeholder cannot exceed 200 characters")]
+        public string MessagePlaceholder { get; set; } = "Enter your message..";
+
+        [Range(1, 500,
+            ErrorMessage = "Maximum message length must be between 1 and 500")]
+        public int MaxMessageLength { get; set; } = 100;
+
+        [Range(0, 100000,
+            ErrorMessage = "Message additional price cannot be negative or exceed 100000")]
+        public decimal MessageAdditionalPrice { get; set; } = 0;
     }
 }

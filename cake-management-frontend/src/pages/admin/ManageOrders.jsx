@@ -39,6 +39,10 @@ function ManageOrders() {
 
             const data = await getAllOrders();
 
+                 console.log("Complete API response:", data);
+        console.log("First order:", data?.[0]);
+        console.log("First order PublicId:", data?.[0]?.publicId);
+
             setOrders(Array.isArray(data) ? data : []);
 
         } catch (err) {
@@ -346,7 +350,8 @@ function ManageOrders() {
                             <thead>
                                 <tr>
                                     <th>S.N.</th>
-                                    <th>Order ID</th>
+                                    {/* <th>Order ID</th> */}
+                                    <th>Order Reference</th>
                                     <th>Customer</th>
                                     <th>Order Date</th>
                                     <th>Total Amount</th>
@@ -365,12 +370,22 @@ function ManageOrders() {
                                             <td>
                                                 {index + 1}
                                             </td>
-
+{/* 
                                             <td>
                                                 <strong>
                                                     Order ID: {order.orderId}
                                                 </strong>
-                                            </td>
+                                            </td> */}
+                                            <td>
+    <strong
+        title={order.publicId}
+        className="order-reference"
+    >
+        {order.publicId
+            ? order.publicId.slice(0, 8).toUpperCase()
+            : "—"}
+    </strong>
+</td>
 
                                             <td>
                                                 Customer ID:
@@ -504,10 +519,18 @@ function ManageOrders() {
                         <div className="order-modal-header">
 
                             <div>
-                                <h2>
+                                {/* <h2>
                                     Order ID:
                                     {selectedOrder.orderId}
-                                </h2>
+                                </h2> */}
+                                <h2>
+    Order Details
+</h2>
+
+<p>
+    Order Reference:{" "}
+    <strong>{selectedOrder.publicId || "—"}</strong>
+</p>
 
                                 <p>
                                     Placed on{" "}
@@ -557,7 +580,7 @@ function ManageOrders() {
                                         <select 
                                         className={getStatusClass(selectedOrder.status)}
                                         value={selectedOrder.status}
-                                        disabled={updatingOrderId === selectedOrder.order.orderId}
+                                        disabled={updatingOrderId === selectedOrder.orderId}
                                         onChange={(e) => 
                                             handleStatusChange(selectedOrder.orderId, e.target.value)
                                         }
@@ -596,89 +619,183 @@ function ManageOrders() {
                                     </div>
 
                                 </div>
-
+     
                                 {/* Shipping */}
+<div className="shipping-section">
+    <h3>Shipping Address</h3>
 
-                                <div className="shipping-section">
+    <p>{selectedOrder.shippingAddress || "—"}</p>
 
-                                    <h3>
-                                        Shipping Address
-                                    </h3>
+    {selectedOrder.latitude != null &&
+    selectedOrder.longitude != null ? (
+        <div className="delivery-location">
+            <p>
+                <strong>Latitude:</strong> {selectedOrder.latitude}
+            </p>
+            <p>
+                <strong>Longitude:</strong> {selectedOrder.longitude}
+            </p>
+            <a
+                href={`https://www.google.com/maps?q=${selectedOrder.latitude},${selectedOrder.longitude}`}
+                target="_blank"
+                rel="noreferrer"
+            >
+                Open delivery location on map
+            </a>
+        </div>
+    ) : (
+        <p>
+            <small>No map location was saved for this order.</small>
+        </p>
+    )}
+</div>
+
+                                {/* Ordered Cakes */}
+
+<div className="order-items-section">
+
+    <h3>Ordered Cakes</h3>
+
+    {selectedOrder.items?.length > 0 ? (
+        <div className="admin-ordered-items">
+
+            {selectedOrder.items.map((item) => {
+
+                const personalizedMessage =
+                    item.personalizedMessage?.trim() || "";
+
+                return (
+                    <div
+                        className="admin-order-item"
+                        key={item.orderItemId}
+                    >
+
+                        {/* Cake Information */}
+
+                        <div className="admin-order-item-header">
+
+                            <div>
+                                <strong>{item.cakeName}</strong>
+
+                                <span className="admin-order-item-type">
+                                    {item.isCustomized
+                                        ? "Customized Cake"
+                                        : "Normal Cake"}
+                                </span>
+                            </div>
+
+                            <span>
+                                Quantity: {item.quantity}
+                            </span>
+
+                        </div>
+
+                        {/* Personalized Message */}
+
+                        {!item.isCustomized &&
+                            personalizedMessage && (
+                                <div className="admin-personalized-message">
+
+                                    <h4>Personalized Message</h4>
 
                                     <p>
-                                        {
-                                            selectedOrder.shippingAddress
-                                        }
+                                        {personalizedMessage}
                                     </p>
 
                                 </div>
+                            )}
 
-                                {/* Items */}
+                        {/* Customized Cake Information */}
 
-                                <div className="order-items-section">
+                        {item.isCustomized && (
+                            <div className="admin-customized-info">
+                                <strong>
+                                    Customized cake
+                                </strong>
 
-                                    <h3>
-                                        Ordered Cakes
-                                    </h3>
+                                <p>
+                                    This item was created using
+                                    the customer's cake customization.
+                                </p>
+                            </div>
+                        )}
 
-                                    <table className="order-items-table">
+                        {/* Price Information */}
+                        
+<div className="admin-order-item-pricing">
 
-                                        <thead>
-                                            <tr>
-                                                <th>Cake</th>
-                                                <th>Quantity</th>
-                                                <th>Unit Price</th>
-                                                <th>Subtotal</th>
-                                            </tr>
-                                        </thead>
+    <div>
+        <span>Cake Price</span>
+        <strong>
+            {formatCurrency(
+                Number(item.unitPrice) -
+                Number(item.messageAdditionalPrice || 0)
+            )}
+        </strong>
+    </div>
 
-                                        <tbody>
+    {personalizedMessage && !item.isCustomized && (
+        <div>
+            <span>Message Charge (per cake)</span>
+            <strong>
+                {formatCurrency(item.messageAdditionalPrice || 0)}
+            </strong>
+        </div>
+    )}
 
-                                            {selectedOrder.items?.map(
-                                                (item) => (
-                                                    <tr
-                                                        key={
-                                                            item.orderItemId
-                                                        }
-                                                    >
+    <div>
+        <span>Quantity</span>
+        <strong>
+            {item.quantity}
+        </strong>
+    </div>
 
-                                                        <td>
-                                                            <strong>
-                                                                {
-                                                                    item.cakeName
-                                                                }
-                                                            </strong>
-                                                        </td>
+    <div>
+        <span>Final Unit Price</span>
+        <strong>
+            {formatCurrency(item.unitPrice)}
+        </strong>
+    </div>
 
-                                                        <td>
-                                                            {
-                                                                item.quantity
-                                                            }
-                                                        </td>
+    {personalizedMessage && !item.isCustomized && (
+        <div>
+            <span>Total Message Charge</span>
+            <strong>
+                {formatCurrency(
+                    Number(item.messageAdditionalPrice || 0) *
+                    Number(item.quantity)
+                )}
+            </strong>
+        </div>
+    )}
 
-                                                        <td>
-                                                            {formatCurrency(
-                                                                item.unitPrice
-                                                            )}
-                                                        </td>
+    <div>
+        <span>Subtotal</span>
+        <strong>
+            {formatCurrency(item.subtotal)}
+        </strong>
+    </div>
 
-                                                        <td>
-                                                            <strong>
-                                                                {formatCurrency(
-                                                                    item.subtotal
-                                                                )}
-                                                            </strong>
-                                                        </td>
+</div>
 
-                                                    </tr>
-                                                )
-                                            )}
 
-                                        </tbody>
+                        {personalizedMessage && !item.isCustomized && (
+                            <small className="admin-message-price-note">
+                                The unit price includes any applicable
+                                personalized-message charge.
+                            </small>
+                        )}
 
-                                    </table>
+                    </div>
+                );
+            })}
 
-                                </div>
+        </div>
+    ) : (
+        <p>No items found in this order.</p>
+    )}
+
+</div>
 
                                 {/* Total */}
 

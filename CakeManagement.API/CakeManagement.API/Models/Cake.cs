@@ -8,6 +8,8 @@ namespace CakeManagementAPI.Models
 
         public string Name { get; set; } = string.Empty;
 
+        // SEO-Friendly URL identifier
+        public string Slug { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 
         public decimal Price { get; set; }
@@ -25,6 +27,17 @@ namespace CakeManagementAPI.Models
         public bool IsBestSeller { get; set; } = false;
 
         public bool IsTrending { get; set; } = false;
+
+        public bool AllowMessage { get; set; } = false;
+
+        public string MessageLabel { get; set; } = "Personalized Message";
+
+        public string MessagePlaceholder { get; set; } = "Enter your message";
+
+        public int MaxMessageLength { get; set; } = 100;
+
+        public decimal MessageAdditionalPrice { get; set; } = 0;
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? UpdatedAt { get; set; }

@@ -32,7 +32,7 @@ namespace CakeManagementAPI.Controllers
             return Ok(cakes);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
             var cake = await _cakeService.GetByIdAsync(id);
@@ -41,6 +41,19 @@ namespace CakeManagementAPI.Controllers
             {
                 return NotFound(
                     $"Cake with id {id} was not found.");
+            }
+
+            return Ok(cake);
+        }
+
+        [HttpGet("{slug}")]
+        public async Task<IActionResult> GetBySlug(string slug)
+        {
+            var cake = await _cakeService.GetBySlugAsync(slug);
+
+            if (cake == null)
+            {
+                return NotFound($"Cake with slug '{slug}' was not found.");
             }
 
             return Ok(cake);
@@ -77,7 +90,7 @@ namespace CakeManagementAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(
             int id, [FromForm] UpdateCakeDto dto)
             {
@@ -104,9 +117,46 @@ namespace CakeManagementAPI.Controllers
                 });
             }
         }
+        
+[Authorize(Roles = "Admin")]
+[HttpPatch("{id:int}/message-settings")]
+public async Task<IActionResult> UpdateMessageSettings(
+    int id,
+    [FromBody] UpdateCakeMessageSettingsDto dto)
+{
+    if (dto.AllowMessage && (!dto.MaxMessageLength.HasValue ||
+                             dto.MaxMessageLength.Value < 1))
+    {
+        return BadRequest(new
+        {
+            message = "Max length must be at least 1 when messages are enabled."
+        });
+    }
+
+    if (dto.MessageAdditionalPrice < 0)
+    {
+        return BadRequest(new
+        {
+            message = "Additional price cannot be negative."
+        });
+    }
+
+    var updated = await _cakeService.UpdateMessageSettingsAsync(id, dto);
+
+    if (!updated)
+    {
+        return NotFound(new
+        {
+            message = $"Cake with id {id} was not found."
+        });
+    }
+
+    return NoContent();
+}
+
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

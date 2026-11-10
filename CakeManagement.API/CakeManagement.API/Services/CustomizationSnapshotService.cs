@@ -56,6 +56,7 @@ namespace CakeManagementAPI.Services
 
         Message = dto.Message,
         Font = dto.Font,
+        TextColor = dto.TextColor,
 
         Sponge = dto.Sponge,
         Frosting = dto.Frosting,

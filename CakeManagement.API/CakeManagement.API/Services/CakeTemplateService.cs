@@ -3,6 +3,7 @@ using CakeManagementAPI.DTOs.Templates;
 using CakeManagementAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using CakeManagementAPI.Helpers;
 
 public class CakeTemplateService : ICakeTemplateService
 {
@@ -40,16 +41,55 @@ public class CakeTemplateService : ICakeTemplateService
             .FirstOrDefaultAsync(t => t.Id == id);
     }
 
+    // NEW (optional): only used if you add a slug endpoint
+    public async Task<CakeTemplate?> GetBySlugAsync(string slug)
+    {
+        return await _context.CakeTemplates
+            .AsNoTracking()
+            .Include(t => t.Images)
+            .Include(t => t.Sizes)
+            .Include(t => t.Colors)
+            .Include(t => t.Features)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(t => t.Slug == slug);
+    }
+
+    private async Task<string> GenerateUniqueSlugAsync(string name)
+    {
+        var baseSlug = SlugHelper.Generate(name, "template");
+
+        if (string.IsNullOrWhiteSpace(baseSlug) ||
+            baseSlug.Equals("featured", StringComparison.OrdinalIgnoreCase))
+        {
+            baseSlug = "template";
+        }
+
+        var slug = baseSlug;
+        var counter = 2;
+
+        while (await _context.CakeTemplates
+            .AnyAsync(t => t.Slug.ToLower() == slug.ToLower()))
+        {
+            slug = $"{baseSlug}-{counter++}";
+        }
+
+        return slug;
+    }
+
     public async Task<CakeTemplate> CreateAsync(CreateCakeTemplateDto dto)
     {
         var exists = await _context.CakeTemplates
             .AnyAsync(t => t.Name.ToLower() == dto.Name.ToLower());
 
-        if (exists) 
+        if (exists)
             throw new InvalidOperationException($"A template named '{dto.Name}' already exists.");
+
+        var slug = await GenerateUniqueSlugAsync(dto.Name);   // NEW
+
         var template = new CakeTemplate
         {
             Name = dto.Name,
+            Slug = slug,                                       // NEW
             Description = dto.Description,
             Category = dto.Category,
             IsPopular = dto.IsPopular,
@@ -101,6 +141,7 @@ public class CakeTemplateService : ICakeTemplateService
                 ImageType = "tier",
                 TierCount = t.TierCount
             }));
+
         return images;
     }
 
@@ -129,11 +170,11 @@ public class CakeTemplateService : ICakeTemplateService
 
         var allowedExtensions = new[]
         {
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".webp"
-    };
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp"
+        };
 
         var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
 
@@ -184,6 +225,7 @@ public class CakeTemplateService : ICakeTemplateService
             return null;
 
         template.Name = dto.Name;
+        // Slug intentionally NOT changed, so existing links keep working
         template.Description = dto.Description;
         template.Category = dto.Category;
         template.IsPopular = dto.IsPopular;
@@ -225,20 +267,20 @@ public class CakeTemplateService : ICakeTemplateService
         return true;
     }
 
-    [HttpGet("featured")]
     public async Task<List<FeaturedTemplateDto>> GetFeaturedAsync(int count)
     {
         return await _context.CakeTemplates
-            .Where(t => t.IsPopular)          // use a property that exists on your model
+            .Where(t => t.IsPopular)
             .OrderBy(t => t.Id)
             .Take(count)
             .Select(t => new FeaturedTemplateDto
             {
                 Id = t.Id,
                 Name = t.Name,
+                Slug = t.Slug,                                 // NEW
                 Description = t.Description,
                 BasePrice = t.BasePrice,
-                Category = t.Category,        // if Category is an entity, use t.Category.Name
+                Category = t.Category,
                 ImageUrl = t.Images
                     .Where(i => i.ImageType.ToLower() == "thumb")
                     .Select(i => i.ImageUrl)

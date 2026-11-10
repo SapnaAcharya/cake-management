@@ -146,7 +146,13 @@ builder.Services.AddScoped<ICakeService, CakeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add email service to the container
-builder.Services.AddHttpClient<IPasswordResetEmailService, BrevoPasswordResetEmailService>();
+builder.Services.AddHttpClient<BrevoPasswordResetEmailService>();
+
+builder.Services.AddScoped<IPasswordResetEmailService>(
+    sp => sp.GetRequiredService<BrevoPasswordResetEmailService>());
+
+// Add training enrollment service to the container
+builder.Services.AddScoped<TrainingEnrollmentService>();
 
 // Add contact service to the container
 builder.Services.AddHttpClient<IContactEmailService, ContactEmailService>();
@@ -184,6 +190,15 @@ builder.Services.AddScoped<ICustomizationSnapshotService, CustomizationSnapshotS
 // Add Customization Service to the container
 builder.Services.AddScoped<ICustomizationService, CustomizationService>();
 
+// Add training package services the container
+builder.Services.AddScoped<ITrainingPackageService, TrainingPackageService>();
+
+// Add trainer services to the conatiner
+builder.Services.AddScoped<ITrainerService, TrainerService>();
+
+// Add training batch services to the container
+builder.Services.AddScoped<ITrainingBatchService, TrainingBatchService>(); 
+
 var app = builder.Build();
 
 // Render sits behind a proxy that terminates HTTPS
@@ -191,6 +206,7 @@ var forwardedOptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 };
+
 forwardedOptions.KnownNetworks.Clear();
 forwardedOptions.KnownProxies.Clear();
 app.UseForwardedHeaders(forwardedOptions);
@@ -218,7 +234,16 @@ app.UseCors("ReactPolicy");
 
 app.UseRateLimiter();
 
-app.UseStaticFiles();
+//app.UseStaticFiles();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+        ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=604800";
+    }
+});
 
 app.UseAuthentication();
 
@@ -249,6 +274,7 @@ static string BuildConnectionString(string? raw)
         Username = Uri.UnescapeDataString(userInfo[0]),
         Password = Uri.UnescapeDataString(userInfo[1]),
         Database = uri.AbsolutePath.TrimStart('/'),
-        SslMode = Npgsql.SslMode.Prefer
+        SslMode = Npgsql.SslMode.Require,
+        GssEncryptionMode = Npgsql.GssEncryptionMode.Disable
     }.ConnectionString;
 }

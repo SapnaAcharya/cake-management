@@ -5,6 +5,8 @@ public class FeaturedTemplateDto
 
     public string Name { get; set; }
 
+    public string Slug { get; set; } = string.Empty;
+
     public string Description { get; set; }
 
     public decimal BasePrice { get; set; }

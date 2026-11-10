@@ -19,10 +19,10 @@ export default function PreviewStage({
 
   // Only computed when cfg is provided (not on the plain browsing page).
   const stage = cfg ? stageView(template, cfg, null, decorations) : null;
-  
+
   // Color picked in the details panel (works without cfg)
-const pickedColor = template.colors?.find((c) => c.id === colorId);
-const tint = stage?.tint ?? pickedColor?.tint ?? pickedColor?.filter;
+  const pickedColor = template.colors?.find((c) => c.id === colorId);
+  const tint = stage?.tint ?? pickedColor?.tint ?? pickedColor?.filter;
 
   const gallery = stage?.gallery?.length
     ? stage.gallery
@@ -35,12 +35,18 @@ const tint = stage?.tint ?? pickedColor?.tint ?? pickedColor?.filter;
 
   const loaded = Boolean(previewImage) && loadedImage === previewImage;
 
-  // Close full view with Esc
+  // Full view: close with Esc and lock page scroll behind it.
+  // The responsive CSS sets overflow with !important on body, so the lock
+  // has to be !important too.
   useEffect(() => {
     if (!expanded) return;
     const onKey = (e) => e.key === "Escape" && setExpanded(false);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.body.style.setProperty("overflow", "hidden", "important");
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.removeProperty("overflow");
+    };
   }, [expanded]);
 
   return (
@@ -48,6 +54,8 @@ const tint = stage?.tint ?? pickedColor?.tint ?? pickedColor?.filter;
       <section
         className={`ps ${expanded ? "ps--expanded" : ""}`}
         aria-label="Cake preview"
+        role={expanded ? "dialog" : undefined}
+        aria-modal={expanded || undefined}
       >
         {/* 1. Toolbar */}
         <header className="ps__toolbar">
@@ -96,8 +104,8 @@ const tint = stage?.tint ?? pickedColor?.tint ?? pickedColor?.filter;
                 alt={`${template.name} preview`}
                 onLoad={() => setLoadedImage(previewImage)}
                 style={{
-                        filter: tint,
-                        transform: stage ? `scale(${stage.sizeScale})` : undefined,
+                  filter: tint,
+                  transform: stage ? `scale(${stage.sizeScale})` : undefined,
                 }}
               />
             )}

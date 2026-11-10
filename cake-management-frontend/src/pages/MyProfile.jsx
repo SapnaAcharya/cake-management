@@ -7,26 +7,26 @@ import "../styles/MyProfile.css";
 function Profile() {
     const [activeTab, setActiveTab] = useState("info");
 
-    // Profile info state
+    // Profile information
     const [profile, setProfile] = useState(null);
     const [form, setForm] = useState({
         name: "",
         phone: "",
-        address: ""
+        address: "",
     });
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [savingProfile, setSavingProfile] = useState(false);
 
-    // Order history state
+    // Order history
     const [orders, setOrders] = useState([]);
     const [loadingOrders, setLoadingOrders] = useState(false);
     const [ordersLoaded, setOrdersLoaded] = useState(false);
 
-    // Change password state
+    // Password change
     const [passwordForm, setPasswordForm] = useState({
         currentPassword: "",
         newPassword: "",
-        confirmPassword: ""
+        confirmPassword: "",
     });
     const [passwordErrors, setPasswordErrors] = useState({});
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -37,7 +37,7 @@ function Profile() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    // Load profile on mount
+    // Load profile
     useEffect(() => {
         const loadProfile = async () => {
             try {
@@ -50,9 +50,8 @@ function Profile() {
                 setForm({
                     name: data.name || "",
                     phone: data.phone || "",
-                    address: data.address || ""
+                    address: data.address || "",
                 });
-
             } catch (err) {
                 console.error(err);
                 setError(err.message || "Failed to load profile.");
@@ -64,7 +63,7 @@ function Profile() {
         loadProfile();
     }, []);
 
-    // Load orders when the Order History tab is opened (lazy load)
+    // Load orders when the Order History tab is opened
     useEffect(() => {
         if (activeTab !== "orders" || ordersLoaded) return;
 
@@ -77,7 +76,6 @@ function Profile() {
 
                 setOrders(Array.isArray(data) ? data : []);
                 setOrdersLoaded(true);
-
             } catch (err) {
                 console.error(err);
                 setError(err.message || "Failed to load order history.");
@@ -105,11 +103,10 @@ function Profile() {
             setSuccess("");
 
             const result = await profileService.updateMyProfile(form);
-
             const updatedUser = result.user || result;
+
             setProfile(updatedUser);
             setSuccess("Profile updated successfully.");
-
         } catch (err) {
             console.error(err);
             setError(err.message || "Failed to update profile.");
@@ -118,79 +115,97 @@ function Profile() {
         }
     };
 
-        // Change password
-        const handlePasswordFieldChange = (e) => {
-            const { name, value } = e.target;
-            setPasswordForm((prev) => ({ ...prev, [name]: value }));
-        };
-    
-        const validatePasswordForm = () => {
-            const newErrors = {};
-    
-            if (!passwordForm.currentPassword) {
-                newErrors.currentPassword = "Enter your current password.";
-            }
-    
-            if (!passwordForm.newPassword) {
-                newErrors.newPassword = "Enter a new password.";
-            } else if (passwordForm.newPassword.length < 6) {
-                newErrors.newPassword = "New password must be at least 6 characters.";
-            } else if (passwordForm.newPassword === passwordForm.currentPassword) {
-                newErrors.newPassword = "New password must be different from the current password.";
-            }
-    
-            if (passwordForm.confirmPassword !== passwordForm.newPassword) {
-                newErrors.confirmPassword = "Passwords do not match.";
-            }
-    
-            return newErrors;
-        };
-    
-        const handleChangePassword = async (e) => {
-            e.preventDefault();
-            setError("");
-            setSuccess("");
-    
-            const validationErrors = validatePasswordForm();
-            setPasswordErrors(validationErrors);
-            if (Object.keys(validationErrors).length > 0) return;
-    
-            try {
-                setChangingPassword(true);
-    
-                await profileService.changePassword({
-                    currentPassword: passwordForm.currentPassword,
-                    newPassword: passwordForm.newPassword
-                });
-    
-                setSuccess("Password changed successfully.");
-                setPasswordForm({
-                    currentPassword: "",
-                    newPassword: "",
-                    confirmPassword: ""
-                });
-                setPasswordErrors({});
-    
-            } catch (err) {
-                console.error(err);
-                setError(err.message || "Failed to change password.");
-            } finally {
-                setChangingPassword(false);
-            }
-        };
+    // Handle password field changes
+    const handlePasswordFieldChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordForm((prev) => ({ ...prev, [name]: value }));
+    };
+
+    // Validate password form
+    const validatePasswordForm = () => {
+        const newErrors = {};
+
+        if (!passwordForm.currentPassword) {
+            newErrors.currentPassword = "Enter your current password.";
+        }
+
+        if (!passwordForm.newPassword) {
+            newErrors.newPassword = "Enter a new password.";
+        } else if (passwordForm.newPassword.length < 6) {
+            newErrors.newPassword =
+                "New password must be at least 6 characters.";
+        } else if (
+            passwordForm.newPassword === passwordForm.currentPassword
+        ) {
+            newErrors.newPassword =
+                "New password must be different from the current password.";
+        }
+
+        if (passwordForm.confirmPassword !== passwordForm.newPassword) {
+            newErrors.confirmPassword = "Passwords do not match.";
+        }
+
+        return newErrors;
+    };
+
+    // Change password
+    const handleChangePassword = async (e) => {
+        e.preventDefault();
+        setError("");
+        setSuccess("");
+
+        const validationErrors = validatePasswordForm();
+        setPasswordErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length > 0) return;
+
+        try {
+            setChangingPassword(true);
+
+            await profileService.changePassword({
+                currentPassword: passwordForm.currentPassword,
+                newPassword: passwordForm.newPassword,
+            });
+
+            setSuccess("Password changed successfully.");
+            setPasswordForm({
+                currentPassword: "",
+                newPassword: "",
+                confirmPassword: "",
+            });
+            setPasswordErrors({});
+        } catch (err) {
+            console.error(err);
+            setError(err.message || "Failed to change password.");
+        } finally {
+            setChangingPassword(false);
+        }
+    };
 
     // Format helpers
     const formatDate = (date) => {
         if (!date) return "—";
-        return new Date(date).toLocaleDateString("en-US", {
+
+        const parsedDate = new Date(date);
+
+        if (Number.isNaN(parsedDate.getTime())) return "—";
+
+        return parsedDate.toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
-            day: "numeric"
+            day: "numeric",
         });
     };
 
     const formatCurrency = (amount) =>
         `NPR ${Number(amount || 0).toLocaleString()}`;
+
+    // Switch account tabs and clear previous messages
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        setError("");
+        setSuccess("");
+    };
 
     return (
         <div className="profile-page">
@@ -199,38 +214,65 @@ function Profile() {
             <main className="profile-content">
                 <h1>My Account</h1>
 
-                {success && <div className="profile-success">{success}</div>}
-                {error && <div className="profile-error">{error}</div>}
+                {success && (
+                    <div className="profile-success" role="status">
+                        {success}
+                    </div>
+                )}
 
-                <div className="profile-tabs">
+                {error && (
+                    <div className="profile-error" role="alert">
+                        {error}
+                    </div>
+                )}
+
+                {/* Account navigation tabs */}
+                <div className="profile-tabs" role="tablist" aria-label="My account">
                     <button
+                        type="button"
+                        role="tab"
+                        aria-selected={activeTab === "info"}
                         className={activeTab === "info" ? "active" : ""}
-                        onClick={() => setActiveTab("info")}
+                        onClick={() => handleTabChange("info")}
                     >
                         My Info
                     </button>
+
                     <button
+                        type="button"
+                        role="tab"
+                        aria-selected={activeTab === "orders"}
                         className={activeTab === "orders" ? "active" : ""}
-                        onClick={() => setActiveTab("orders")}
+                        onClick={() => handleTabChange("orders")}
                     >
                         Order History
                     </button>
-                    <button className={activeTab === "security" ? "active" : ""}
-                    onClick={() => setActiveTab("security")}
+
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={activeTab === "security"}
+                        className={activeTab === "security" ? "active" : ""}
+                        onClick={() => handleTabChange("security")}
                     >
                         Change Password
                     </button>
                 </div>
 
+                {/* My Info */}
                 {activeTab === "info" && (
-                    <div className="profile-card">
+                    <section className="profile-card">
                         {loadingProfile ? (
                             <p>Loading profile...</p>
                         ) : (
-                            <form onSubmit={handleSave} className="profile-form">
+                            <form
+                                onSubmit={handleSave}
+                                className="profile-form"
+                            >
                                 <div className="form-field">
-                                    <label>Email</label>
+                                    <label htmlFor="profile-email">Email</label>
                                     <input
+                                        id="profile-email"
                                         type="email"
                                         value={profile?.email || ""}
                                         disabled
@@ -238,8 +280,9 @@ function Profile() {
                                 </div>
 
                                 <div className="form-field">
-                                    <label>Name</label>
+                                    <label htmlFor="profile-name">Name</label>
                                     <input
+                                        id="profile-name"
                                         type="text"
                                         name="name"
                                         value={form.name}
@@ -249,8 +292,9 @@ function Profile() {
                                 </div>
 
                                 <div className="form-field">
-                                    <label>Phone</label>
+                                    <label htmlFor="profile-phone">Phone</label>
                                     <input
+                                        id="profile-phone"
                                         type="text"
                                         name="phone"
                                         value={form.phone}
@@ -259,8 +303,9 @@ function Profile() {
                                 </div>
 
                                 <div className="form-field">
-                                    <label>Address</label>
+                                    <label htmlFor="profile-address">Address</label>
                                     <input
+                                        id="profile-address"
                                         type="text"
                                         name="address"
                                         value={form.address}
@@ -273,15 +318,18 @@ function Profile() {
                                     className="save-btn"
                                     disabled={savingProfile}
                                 >
-                                    {savingProfile ? "Saving..." : "Save Changes"}
+                                    {savingProfile
+                                        ? "Saving..."
+                                        : "Save Changes"}
                                 </button>
                             </form>
                         )}
-                    </div>
+                    </section>
                 )}
 
+                {/* Order History */}
                 {activeTab === "orders" && (
-                    <div className="profile-card">
+                    <section className="profile-card">
                         {loadingOrders ? (
                             <p>Loading order history...</p>
                         ) : orders.length === 0 ? (
@@ -289,123 +337,205 @@ function Profile() {
                         ) : (
                             <div className="order-history-list">
                                 {orders.map((order) => (
-                                    <div key={order.id} className="order-history-item">
+                                    <article
+                                        key={order.id}
+                                        className="order-history-item"
+                                    >
                                         <div className="order-history-header">
-                                            <strong>Order #{order.id}</strong>
-                                            <span>{formatDate(order.orderDate)}</span>
+                                            <strong>
+                                                Order #{order.id}
+                                            </strong>
+                                            <span>
+                                                {formatDate(order.orderDate)}
+                                            </span>
                                         </div>
+
                                         <div className="order-history-status">
                                             {order.status}
                                         </div>
+
                                         <ul>
                                             {order.items?.map((item) => (
-                                                <li key={item.cakeId}>
-                                                    {item.cakeName} × {item.quantity} —{" "}
+                                                <li
+                                                    key={`${order.id}-${item.cakeId}`}
+                                                >
+                                                    {item.cakeName} ×{" "}
+                                                    {item.quantity} —{" "}
                                                     {formatCurrency(item.subtotal)}
                                                 </li>
                                             ))}
                                         </ul>
+
                                         <div className="order-history-total">
-                                            Total: {formatCurrency(order.totalAmount)}
+                                            Total:{" "}
+                                            {formatCurrency(order.totalAmount)}
                                         </div>
-                                    </div>
+                                    </article>
                                 ))}
                             </div>
                         )}
-                    </div>
+                    </section>
                 )}
 
+                {/* Change Password */}
                 {activeTab === "security" && (
-                                    <div className="profile-card">
-                                        <form onSubmit={handleChangePassword} className="profile-form" noValidate>
-                                            <div className="form-field">
-                                                <label htmlFor="currentPassword">Current Password</label>
-                                                <div className="password-input-wrap">
-                                                    <input
-                                                        id="currentPassword"
-                                                        type={showCurrentPassword ? "text" : "password"}
-                                                        name="currentPassword"
-                                                        value={passwordForm.currentPassword}
-                                                        onChange={handlePasswordFieldChange}
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="password-toggle"
-                                                        onClick={() => setShowCurrentPassword((v) => !v)}
-                                                        tabIndex={-1}
-                                                        aria-label={showCurrentPassword ? "Hide password" : "Show password"}
-                                                    >
-                                                        {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                                    </button>
-                                                </div>
-                                                {passwordErrors.currentPassword && (
-                                                    <div className="field-error">{passwordErrors.currentPassword}</div>
-                                                )}
-                                            </div>
-                
-                                            <div className="form-field">
-                                                <label htmlFor="newPassword">New Password</label>
-                                                <div className="password-input-wrap">
-                                                    <input
-                                                        id="newPassword"
-                                                        type={showNewPassword ? "text" : "password"}
-                                                        name="newPassword"
-                                                        value={passwordForm.newPassword}
-                                                        onChange={handlePasswordFieldChange}
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="password-toggle"
-                                                        onClick={() => setShowNewPassword((v) => !v)}
-                                                        tabIndex={-1}
-                                                        aria-label={showNewPassword ? "Hide password" : "Show password"}
-                                                    >
-                                                        {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                                    </button>
-                                                </div>
-                                                {passwordErrors.newPassword && (
-                                                    <div className="field-error">{passwordErrors.newPassword}</div>
-                                                )}
-                                            </div>
-                
-                                            <div className="form-field">
-                                                <label htmlFor="confirmPassword">Confirm New Password</label>
-                                                <div className="password-input-wrap">
-                                                    <input
-                                                        id="confirmPassword"
-                                                        type={showConfirmPassword ? "text" : "password"}
-                                                        name="confirmPassword"
-                                                        value={passwordForm.confirmPassword}
-                                                        onChange={handlePasswordFieldChange}
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="password-toggle"
-                                                        onClick={() => setShowConfirmPassword((v) => !v)}
-                                                        tabIndex={-1}
-                                                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                                                    >
-                                                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                                    </button>
-                                                </div>
-                                                {passwordErrors.confirmPassword && (
-                                                    <div className="field-error">{passwordErrors.confirmPassword}</div>
-                                                )}
-                                            </div>
-                
-                                            <button
-                                                type="submit"
-                                                className="save-btn"
-                                                disabled={changingPassword}
-                                            >
-                                                {changingPassword ? "Updating..." : "Update Password"}
-                                            </button>
-                                        </form>
+                    <section className="profile-card">
+                        <form
+                            onSubmit={handleChangePassword}
+                            className="profile-form"
+                            noValidate
+                        >
+                            <div className="form-field">
+                                <label htmlFor="currentPassword">
+                                    Current Password
+                                </label>
+
+                                <div className="password-input-wrap">
+                                    <input
+                                        id="currentPassword"
+                                        type={
+                                            showCurrentPassword
+                                                ? "text"
+                                                : "password"
+                                        }
+                                        name="currentPassword"
+                                        value={passwordForm.currentPassword}
+                                        onChange={handlePasswordFieldChange}
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="password-toggle"
+                                        onClick={() =>
+                                            setShowCurrentPassword((v) => !v)
+                                        }
+                                        aria-label={
+                                            showCurrentPassword
+                                                ? "Hide password"
+                                                : "Show password"
+                                        }
+                                    >
+                                        {showCurrentPassword ? (
+                                            <EyeOff size={16} />
+                                        ) : (
+                                            <Eye size={16} />
+                                        )}
+                                    </button>
+                                </div>
+
+                                {passwordErrors.currentPassword && (
+                                    <div className="field-error">
+                                        {passwordErrors.currentPassword}
                                     </div>
-                             )}
+                                )}
+                            </div>
+
+                            <div className="form-field">
+                                <label htmlFor="newPassword">
+                                    New Password
+                                </label>
+
+                                <div className="password-input-wrap">
+                                    <input
+                                        id="newPassword"
+                                        type={
+                                            showNewPassword
+                                                ? "text"
+                                                : "password"
+                                        }
+                                        name="newPassword"
+                                        value={passwordForm.newPassword}
+                                        onChange={handlePasswordFieldChange}
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="password-toggle"
+                                        onClick={() =>
+                                            setShowNewPassword((v) => !v)
+                                        }
+                                        aria-label={
+                                            showNewPassword
+                                                ? "Hide password"
+                                                : "Show password"
+                                        }
+                                    >
+                                        {showNewPassword ? (
+                                            <EyeOff size={16} />
+                                        ) : (
+                                            <Eye size={16} />
+                                        )}
+                                    </button>
+                                </div>
+
+                                {passwordErrors.newPassword && (
+                                    <div className="field-error">
+                                        {passwordErrors.newPassword}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="form-field">
+                                <label htmlFor="confirmPassword">
+                                    Confirm New Password
+                                </label>
+
+                                <div className="password-input-wrap">
+                                    <input
+                                        id="confirmPassword"
+                                        type={
+                                            showConfirmPassword
+                                                ? "text"
+                                                : "password"
+                                        }
+                                        name="confirmPassword"
+                                        value={passwordForm.confirmPassword}
+                                        onChange={handlePasswordFieldChange}
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="password-toggle"
+                                        onClick={() =>
+                                            setShowConfirmPassword((v) => !v)
+                                        }
+                                        aria-label={
+                                            showConfirmPassword
+                                                ? "Hide password"
+                                                : "Show password"
+                                        }
+                                    >
+                                        {showConfirmPassword ? (
+                                            <EyeOff size={16} />
+                                        ) : (
+                                            <Eye size={16} />
+                                        )}
+                                    </button>
+                                </div>
+
+                                {passwordErrors.confirmPassword && (
+                                    <div className="field-error">
+                                        {passwordErrors.confirmPassword}
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="save-btn"
+                                disabled={changingPassword}
+                            >
+                                {changingPassword
+                                    ? "Updating..."
+                                    : "Update Password"}
+                            </button>
+                        </form>
+                    </section>
+                )}
             </main>
         </div>
     );
 }
 
 export default Profile;
+

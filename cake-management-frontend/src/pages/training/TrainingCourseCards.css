@@ -1,0 +1,177 @@
+/* ==========================================================
+   Training course cards (clean style)
+   Put this next to TrainingCourses.jsx. It is imported AFTER
+   TrainingCourses.css, so it overrides the old card styles.
+   You can delete the old .training-course-card / -image /
+   -meta / -button rules from TrainingCourses.css.
+   ========================================================== */
+
+.training-courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+/* Card */
+.training-course-card {
+    position: relative;               /* anchors the stretched link */
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #f0dde2;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.training-course-card:hover,
+.training-course-card:focus-within {
+    border-color: #e3b3c3;
+    box-shadow: 0 10px 28px rgba(139, 30, 79, 0.1);
+}
+
+/* Image */
+.training-course-image {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, #fdeef1, #f9e1e7);
+    overflow: hidden;
+}
+
+.training-course-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.training-image-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #a8426a;
+}
+
+.training-image-placeholder[hidden] {
+    display: none;
+}
+
+.training-image-placeholder span {
+    font-size: 40px;
+    line-height: 1;
+}
+
+.training-image-placeholder p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Body */
+.training-course-card__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 16px 18px 18px;
+}
+
+/* Level pill (sits under the image) */
+.training-level-pill {
+    align-self: flex-start;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: #fce4ec;
+    color: #a42a5c;
+}
+
+.training-level-pill--beginner     { background: #fce4ec; color: #a42a5c; }
+.training-level-pill--intermediate { background: #fff1d6; color: #9a5b00; }
+.training-level-pill--advanced     { background: #e8e3fa; color: #54379b; }
+.training-level-pill--all          { background: #e6f4ec; color: #2c7a4b; }
+
+/* Title */
+.training-course-card__body h3 {
+    margin: 12px 0 6px;
+    font-size: 19px;
+    line-height: 1.3;
+    color: #2b1810;
+}
+
+.training-course-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Makes the whole card clickable */
+.training-course-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.training-course-link:focus-visible {
+    outline: none;
+}
+
+.training-course-card:has(.training-course-link:focus-visible) {
+    outline: 2px solid #a42a5c;
+    outline-offset: 2px;
+}
+
+/* Duration */
+.training-course-duration {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 14px;
+    color: #6b4a3a;
+}
+
+/* Footer: price left, call to action right */
+.training-course-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;                 /* keeps footers aligned across cards */
+    padding-top: 14px;
+    border-top: 1px solid #f0e4e7;
+}
+
+.training-course-card__body h3 + .training-course-duration {
+    margin-bottom: 16px;
+}
+
+.training-course-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #b02a63;
+}
+
+.training-course-cta {
+    font-size: 14px;
+    font-weight: 600;
+    color: #8b1e4f;
+    white-space: nowrap;
+}
+
+.training-course-card:hover .training-course-cta {
+    text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+    .training-courses-grid {
+        grid-template-columns: 1fr;
+    }
+}

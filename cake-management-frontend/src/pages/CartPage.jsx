@@ -1,42 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
     getCart,
     updateCartItem,
     removeCartItem,
-    clearCart
+    clearCart,
+    updatePersonalizedMessage
 } from "../services/cartService";
-import {
-    getGuestCart,
-    updateGuestCartItem,
-    removeGuestCartItem,
-    clearGuestCart
-} from "../services/guestCartService";
+
 import { ShoppingCart } from "lucide-react";
 import "../styles/CartPage.css";
-
-// Helper: get the auth token, if any
-const getToken = () => {
-    return localStorage.getItem("token") || sessionStorage.getItem("token");
-};
-
-const buildGuestCart = (guestItems) => {
-    const itemsWithSubtotal = guestItems.map((item) => ({
-        ...item,
-        cartItemId: item.lineId,
-        subtotal: item.price * item.quantity
-    }));
-
-    return {
-        cartId: null,
-        userId: null,
-        items: itemsWithSubtotal,
-        totalAmount: itemsWithSubtotal.reduce(
-            (total, item) => total + item.subtotal,
-            0
-        )
-    };
-};
 
 const CartPage = () => {
     const navigate = useNavigate();
@@ -46,150 +20,260 @@ const CartPage = () => {
     const [error, setError] = useState("");
     const [actionLoading, setActionLoading] = useState(null);
 
+    // Store message drafts separately until the customer saves them.
+    const [messageDrafts, setMessageDrafts] = useState({});
+
+    // --------------------------------------------------
+    // HELPERS
+    // --------------------------------------------------
+
+    const getItemId = (item) => {
+        return (
+            item.cartItemId ??
+            item.lineId ??
+            item.id ??
+            item.cakeId
+        );
+    };
+
+    const getActionKey = (item) => {
+        return String(getItemId(item));
+    };
+
+    const isCustomizedCake = (item) => {
+        return (
+            item.isCustomized === true ||
+            !!item.customization ||
+            !!item.customizationDto ||
+            !!item.customizationJson
+        );
+    };
+
+    const isMessageDirty = (item) => {
+        const itemId = getItemId(item);
+
+        const currentMessage =
+            messageDrafts[itemId] ?? "";
+
+        const savedMessage =
+            item.personalizedMessage ?? "";
+
+        return (
+            currentMessage.trim() !==
+            savedMessage.trim()
+        );
+    };
+
+    const hasUnsavedMessages = () => {
+        return (
+            cart?.items?.some(
+                (item) =>
+                    !isCustomizedCake(item) &&
+                    item.allowMessage === true &&
+                    isMessageDirty(item)
+            ) ?? false
+        );
+    };
+
+    // --------------------------------------------------
+    // UPDATE CART STATE
+    // --------------------------------------------------
+
+    const updateCartState = (data) => {
+        setCart(data);
+
+        const drafts = {};
+
+        (data?.items || []).forEach((item) => {
+            const itemId = getItemId(item);
+
+            drafts[itemId] =
+                item.personalizedMessage ?? "";
+        });
+
+        setMessageDrafts(drafts);
+    };
+
+    // --------------------------------------------------
     // LOAD CART
-    const loadCart = async () => {
+    // --------------------------------------------------
+
+    const loadCart = async (showLoading = false) => {
         try {
-            setLoading(true);
-            setError("");
-
-            const token = getToken();
-
-            // Guest cart
-            if (!token) {
-                const guestItems = getGuestCart();
-                setCart(buildGuestCart(guestItems));
-                return;
+            if (showLoading) {
+                setLoading(true);
             }
 
-            // logged-in-customer cart
+            setError("");
+
             const data = await getCart();
-            console.log("Cart Data:", data);
-            console.log("Cart Items:", data.items);
-            setCart(data);
+
+            updateCartState(data);
+
         } catch (error) {
             console.error("Error loading cart:", error);
 
             setError(
-                error.message ||
-                "Unable to load your cart."
+                error.message || "Failed to load cart."
             );
+
         } finally {
             setLoading(false);
         }
     };
 
-    // LOAD CART WHEN PAGE OPENS
+    // --------------------------------------------------
+    // INITIAL CART LOAD
+    // --------------------------------------------------
+
     useEffect(() => {
-         // eslint-disable-next-line react-hooks/set-state-in-effect -- data fetch on mount, setState only runs after await
-        loadCart();
+        let isMounted = true;
+
+        const fetchInitialCart = async () => {
+            try {
+                const data = await getCart();
+
+                if (!isMounted) return;
+
+                updateCartState(data);
+
+            } catch (error) {
+                if (!isMounted) return;
+
+                console.error(
+                    "Error loading cart:",
+                    error
+                );
+
+                setError(
+                    error.message || "Failed to load cart."
+                );
+
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchInitialCart();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
-   
+
+    // --------------------------------------------------
+    // INCREASE QUANTITY
+    // --------------------------------------------------
+
     const handleIncrease = async (item) => {
-    const actionKey = item.cartItemId ?? item.lineId ?? item.cakeId;
+        const actionKey = getActionKey(item);
 
-    try {
-        setActionLoading(actionKey);
-        setError("");
+        try {
+            setActionLoading(actionKey);
+            setError("");
 
-        const token = getToken();
-
-        // Guest: update the exact line by its lineId
-        if (!token) {
-            const updatedItems = updateGuestCartItem(
-                item.lineId,
-                item.quantity + 1
+            const updatedCart = await updateCartItem(
+                item.cartItemId ?? item.lineId ?? item.id,
+                Number(item.quantity) + 1
             );
 
-            setCart(buildGuestCart(updatedItems));
-            return;
+            // Preserve unsaved message drafts.
+            setCart(updatedCart);
+
+        } catch (error) {
+            console.error(
+                "Error increasing quantity:",
+                error
+            );
+
+            setError(
+                error.message ||
+                "Unable to update quantity."
+            );
+
+        } finally {
+            setActionLoading(null);
         }
+    };
 
-        // Logged-in customer: update by the server's cartItemId
-        const updatedCart = await updateCartItem(
-            item.cartItemId,
-            item.quantity + 1
-        );
-
-        setCart(updatedCart);
-    } catch (error) {
-        console.error("Error increasing quantity:", error);
-
-        setError(error.message || "Unable to update quantity.");
-    } finally {
-        setActionLoading(null);
-    }
-};
+    // --------------------------------------------------
+    // DECREASE QUANTITY
+    // --------------------------------------------------
 
     const handleDecrease = async (item) => {
-    if (item.quantity <= 1) {
-        return;
-    }
+        if (item.quantity <= 1) {
+            return;
+        }
 
-    const actionKey = item.cartItemId ?? item.lineId ?? item.cakeId;
+        const actionKey = getActionKey(item);
 
-    try {
-        setActionLoading(actionKey);
-        setError("");
+        try {
+            setActionLoading(actionKey);
+            setError("");
 
-        const token = getToken();
-
-        // Guest: update the exact line by its lineId
-        if (!token) {
-            const updatedItems = updateGuestCartItem(
-                item.lineId,
-                item.quantity - 1
+            const updatedCart = await updateCartItem(
+                item.cartItemId ?? item.lineId ?? item.id,
+                Number(item.quantity) - 1
             );
 
-            setCart(buildGuestCart(updatedItems));
-            return;
+            // Preserve unsaved message drafts.
+            setCart(updatedCart);
+
+        } catch (error) {
+            console.error(
+                "Error decreasing quantity:",
+                error
+            );
+
+            setError(
+                error.message ||
+                "Unable to update quantity."
+            );
+
+        } finally {
+            setActionLoading(null);
         }
+    };
 
-        // Logged-in customer: update by the server's cartItemId
-        const updatedCart = await updateCartItem(
-            item.cartItemId,
-            item.quantity - 1
-        );
-
-        setCart(updatedCart);
-    } catch (error) {
-        console.error("Error decreasing quantity:", error);
-
-        setError(error.message || "Unable to update quantity.");
-    } finally {
-        setActionLoading(null);
-    }
-};
-
+    // --------------------------------------------------
     // REMOVE CART ITEM
+    // --------------------------------------------------
+
     const handleRemove = async (item) => {
-    const actionKey = item.cartItemId ?? item.lineId ?? item.cakeId;
+        const actionKey = getActionKey(item);
 
-    try {
-        setActionLoading(actionKey);
-        setError("");
+        try {
+            setActionLoading(actionKey);
+            setError("");
 
-        const token = getToken();
+            await removeCartItem(
+                item.cartItemId ?? item.lineId ?? item.id
+            );
 
-        // Guest: remove the exact line by its lineId
-        if (!token) {
-            removeGuestCartItem(item.lineId);
             await loadCart();
-            return;
+
+        } catch (error) {
+            console.error(
+                "Error removing cart item:",
+                error
+            );
+
+            setError(
+                error.message ||
+                "Unable to remove cart item."
+            );
+
+        } finally {
+            setActionLoading(null);
         }
+    };
 
-        // Logged-in customer: remove by the server's cartItemId.
-        // The backend returns only a message, so reload the cart after.
-        await removeCartItem(item.cartItemId);
-        await loadCart();
-    } catch (error) {
-        console.error("Error removing cart item:", error);
-
-        setError(error.message || "Unable to remove cart item.");
-        setActionLoading(null);
-    }
-};
-
+    // --------------------------------------------------
     // CLEAR CART
+    // --------------------------------------------------
+
     const handleClearCart = async () => {
         const confirmed = window.confirm(
             "Are you sure you want to clear your cart?"
@@ -203,32 +287,123 @@ const CartPage = () => {
             setActionLoading("clear");
             setError("");
 
-            const token = getToken();
-
-            // Guest
-            if (!token) {
-                clearGuestCart();
-                await loadCart();
-                return;
-            }
-
-            // logged-in-customer
             await clearCart();
+
+            setMessageDrafts({});
+
             await loadCart();
 
         } catch (error) {
-            console.error("Error clearing cart:", error);
+            console.error(
+                "Error clearing cart:",
+                error
+            );
 
             setError(
                 error.message ||
                 "Unable to clear cart."
             );
 
+        } finally {
             setActionLoading(null);
         }
     };
 
+    // --------------------------------------------------
+    // UPDATE MESSAGE DRAFT
+    // --------------------------------------------------
+
+    const handleMessageChange = (item, value) => {
+        const itemId = getItemId(item);
+
+        setMessageDrafts((previous) => ({
+            ...previous,
+            [itemId]: value
+        }));
+    };
+
+    // --------------------------------------------------
+    // SAVE PERSONALIZED MESSAGE
+    // Guest and authenticated customers
+    // --------------------------------------------------
+
+    const handleSaveMessage = async (item) => {
+        const itemId = getItemId(item);
+
+        const actionKey = `message-${itemId}`;
+
+        try {
+            setActionLoading(actionKey);
+            setError("");
+
+            const personalizedMessage =
+                messageDrafts[itemId] ?? "";
+
+            const updatedCart =
+                await updatePersonalizedMessage(
+                    item.cartItemId ??
+                    item.lineId ??
+                    item.id,
+                    personalizedMessage.trim()
+                );
+
+            // Update cart without resetting other drafts.
+            setCart(updatedCart);
+
+            // Update only the saved item's draft.
+            const updatedItem =
+                updatedCart.items.find(
+                    (cartItem) =>
+                        String(getItemId(cartItem)) ===
+                        String(itemId)
+                );
+
+            if (updatedItem) {
+                setMessageDrafts((previous) => ({
+                    ...previous,
+                    [itemId]:
+                        updatedItem.personalizedMessage ?? ""
+                }));
+            }
+
+        } catch (error) {
+            console.error(
+                "Error saving personalized message:",
+                error
+            );
+
+            setError(
+                error.message ||
+                "Unable to save personalized message."
+            );
+
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    // --------------------------------------------------
+    // PROCEED TO CHECKOUT
+    // --------------------------------------------------
+
+    const handleCheckout = () => {
+        if (hasUnsavedMessages()) {
+            setError(
+                "Please save your personalized messages before proceeding to checkout."
+            );
+
+            return;
+        }
+
+        setError("");
+
+        navigate("/checkout");
+    };
+
+    // --------------------------------------------------
     // LOADING STATE
+    // --------------------------------------------------
+
     if (loading) {
         return (
             <div className="cart-page">
@@ -239,7 +414,10 @@ const CartPage = () => {
         );
     }
 
+    // --------------------------------------------------
     // ERROR STATE
+    // --------------------------------------------------
+
     if (error && !cart) {
         return (
             <div className="cart-page">
@@ -248,7 +426,7 @@ const CartPage = () => {
 
                     <p>{error}</p>
 
-                    <button onClick={loadCart}>
+                    <button onClick={() => loadCart()}>
                         Try Again
                     </button>
                 </div>
@@ -256,8 +434,15 @@ const CartPage = () => {
         );
     }
 
+    // --------------------------------------------------
     // EMPTY CART
-    if (!cart || cart.items.length === 0) {
+    // --------------------------------------------------
+
+    if (
+        !cart ||
+        !cart.items ||
+        cart.items.length === 0
+    ) {
         return (
             <div className="cart-page">
                 <div className="cart-container">
@@ -273,15 +458,19 @@ const CartPage = () => {
                     )}
 
                     <div className="empty-cart">
+
                         <div className="empty-cart-icon">
-                             <ShoppingCart size={64} strokeWidth={1.5} />
+                            <ShoppingCart
+                                size={64}
+                                strokeWidth={1.5}
+                            />
                         </div>
 
                         <h2>Your cart is empty</h2>
 
                         <p>
-                            Looks like you haven't added any cakes
-                            to your cart yet.
+                            Looks like you haven't added any
+                            cakes to your cart yet.
                         </p>
 
                         <button
@@ -290,6 +479,7 @@ const CartPage = () => {
                         >
                             Continue Shopping
                         </button>
+
                     </div>
 
                 </div>
@@ -297,11 +487,16 @@ const CartPage = () => {
         );
     }
 
+    // --------------------------------------------------
     // MAIN CART PAGE
+    // --------------------------------------------------
+
     return (
         <div className="cart-page">
 
             <div className="cart-container">
+
+                {/* CART HEADER */}
 
                 <div className="cart-header">
 
@@ -329,27 +524,63 @@ const CartPage = () => {
 
                 </div>
 
+                {/* ERROR MESSAGE */}
 
-                    {/* ERROR MESSAGE */}
-               
                 {error && (
                     <div className="cart-error-message">
                         {error}
                     </div>
                 )}
 
-
                 {/* CART CONTENT */}
+
                 <div className="cart-content">
 
                     {/* CART ITEMS */}
+
                     <div className="cart-items">
 
                         {cart.items.map((item, index) => {
 
-                            // const itemKey = item.cartItemId ?? item.id ?? `${item.cakeId}-${index}`;
-                            const itemKey = `${item.cartItemId}-${index}`;
-                            const isUpdating = actionLoading === itemKey;
+                            const itemId = getItemId(item);
+
+                            const itemKey =
+                                `${itemId}-${index}`;
+
+                            const isUpdating =
+                                actionLoading ===
+                                getActionKey(item);
+
+                            const isSavingMessage =
+                                actionLoading ===
+                                `message-${itemId}`;
+
+                            const customized =
+                                isCustomizedCake(item);
+
+                            const allowMessage =
+                                !customized &&
+                                item.allowMessage === true;
+
+                            const message =
+                                messageDrafts[itemId] ?? "";
+
+                            const maxLength = Math.max(
+                                1,
+                                Number(
+                                    item.maxMessageLength ?? 100
+                                )
+                            );
+
+                            const additionalPrice = Math.max(
+                                0,
+                                Number(
+                                    item.messageAdditionalPrice ?? 0
+                                )
+                            );
+
+                            const messageDirty =
+                                isMessageDirty(item);
 
                             return (
                                 <div
@@ -358,6 +589,7 @@ const CartPage = () => {
                                 >
 
                                     {/* CAKE INFORMATION */}
+
                                     <div className="cart-item-info">
 
                                         <h2>
@@ -366,13 +598,94 @@ const CartPage = () => {
 
                                         <p className="cart-item-price">
                                             Rs.{" "}
-                                            {item.price.toFixed(2)}
+                                            {Number(
+                                                item.price ??
+                                                item.unitPrice ??
+                                                0
+                                            ).toFixed(2)}
                                         </p>
 
                                     </div>
 
+                                    {/* PERSONALIZED MESSAGE */}
+
+                                    {allowMessage && (
+                                        <div className="cart-personalized-message">
+
+                                            <label
+                                                htmlFor={`message-${itemId}`}
+                                            >
+                                                {item.messageLabel ||
+                                                    "Personalized Message"}
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                id={`message-${itemId}`}
+                                                value={message}
+                                                placeholder={
+                                                    item.messagePlaceholder ||
+                                                    "Enter your message"
+                                                }
+                                                maxLength={maxLength}
+                                                onChange={(event) =>
+                                                    handleMessageChange(
+                                                        item,
+                                                        event.target.value
+                                                    )
+                                                }
+                                                disabled={
+                                                    isSavingMessage ||
+                                                    isUpdating
+                                                }
+                                            />
+
+                                            {/* MESSAGE FOOTER */}
+
+                                            <div className="cart-message-footer">
+
+                                                <span>
+                                                    {message.length}/
+                                                    {maxLength} characters
+                                                </span>
+
+                                                {message.trim().length > 0 && (
+                                                    <span>
+                                                        Message charge: Rs.{" "}
+                                                        {additionalPrice.toFixed(2)}
+
+                                                        {messageDirty &&
+                                                            " (after saving)"}
+                                                    </span>
+                                                )}
+
+                                            </div>
+
+                                            {/* SAVE MESSAGE BUTTON */}
+
+                                            {messageDirty && (
+                                                <button
+                                                    type="button"
+                                                    className="save-message-btn"
+                                                    onClick={() =>
+                                                        handleSaveMessage(item)
+                                                    }
+                                                    disabled={
+                                                        isSavingMessage ||
+                                                        isUpdating
+                                                    }
+                                                >
+                                                    {isSavingMessage
+                                                        ? "Saving..."
+                                                        : "Save Message"}
+                                                </button>
+                                            )}
+
+                                        </div>
+                                    )}
 
                                     {/* QUANTITY CONTROLS */}
+
                                     <div className="quantity-section">
 
                                         <span className="quantity-label">
@@ -387,7 +700,8 @@ const CartPage = () => {
                                                 }
                                                 disabled={
                                                     item.quantity <= 1 ||
-                                                    isUpdating
+                                                    isUpdating ||
+                                                    isSavingMessage
                                                 }
                                             >
                                                 −
@@ -403,7 +717,10 @@ const CartPage = () => {
                                                 onClick={() =>
                                                     handleIncrease(item)
                                                 }
-                                                disabled={isUpdating}
+                                                disabled={
+                                                    isUpdating ||
+                                                    isSavingMessage
+                                                }
                                             >
                                                 +
                                             </button>
@@ -412,8 +729,8 @@ const CartPage = () => {
 
                                     </div>
 
-
                                     {/* SUBTOTAL */}
+
                                     <div className="cart-item-subtotal">
 
                                         <span>
@@ -422,19 +739,24 @@ const CartPage = () => {
 
                                         <strong>
                                             Rs.{" "}
-                                            {item.subtotal.toFixed(2)}
+                                            {Number(
+                                                item.subtotal ?? 0
+                                            ).toFixed(2)}
                                         </strong>
 
                                     </div>
 
+                                    {/* REMOVE BUTTON */}
 
-                                    {/*REMOVE BUTTON */}
                                     <button
                                         className="remove-item-btn"
                                         onClick={() =>
                                             handleRemove(item)
                                         }
-                                        disabled={isUpdating}
+                                        disabled={
+                                            isUpdating ||
+                                            isSavingMessage
+                                        }
                                     >
                                         {isUpdating
                                             ? "Removing..."
@@ -447,8 +769,8 @@ const CartPage = () => {
 
                     </div>
 
-
                     {/* CART SUMMARY */}
+
                     <div className="cart-summary">
 
                         <h2>
@@ -467,7 +789,6 @@ const CartPage = () => {
 
                         </div>
 
-
                         <div className="summary-row">
 
                             <span>
@@ -476,14 +797,14 @@ const CartPage = () => {
 
                             <strong>
                                 Rs.{" "}
-                                {cart.totalAmount.toFixed(2)}
+                                {Number(
+                                    cart.totalAmount ?? 0
+                                ).toFixed(2)}
                             </strong>
 
                         </div>
 
-
                         <div className="summary-divider" />
-
 
                         <div className="summary-total">
 
@@ -493,22 +814,28 @@ const CartPage = () => {
 
                             <strong>
                                 Rs.{" "}
-                                {cart.totalAmount.toFixed(2)}
+                                {Number(
+                                    cart.totalAmount ?? 0
+                                ).toFixed(2)}
                             </strong>
 
                         </div>
 
+                        {/* CHECKOUT */}
 
-                        {/*CHECKOUT */}
                         <button
                             className="checkout-btn"
-                            onClick={() => navigate("/checkout")}
+                            onClick={handleCheckout}
+                            disabled={
+                                hasUnsavedMessages() ||
+                                actionLoading !== null
+                            }
                         >
                             Proceed to Checkout
                         </button>
 
-
                         {/* CONTINUE SHOPPING */}
+
                         <button
                             className="continue-shopping-btn"
                             onClick={() => navigate("/")}
@@ -527,3 +854,4 @@ const CartPage = () => {
 };
 
 export default CartPage;
+

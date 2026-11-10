@@ -5,7 +5,6 @@ import {
 import { formatPrice } from "../../data/helpers";
 import { TIERS, FLAVORS, FROSTINGS } from "../../data/Options";
 import { getImageUrl } from "../../utils/imageUrl";
-// import "../../styles/Customizesidebar.css";
 
 const jumpTo = (id) =>
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });

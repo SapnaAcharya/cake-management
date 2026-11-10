@@ -1,6 +1,5 @@
 ﻿using CakeManagementAPI.DTOs.Templates;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
@@ -22,10 +21,23 @@ public class CakeTemplatesController : ControllerBase
         return Ok(templates);
     }
 
-    [HttpGet("{id}")]
+    // CHANGED: ":int" so only numbers match, e.g. /api/templates/8
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var template = await _service.GetByIdAsync(id);
+
+        if (template == null)
+            return NotFound();
+
+        return Ok(template);
+    }
+
+    // NEW: text values match here, e.g. /api/templates/birthday-cake
+    [HttpGet("{slug}")]
+    public async Task<IActionResult> GetBySlug(string slug)
+    {
+        var template = await _service.GetBySlugAsync(slug);
 
         if (template == null)
             return NotFound();

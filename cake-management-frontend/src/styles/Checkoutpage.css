@@ -1,0 +1,308 @@
+:root {
+  --checkout-bg: #FAF6F3;
+  --checkout-surface: #FFFFFF;
+  --checkout-ink: #251320;
+  --checkout-ink-muted: #7C6670;
+  --checkout-accent: #9A2C5D;
+  --checkout-accent-dark: #74204A;
+  --checkout-accent-soft: #F6E8EE;
+  --checkout-border: #ECE2E5;
+  --checkout-danger-bg: #FBE9EC;
+  --checkout-danger-text: #9A2C42;
+  --checkout-success-bg: #E8F4EC;
+  --checkout-success-text: #1F6B3A;
+}
+
+.checkout-page {
+  min-height: 100vh;
+  background: var(--checkout-bg);
+  font-family: 'Work Sans', sans-serif;
+  color: var(--checkout-ink);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 20px;
+  box-sizing: border-box;
+}
+
+.checkout-page *,
+.checkout-page *::before,
+.checkout-page *::after {
+  box-sizing: border-box;
+}
+
+.checkout-container {
+  width: 100%;
+  max-width: 560px;
+  background: var(--checkout-surface);
+  border: 1px solid var(--checkout-border);
+  border-radius: 16px;
+  padding: 40px;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.checkout-header {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--checkout-border);
+}
+
+.checkout-header h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.checkout-header p {
+  font-size: 13.5px;
+  color: var(--checkout-ink-muted);
+  margin: 0;
+}
+
+/* ==========================================================================
+   Error banner
+   ========================================================================== */
+
+.checkout-error-message {
+  background: var(--checkout-danger-bg);
+  color: var(--checkout-danger-text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   Form
+   ========================================================================== */
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.checkout-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkout-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--checkout-ink);
+}
+
+/* Shared control styling: text inputs, textarea, select */
+.checkout-field input,
+.checkout-field textarea,
+.checkout-field select {
+  width: 100%;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 13.5px;
+  color: var(--checkout-ink);
+  border: 1px solid var(--checkout-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: var(--checkout-bg);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.checkout-field textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.checkout-field input::placeholder,
+.checkout-field textarea::placeholder {
+  color: var(--checkout-ink-muted);
+  opacity: 0.7;
+}
+
+.checkout-field input:focus,
+.checkout-field textarea:focus,
+.checkout-field select:focus {
+  border-color: var(--checkout-accent);
+  box-shadow: 0 0 0 3px var(--checkout-accent-soft);
+}
+
+/* Phone number locked after verification */
+.checkout-field input:disabled {
+  background: var(--checkout-success-bg);
+  border-color: transparent;
+  color: var(--checkout-success-text);
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Phone verification (Send OTP / Verify OTP)
+   ========================================================================== */
+
+/* Secondary buttons inside a field (Send OTP, Verify OTP) */
+.checkout-field button {
+  align-self: flex-start;
+  background: var(--checkout-accent-soft);
+  color: var(--checkout-accent);
+  border: 1px solid transparent;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.checkout-field button:hover:not(:disabled) {
+  background: var(--checkout-accent);
+  color: #fff;
+}
+
+.checkout-field button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* OTP entry block */
+.otp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 16px;
+  background: var(--checkout-bg);
+  border: 1px dashed var(--checkout-border);
+  border-radius: 10px;
+}
+
+.otp-section input {
+  background: var(--checkout-surface);
+  letter-spacing: 0.25em;
+  font-weight: 600;
+}
+
+.otp-section input::placeholder {
+  letter-spacing: normal;
+  font-weight: 400;
+}
+
+/* Verified message */
+.phone-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  margin: 0;
+  padding: 6px 12px;
+  background: var(--checkout-success-bg);
+  color: var(--checkout-success-text);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.phone-verified::before {
+  content: "\2713";
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Actions
+   ========================================================================== */
+
+.checkout-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--checkout-border);
+}
+
+.checkout-back-btn {
+  background: none;
+  border: 1px solid var(--checkout-border);
+  color: var(--checkout-ink-muted);
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.checkout-back-btn:hover:not(:disabled) {
+  border-color: var(--checkout-ink-muted);
+  color: var(--checkout-ink);
+}
+
+.checkout-back-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.checkout-submit-btn {
+  flex: 1;
+  background: var(--checkout-accent);
+  color: #fff;
+  border: none;
+  padding: 13px;
+  border-radius: 8px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.checkout-submit-btn:hover:not(:disabled) {
+  background: var(--checkout-accent-dark);
+}
+
+.checkout-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Keyboard focus */
+.checkout-back-btn:focus-visible,
+.checkout-submit-btn:focus-visible,
+.checkout-field button:focus-visible {
+  outline: 2px solid var(--checkout-accent);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .checkout-page {
+    padding: 32px 16px;
+  }
+
+  .checkout-container {
+    padding: 28px 20px;
+  }
+
+  .checkout-field button {
+    align-self: stretch;
+  }
+
+  .checkout-actions {
+    flex-direction: column-reverse;
+  }
+
+  .checkout-back-btn,
+  .checkout-submit-btn {
+    width: 100%;
+  }
+}

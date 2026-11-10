@@ -1,0 +1,206 @@
+
+.manage-training-batches {
+  padding: 28px;
+  color: #292524;
+}
+
+.mtb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.mtb-header h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.mtb-header p {
+  margin: 0;
+  color: #78716c;
+  line-height: 1.6;
+}
+
+.mtb-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 17px;
+  border: none;
+  border-radius: 8px;
+  background: #a84362;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mtb-primary-btn:hover {
+  background: #89334f;
+}
+
+.mtb-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.mtb-summary-card {
+  padding: 20px;
+  border: 1px solid #eee7e5;
+  border-radius: 12px;
+  background: white;
+}
+
+.mtb-summary-card span {
+  display: block;
+  margin-bottom: 10px;
+  color: #78716c;
+  font-size: 14px;
+}
+
+.mtb-summary-card strong {
+  font-size: 27px;
+}
+
+.mtb-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #eee7e5;
+  border-radius: 12px;
+  background: white;
+}
+
+.mtb-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.mtb-table th,
+.mtb-table td {
+  padding: 15px 16px;
+  border-bottom: 1px solid #f0ecea;
+  vertical-align: middle;
+}
+
+.mtb-table th {
+  background: #faf7f6;
+  color: #57534e;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mtb-table td {
+  font-size: 14px;
+}
+
+.mtb-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mtb-table td small {
+  display: block;
+  margin-top: 5px;
+  color: #78716c;
+}
+
+.mtb-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #f5f5f4;
+  color: #57534e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mtb-status--open {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.mtb-status--closed {
+  background: #e7e5e4;
+  color: #57534e;
+}
+
+.mtb-status--full {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.mtb-status--cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.mtb-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mtb-edit-btn,
+.mtb-close-btn {
+  padding: 7px 10px;
+  border: 1px solid #e7dedb;
+  border-radius: 6px;
+  background: white;
+  color: #44403c;
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mtb-close-btn {
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.mtb-message,
+.mtb-empty,
+.mtb-error {
+  padding: 30px;
+  border: 1px solid #eee7e5;
+  border-radius: 12px;
+  background: white;
+  text-align: center;
+}
+
+.mtb-empty p {
+  margin-bottom: 20px;
+  color: #78716c;
+}
+
+.mtb-error {
+  color: #b91c1c;
+}
+
+.mtb-error button {
+  padding: 9px 14px;
+  border: 1px solid #e7dedb;
+  border-radius: 7px;
+  background: white;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .manage-training-batches {
+    padding: 18px;
+  }
+
+  .mtb-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mtb-summary {
+    grid-template-columns: 1fr;
+  }
+}

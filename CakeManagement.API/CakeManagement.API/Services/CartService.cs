@@ -12,6 +12,7 @@ namespace CakeManagementAPI.Services
         private readonly AppDbContext _context;
         private readonly ICustomizationSnapshotService _snapshotService;
         private readonly CakePricingService _pricing;
+
         public CartService(
             AppDbContext context,
             ICustomizationSnapshotService snapshotService,
@@ -27,9 +28,9 @@ namespace CakeManagementAPI.Services
         {
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
-                .ThenInclude(ci => ci.Cake)
+                    .ThenInclude(ci => ci.Cake)
                 .Include(c => c.CartItems)
-                .ThenInclude(ci => ci.CakeTemplate)
+                    .ThenInclude(ci => ci.CakeTemplate)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart == null)
@@ -40,7 +41,6 @@ namespace CakeManagementAPI.Services
                 };
 
                 _context.Carts.Add(cart);
-
                 await _context.SaveChangesAsync();
             }
 
@@ -48,9 +48,7 @@ namespace CakeManagementAPI.Services
         }
 
         // ADD TO CART
-        // Handles BOTH normal and customized cakes.
-        // dto.Customization == null  -> normal cake (CakeId required)
-        // dto.Customization != null  -> customized cake (no CakeId, uses template)
+        // Handles normal and customized cakes.
         public async Task<CartResponseDto> AddToCartAsync(
             int userId,
             AddToCartDto dto)
@@ -59,15 +57,22 @@ namespace CakeManagementAPI.Services
 
             var cart = await GetOrCreateCartAsync(userId);
 
+            // CUSTOMIZED CAKES
             if (isCustomized)
             {
-                // Customized cake: identified by template, no CakeId,
-                // no stock rules (made to order).
-                // Always a NEW cart line, never merged.
+                // Customized cakes do not support personalized messages.
+                if (!string.IsNullOrWhiteSpace(dto.PersonalizedMessage))
+                {
+                    throw new InvalidOperationException(
+                        "Personalized messages are not available for customized cakes.");
+                }
+
+                // Customized cakes always create a separate cart line.
                 var snapshot = await _snapshotService
                     .CreateSnapshotAsync(dto.Customization!);
 
-                var customPrice = await _pricing.CalculateAsync(dto.Customization!);
+                var customPrice = await _pricing.CalculateAsync(
+                    dto.Customization!);
 
                 var customItem = new CartItem
                 {
@@ -76,14 +81,15 @@ namespace CakeManagementAPI.Services
                     Quantity = dto.Quantity,
                     CakeTemplateId = snapshot.TemplateId,
                     CustomUnitPrice = customPrice,
-                    CustomizationJson = _snapshotService.ToJson(snapshot)
+                    CustomizationJson = _snapshotService.ToJson(snapshot),
+                    PersonalizedMessage = null
                 };
 
                 cart.CartItems.Add(customItem);
             }
+            // NORMAL CAKES
             else
             {
-                // Normal cake: CakeId is required
                 if (dto.CakeId == null)
                 {
                     throw new ArgumentException(
@@ -95,8 +101,7 @@ namespace CakeManagementAPI.Services
 
                 if (cake == null)
                 {
-                    throw new KeyNotFoundException(
-                        "Cake not found.");
+                    throw new KeyNotFoundException("Cake not found.");
                 }
 
                 if (!cake.IsAvailable)
@@ -111,16 +116,49 @@ namespace CakeManagementAPI.Services
                         "Requested quantity is greater than available stock.");
                 }
 
-                // Merge with existing NORMAL line
-                var existingItem = cart.CartItems
-                    .FirstOrDefault(ci =>
-                        ci.CakeId == dto.CakeId &&
-                        ci.CustomizationJson == null);
+                // Validate personalized message.
+                var message = dto.PersonalizedMessage?.Trim();
+
+                if (!string.IsNullOrWhiteSpace(message))
+                {
+                    if (!cake.AllowMessage)
+                    {
+                        throw new InvalidOperationException(
+                            "Personalized messages are not available for this cake.");
+                    }
+
+                    if (cake.MaxMessageLength < 1)
+                    {
+                        throw new InvalidOperationException(
+                            "The personalized message settings for this cake are invalid.");
+                    }
+
+                    if (message.Length > cake.MaxMessageLength)
+                    {
+                        throw new ArgumentException(
+                            $"Your message cannot exceed {cake.MaxMessageLength} characters.");
+                    }
+
+                    if (cake.MessageAdditionalPrice < 0)
+                    {
+                        throw new InvalidOperationException(
+                            "The personalized message additional price is invalid.");
+                    }
+                }
+                else
+                {
+                    message = null;
+                }
+
+                // Merge only when both the cake and message are identical.
+                var existingItem = cart.CartItems.FirstOrDefault(ci =>
+                    ci.CakeId == dto.CakeId &&
+                    ci.CustomizationJson == null &&
+                    (ci.PersonalizedMessage ?? "") == (message ?? ""));
 
                 if (existingItem != null)
                 {
-                    var newQuantity =
-                        existingItem.Quantity + dto.Quantity;
+                    var newQuantity = existingItem.Quantity + dto.Quantity;
 
                     if (newQuantity > cake.StockQuantity)
                     {
@@ -136,7 +174,8 @@ namespace CakeManagementAPI.Services
                     {
                         CartId = cart.Id,
                         CakeId = dto.CakeId,
-                        Quantity = dto.Quantity
+                        Quantity = dto.Quantity,
+                        PersonalizedMessage = message
                     };
 
                     cart.CartItems.Add(cartItem);
@@ -150,7 +189,7 @@ namespace CakeManagementAPI.Services
             return await GetCartAsync(userId);
         }
 
-        // UPDATE CART ITEM
+        // UPDATE CART ITEM QUANTITY
         public async Task<CartResponseDto> UpdateCartItemAsync(
             int userId,
             int cartItemId,
@@ -171,17 +210,15 @@ namespace CakeManagementAPI.Services
 
             if (cartItem == null)
             {
-                throw new KeyNotFoundException(
-                    "Cart item not found.");
+                throw new KeyNotFoundException("Cart item not found.");
             }
 
-            // Stock rules apply to normal cakes only
+            // Stock rules apply to normal cakes only.
             if (cartItem.CustomizationJson == null)
             {
                 if (cartItem.Cake == null)
                 {
-                    throw new KeyNotFoundException(
-                        "Cake not found.");
+                    throw new KeyNotFoundException("Cake not found.");
                 }
 
                 if (!cartItem.Cake.IsAvailable)
@@ -198,6 +235,81 @@ namespace CakeManagementAPI.Services
             }
 
             cartItem.Quantity = quantity;
+            cartItem.Cart!.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return await GetCartAsync(userId);
+        }
+
+        // UPDATE PERSONALIZED MESSAGE
+        public async Task<CartResponseDto> UpdatePersonalizedMessageAsync(
+            int userId,
+            int cartItemId,
+            string? personalizedMessage)
+        {
+            var cartItem = await _context.CartItems
+                .Include(ci => ci.Cart)
+                .Include(ci => ci.Cake)
+                .FirstOrDefaultAsync(ci =>
+                    ci.Id == cartItemId &&
+                    ci.Cart!.UserId == userId);
+
+            if (cartItem == null)
+            {
+                throw new KeyNotFoundException("Cart item not found.");
+            }
+
+            // Customized cakes cannot have personalized messages.
+            if (cartItem.CustomizationJson != null)
+            {
+                throw new InvalidOperationException(
+                    "Personalized messages are not available for customized cakes.");
+            }
+
+            if (cartItem.Cake == null)
+            {
+                throw new KeyNotFoundException("Cake not found.");
+            }
+
+            var cake = cartItem.Cake;
+
+            // Trim the message.
+            var message = personalizedMessage?.Trim();
+
+            // Empty message removes the previously saved message.
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                cartItem.PersonalizedMessage = null;
+            }
+            else
+            {
+                if (!cake.AllowMessage)
+                {
+                    throw new InvalidOperationException(
+                        "Personalized messages are not available for this cake.");
+                }
+
+                if (cake.MaxMessageLength < 1)
+                {
+                    throw new InvalidOperationException(
+                        "The personalized message settings for this cake are invalid.");
+                }
+
+                if (message.Length > cake.MaxMessageLength)
+                {
+                    throw new ArgumentException(
+                        $"Your message cannot exceed {cake.MaxMessageLength} characters.");
+                }
+
+                if (cake.MessageAdditionalPrice < 0)
+                {
+                    throw new InvalidOperationException(
+                        "The personalized message additional price is invalid.");
+                }
+
+                cartItem.PersonalizedMessage = message;
+            }
 
             cartItem.Cart!.UpdatedAt = DateTime.UtcNow;
 
@@ -219,8 +331,7 @@ namespace CakeManagementAPI.Services
 
             if (cartItem == null)
             {
-                throw new KeyNotFoundException(
-                    "Cart item not found.");
+                throw new KeyNotFoundException("Cart item not found.");
             }
 
             cartItem.Cart!.UpdatedAt = DateTime.UtcNow;
@@ -249,7 +360,7 @@ namespace CakeManagementAPI.Services
             await _context.SaveChangesAsync();
         }
 
-        // HELPER: GET OR CREATE CART
+        // GET OR CREATE CART
         private async Task<Cart> GetOrCreateCartAsync(int userId)
         {
             var cart = await _context.Carts
@@ -271,58 +382,73 @@ namespace CakeManagementAPI.Services
             return cart;
         }
 
-        // Adjust property names/rates to match your CakeTemplate model
-        private async Task<decimal> CalculateCustomPriceAsync(
-            CustomizationSnapshot snapshot)
-        {
-            var template = await _context.CakeTemplates
-                .FindAsync(snapshot.TemplateId);
-
-            if (template == null)
-            {
-                throw new KeyNotFoundException(
-                    "Cake template not found.");
-            }
-
-            decimal price = template.BasePrice;
-
-            // Example surcharges - change to your real pricing rules
-            var extraTiers = Math.Max(0, snapshot.Tiers - template.Tiers);
-            price += extraTiers * 25m;
-            price += snapshot.Candles * 0.5m;
-
-            return price;
-        }
-
-        // MAP CART TO DTO
+        // MAP CART TO RESPONSE DTO
         private CartResponseDto MapCartToDto(Cart cart)
         {
             var items = cart.CartItems
                 .Select(ci =>
                 {
-                    // Customized lines use CustomUnitPrice,
-                    // normal lines use the cake's price
-                    var unitPrice = ci.CustomUnitPrice ?? ci.Cake?.Price ?? 0m;
+                    var isCustomized = ci.CustomizationJson != null;
+                    var cake = ci.Cake;
+
+                    // Customized cakes use their calculated custom price.
+                    // Normal cakes use the database cake price.
+                    var unitPrice = isCustomized
+                        ? ci.CustomUnitPrice ?? 0m
+                        : cake?.Price ?? 0m;
+
+                    // Add the message surcharge only when a message exists.
+                    if (!isCustomized &&
+                        !string.IsNullOrWhiteSpace(ci.PersonalizedMessage) &&
+                        cake != null)
+                    {
+                        unitPrice += cake.MessageAdditionalPrice;
+                    }
 
                     return new CartItemResponseDto
                     {
                         CartItemId = ci.Id,
                         CakeId = ci.CakeId,
 
-                        CakeName = ci.Cake?.Name
-                                   ?? ci.CakeTemplate?.Name
-                                   ?? "Custom Cake",
+                        CakeName = cake?.Name
+                            ?? ci.CakeTemplate?.Name
+                            ?? "Custom Cake",
 
-                        ImageUrl = ci.Cake?.ImageUrl ?? string.Empty,
+                        ImageUrl = cake?.ImageUrl ?? string.Empty,
+
                         Price = unitPrice,
                         Quantity = ci.Quantity,
                         Subtotal = unitPrice * ci.Quantity,
 
-                        // Customized cake fields
-                        IsCustomized = ci.CustomizationJson != null,
+                        IsCustomized = isCustomized,
+
                         Customization = ci.CustomizationJson == null
-                              ? null
-                              : JsonSerializer.Deserialize<CustomizationSnapshot>(ci.CustomizationJson)
+                            ? null
+                            : JsonSerializer.Deserialize<CustomizationSnapshot>(
+                                ci.CustomizationJson),
+
+                        // Personalized message
+                        PersonalizedMessage = ci.PersonalizedMessage,
+
+                        // Cake-specific message settings.
+                        // Customized cakes never expose these settings.
+                        AllowMessage = !isCustomized && cake?.AllowMessage == true,
+
+                        MessageLabel = !isCustomized
+                            ? cake?.MessageLabel
+                            : null,
+
+                        MessagePlaceholder = !isCustomized
+                            ? cake?.MessagePlaceholder
+                            : null,
+
+                        MaxMessageLength = !isCustomized
+                            ? cake?.MaxMessageLength ?? 0
+                            : 0,
+
+                        MessageAdditionalPrice = !isCustomized
+                            ? cake?.MessageAdditionalPrice ?? 0m
+                            : 0m
                     };
                 })
                 .ToList();

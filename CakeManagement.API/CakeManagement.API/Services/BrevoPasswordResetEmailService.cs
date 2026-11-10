@@ -1,10 +1,13 @@
 ﻿using System.Net.Http.Json;
 using CakeManagementAPI.Services.Interfaces;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace CakeManagementAPI.Services
 {
-    public class BrevoPasswordResetEmailService
-        : IPasswordResetEmailService
+    public class BrevoPasswordResetEmailService :
+        IPasswordResetEmailService
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
@@ -211,5 +214,6 @@ namespace CakeManagementAPI.Services
                     $"{(int)response.StatusCode}.");
             }
         }
+
     }
 }

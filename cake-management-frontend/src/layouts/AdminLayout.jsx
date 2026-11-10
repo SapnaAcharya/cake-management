@@ -13,7 +13,11 @@ import {
   Menu,
   X,
   Sparkles,
-  LayoutTemplate
+  LayoutTemplate,
+  BookOpen,
+  CalendarDays,
+  GraduationCap,
+  ClipboardCheck,
 } from "lucide-react";
 import "../styles/AdminLayout.css";
 
@@ -27,10 +31,34 @@ const navItems = [
   { label: "Users", to: "/admin/users", icon: Users },
 ];
 
+const trainingNavItems = [
+  {
+    label: "Training Packages",
+    to: "/admin/training-packages",
+    icon: BookOpen,
+  },
+  {
+    label: "Trainers",
+    to: "/admin/trainers",
+    icon: Users,
+  },
+  {
+    label: "Training Batches",
+    to: "/admin/training-batches",
+    icon: CalendarDays,
+  },
+  {
+    label: "Enrollments",
+    to: "/admin/training-enrollments",
+    icon: ClipboardCheck,
+  },
+];
+
 function AdminLayout({ children, title, subtitle, headerAction }) {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [trainingOpen, setTrainingOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -86,6 +114,52 @@ function AdminLayout({ children, title, subtitle, headerAction }) {
               </Link>
             );
           })}
+  
+<div className="admin-nav-group">
+  <button
+    type="button"
+    className={`admin-nav-item admin-nav-toggle ${
+      location.pathname.startsWith("/admin/training")
+        ? "active"
+        : ""
+    }`}
+    onClick={() => setTrainingOpen((open) => !open)}
+    aria-expanded={trainingOpen}
+  >
+    <GraduationCap size={17} />
+    <span>Training </span>
+    <ChevronDown
+      size={15}
+      className={`admin-nav-chevron ${
+        trainingOpen ? "rotated" : ""
+      }`}
+    />
+  </button>
+
+  {trainingOpen && (
+    <div className="admin-subnav">
+      {trainingNavItems.map((item) => {
+        const Icon = item.icon;
+        const isActive = location.pathname.startsWith(item.to);
+
+        return (
+          <Link
+            key={item.to}
+            to={item.to}
+            className={`admin-nav-item admin-subnav-item ${
+              isActive ? "active" : ""
+            }`}
+            onClick={() => setSidebarOpen(false)}
+          >
+            <Icon size={16} />
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
+    </div>
+  )}
+</div>
+
 
           <a
             href="/"

@@ -1,5 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useLocation,
+  useSearchParams,            
+} from "react-router-dom";
 import Header from "../components/customization/TemplateHeader";
 import TemplateSidebar from "../components/customization/TemplateSidebar";
 import PreviewStage from "../components/customization/PreviewStage";
@@ -12,9 +17,14 @@ import "../styles/templateresponsive.css";
 
 export default function DesignByTemplate() {
   const navigate = useNavigate();
-  const { cakeId } = useParams();
+  const { cakeSlug } = useParams();
   const location = useLocation();
   const cakeFromState = location.state?.cake;
+
+  // NEW: read the template from the query string
+  const [searchParams, setSearchParams] = useSearchParams();
+  const slugParam = searchParams.get("template");
+  const legacyId = searchParams.get("templateId");
 
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +43,24 @@ export default function DesignByTemplate() {
         if (!isMounted) return;
         const mapped = data.map(mapApiTemplateToViewModel);
         setTemplates(mapped);
-        if (mapped.length) setSelectedId(mapped[0].id);
+
+        // CHANGED: select the template from the URL, else the first one
+        const fromUrl = slugParam
+          ? mapped.find((t) => t.slug === slugParam)
+          : legacyId
+          ? mapped.find((t) => String(t.id) === legacyId)
+          : null;
+
+        const initial = fromUrl ?? mapped[0];
+        if (initial) setSelectedId(initial.id);
+
+        // NEW: turn old ?templateId=8 links into ?template=birthday-cake
+        if (fromUrl && legacyId && !slugParam && fromUrl.slug) {
+          setSearchParams(
+            { template: fromUrl.slug },
+            { replace: true, state: location.state }
+          );
+        }
       })
       .catch((err) => {
         if (isMounted) setError(err.message);
@@ -45,6 +72,7 @@ export default function DesignByTemplate() {
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const selected = templates.find((t) => t.id === selectedId) ?? templates[0];
@@ -73,10 +101,27 @@ export default function DesignByTemplate() {
       return next;
     });
 
-  const handleUseTemplate = () =>
-    navigate(`/customize/${cakeId}/${selected.id}`, {
-      state: { cake: cakeFromState },
-    });
+  // NEW: keep the URL in sync when a template is clicked in the sidebar
+  const handleSelect = (id) => {
+    setSelectedId(id);
+    const t = templates.find((x) => x.id === id);
+    if (t?.slug) {
+      setSearchParams(
+        { template: t.slug },
+        { replace: true, state: location.state }
+      );
+    }
+  };
+
+  const handleUseTemplate = () => {
+  const templatePart = selected.slug || selected.id;
+  const search = cakeSlug ? `?cake=${cakeSlug}` : "";
+
+  navigate(
+    { pathname: `/customize/${templatePart}`, search },
+    { state: { cake: cakeFromState } }
+  );
+};
 
   if (loading) {
     return (
@@ -85,17 +130,27 @@ export default function DesignByTemplate() {
         <div className="dbt-body">
           <aside className="sidebar">
             <div className="sidebar__head">
-              <h1 className="sidebar__title">Choose a Template</h1>
+              <h1 className="sidebar__title">Design by Template</h1>
+              <p className="sidebar__lead">
+                Choose from our ready-made designs and make it your own.
+              </p>
             </div>
-            <div className="template-skeleton-grid">
+            <div className="template-skeleton-grid" aria-hidden="true">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="template-skeleton-card" />
               ))}
             </div>
           </aside>
+
           <div className="preview-col">
-            <div className="ps" style={{ background: "var(--surface-2)" }} />
+            <div
+              className="ps ps--skeleton"
+              style={{ background: "var(--surface-2)" }}
+              aria-hidden="true"
+            />
           </div>
+
+          <aside className="details details--skeleton" aria-hidden="true" />
         </div>
       </div>
     );
@@ -141,7 +196,7 @@ export default function DesignByTemplate() {
           liked={liked}
           onCategory={setCategory}
           onQuery={setQuery}
-          onSelect={setSelectedId}
+          onSelect={handleSelect}          // CHANGED (was setSelectedId)
           onToggleLike={toggleLike}
         />
 

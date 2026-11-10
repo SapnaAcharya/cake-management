@@ -43,6 +43,23 @@ const getCakeById = async (id) => {
     return await response.json();
 };
 
+// Get cake by slug
+const getCakeBySlug = async (slug) => {
+    const response = await fetch(
+        `${API_BASE_URL}/Cakes/${encodeURIComponent(slug)}`
+    );
+
+    if (response.status === 404) {
+        throw new Error("Cake not found");
+    }
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch cake");
+    }
+
+    return await response.json();
+};
+
 // Create cake
 const createCake = async (cakeData) => {
     const isFormData = cakeData instanceof FormData;
@@ -98,12 +115,36 @@ const deleteCake = async (id) => {
     return await response.text();
 };
 
+// Update personalized-message settings (admin only)
+const updateMessageSettings = async (id, settings) => {
+    const response = await fetch(`${API_BASE_URL}/Cakes/${id}/message-settings`, {
+        method: "PATCH",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(settings)
+    });
+
+    if (!response.ok) {
+        let message = "Failed to update message settings";
+        try {
+            const body = await response.json();
+            message = body.message || message;
+        } catch {
+            // Fall back to the default message.
+        }
+        throw new Error(message);
+    }
+
+    // The endpoint returns 204 No Content, so there is no body to parse.
+};
+
 const cakeService = {
     getCakes,
     getCakeById,
+    getCakeBySlug,
     createCake,
     updateCake,
-    deleteCake
+    deleteCake,
+    updateMessageSettings,
 };
 
 export default cakeService;

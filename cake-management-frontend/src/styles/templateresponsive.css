@@ -1,5 +1,5 @@
 /* ==========================================================================
-   TEMPLATE + CUSTOMIZE PAGES: RESPONSIVE OVERRIDES
+   TEMPLATE + CUSTOMIZE PAGES: RESPONSIVE STYLES
    Import AFTER template.css (and Customize.css on the Customize page):
 
      import "../styles/template.css";
@@ -18,6 +18,9 @@
    - short desktop windows        : page scrolls instead of squashing
    - phones in landscape          : action bar stops being pinned
    - touch devices                : no sticky hover, bigger tap targets
+
+   Also needed once in index.html:
+     <meta name="viewport" content="width=device-width, initial-scale=1" />
    ========================================================================== */
 
 
@@ -62,14 +65,21 @@ img, svg, video {
   min-height: 160px;
 }
 
+/* "More" dropdown: bigger rows on touch screens */
+@media (pointer: coarse) {
+  .chip-menu button {
+    min-height: 40px;
+  }
+}
+
 
 /* --------------------------------------------------------------------------
    1. SMALL LAPTOPS (1101px to 1280px)
    -------------------------------------------------------------------------- */
 @media (min-width: 1101px) and (max-width: 1280px) {
   :root {
-    --col-sidebar: 280px;
-    --col-details: 300px;
+    --col-sidebar: 310px;
+    --col-details: 290px;
     --gap-columns: 12px;
   }
   .cz-body {
@@ -97,13 +107,13 @@ img, svg, video {
 
 /* --------------------------------------------------------------------------
    3. TABLET (901px to 1100px) and below
-   Two columns. The rules in section 4 stack everything at 900px and down.
+   Two columns. Section 4a stacks everything at 900px and down.
    -------------------------------------------------------------------------- */
 @media (max-width: 1100px) {
   /* Same specificity as the :has() rule in template.css, so the window
      scrolls (not the body) and position: sticky keeps working */
-  html:has(.sidebar__grid),
-  body:has(.sidebar__grid) {
+  html:has(.dbt),
+  body:has(.dbt) {
     height: auto;
     overflow: visible;
   }
@@ -123,7 +133,7 @@ img, svg, video {
     scrollbar-width: none;
   }
   .steps-bar__title {
-    display: none;
+    display: none;                       /* in-panel titles show again */
   }
 
   /* ---- Template page: list | (preview over details) ---- */
@@ -209,14 +219,23 @@ img, svg, video {
     max-height: none;
   }
 
-  /* Thumbnail strip scrolls sideways */
+  /* Thumbnail strip scrolls sideways. margin-inline: auto centres it when it
+     fits and lets it scroll from the first thumbnail when it doesn't. */
+  .pv {
+    justify-content: flex-start;
+  }
   .pv__thumbs {
     min-width: 0;
+    max-width: 100%;
+    margin-inline: auto;
     overflow-x: auto;
     scrollbar-width: none;
   }
   .pv__thumbs::-webkit-scrollbar {
     display: none;
+  }
+  .pv__thumb {
+    flex: none;
   }
 }
 
@@ -228,6 +247,17 @@ img, svg, video {
 @media (max-width: 900px) {
   .steps-bar {
     justify-content: flex-start;
+  }
+
+  /* ---- Legacy header (pages that still use it) ---- */
+  .header {
+    grid-template-columns: 1fr auto;
+  }
+  .header > .steps {
+    display: none;
+  }
+  .steps__sep {
+    margin: 0 16px;
   }
 
   /* ---- One column. Bottom padding leaves room for the pinned bar ---- */
@@ -270,6 +300,16 @@ img, svg, video {
   }
   .dbt .sidebar__grid .card {
     scroll-snap-align: start;
+  }
+  /* Loading skeleton matches the strip, so nothing jumps when data arrives */
+  .dbt .template-skeleton-grid {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: clamp(140px, 24vw, 180px);
+    gap: 12px;
+    margin: 12px -14px 0;
+    padding: 10px 14px 16px;
+    overflow: hidden;
   }
   /* In the strip, "grid-column: 1 / -1" would squeeze this into one 150px
      column, so give it the width of the screen instead */
@@ -369,6 +409,19 @@ img, svg, video {
     gap: 12px;
     scroll-snap-type: x proximity;
   }
+
+  /* ---- Footer (pages that still render it) ---- */
+  .footer {
+    height: auto;
+    flex-direction: column;
+    gap: var(--sp-3);
+    padding: var(--sp-4) 0;
+  }
+  .footer__perks {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sp-2) 0;
+  }
 }
 
 
@@ -435,5 +488,126 @@ img, svg, video {
   .pv__arrow {
     width: 40px;
     height: 40px;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   7. TABLET / PHONE: let the document scroll normally
+   Scoped to pages that render .dbt, so other pages (Home, etc.) keep their
+   own html / body / #root sizing.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  html:has(.dbt),
+  body:has(.dbt),
+  #root:has(.dbt) {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .dbt {
+    height: auto !important;
+    min-height: 100dvh;
+    overflow-y: visible !important;
+  }
+}
+
+/* ==========================================================================
+   8. SCROLL FIXES (tablet + phone)
+   Goal: the browser window is the ONLY thing that scrolls vertically.
+   Keep this block at the END of the file.
+   ========================================================================== */
+@media (max-width: 1100px) {
+  /* Page body takes its natural height (flex:1 + min-height:0 can collapse
+     it when the wrapper has no fixed height) */
+  .dbt-body,
+  .layout {
+    flex: 1 0 auto;
+    min-height: auto;
+  }
+
+  /* Details panel never becomes its own scroll box */
+  .details__body {
+    flex: none;
+    overflow: visible;
+  }
+
+  /* Swipes on the preview scroll the page; taps and buttons still work */
+  .ps__stage,
+  .ps__canvas,
+  .cz-stage,
+  .cz-stage__canvas {
+    touch-action: pan-y;
+  }
+}
+
+/* Tablet: sidebar is the only inner scroller, and it hands over to the page
+   at its ends (no scroll trap) */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .sidebar {
+    overscroll-behavior: auto;
+  }
+  .sidebar__grid {
+    flex: none;
+    overflow-y: visible;
+  }
+}
+
+/* Phone: the template strip scrolls sideways only; vertical swipes on it
+   go to the page, and the browser's back-swipe isn't triggered at its ends */
+@media (max-width: 900px) {
+  .dbt .sidebar__grid {
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+  }
+}
+
+/* ==========================================================================
+   9. FINAL SCROLL GUARANTEE (tablet + phone) - keep LAST in the file
+   ========================================================================== */
+@media (max-width: 1100px) {
+  html:has(.dbt) {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;       /* the window scrolls */
+    position: static !important;
+  }
+  body:has(.dbt),
+  #root:has(.dbt),
+  #__next:has(.dbt),
+  .app:has(.dbt) {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  .dbt,
+  .dbt.app {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;      /* also drops overflow-x: clip */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* No inner scroll boxes on tablet: the sidebar is a normal block */
+  .sidebar {
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .sidebar__grid {
+    overflow-y: visible !important;
+  }
+
+  /* Nothing on the page may block vertical swipes */
+  .dbt-body,
+  .dbt-body * {
+    touch-action: manipulation;
+  }
+  .dbt .sidebar__grid {
+    touch-action: pan-x pan-y;         /* horizontal strip on phones */
   }
 }

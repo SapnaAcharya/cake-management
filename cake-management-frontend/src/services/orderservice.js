@@ -27,7 +27,8 @@ export const createOrder = async (orderData) => {
         body: JSON.stringify(orderData)
     });
 
-    if (!response.ok) {
+    
+ if (!response.ok) {
 
     const errorBody = await response.json().catch(() => null);
 
@@ -54,24 +55,57 @@ export const getMyOrders = async () => {
     return await response.json();
 };
 
-// Get one order — for a logged-in customer or a guest (with phone number)
-export const getOrderById = async (orderId, guestPhoneNumber = null) => {
-    const token = getToken();
-
-    let url = `${API_BASE_URL}/Order/${orderId}`;
-    let headers = getAuthHeaders();
-
-    // Guest lookup: no token, so authorize via phone number instead
-    if (!token && guestPhoneNumber) {
-        url = `${API_BASE_URL}/Order/guest/${orderId}?phoneNumber=${encodeURIComponent(guestPhoneNumber)}`;
+// Get one order for a logged-in customer using PublicId
+export const getOrderByPublicId = async (publicId) => {
+    if (!publicId) {
+        throw new Error("Order reference is missing.");
     }
 
-    const response = await fetch(url, { headers });
+    const response = await fetch(
+        `${API_BASE_URL}/Order/public/${encodeURIComponent(publicId)}`,
+        {
+            headers: getAuthHeaders()
+        }
+    );
 
     if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
             throw new Error("You're not authorized to view this order.");
         }
+
+        throw new Error("Failed to load order details.");
+    }
+
+    return await response.json();
+};
+
+
+// Get one guest order using PublicId and phone number
+export const getGuestOrderByPublicId = async (
+    publicId,
+    guestPhoneNumber
+) => {
+    if (!publicId) {
+        throw new Error("Order reference is missing.");
+    }
+    
+    if (!guestPhoneNumber?.trim()) {
+        throw new Error("Phone number is required.");
+    }
+
+    const url =
+        `${API_BASE_URL}/Order/guest/public/${encodeURIComponent(publicId)}` +
+        `?phoneNumber=${encodeURIComponent(guestPhoneNumber.trim())}`;
+
+    const response = await fetch(url, {
+        headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+            throw new Error("You're not authorized to view this order.");
+        }
+
         throw new Error("Failed to load order details.");
     }
 
@@ -81,7 +115,8 @@ export const getOrderById = async (orderId, guestPhoneNumber = null) => {
 const orderService = {
     createOrder,
     getMyOrders,
-    getOrderById
+    getOrderByPublicId,
+    getGuestOrderByPublicId
 };
 
 export default orderService;

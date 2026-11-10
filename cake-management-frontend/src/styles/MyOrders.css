@@ -1,26 +1,33 @@
-:root {
-  --myorders-bg: #FAF6F3;
-  --myorders-surface: #FFFFFF;
-  --myorders-ink: #251320;
-  --myorders-ink-muted: #7C6670;
-  --myorders-accent: #9A2C5D;
-  --myorders-border: #ECE2E5;
-  --myorders-danger-bg: #FBE9EC;
-  --myorders-danger-text: #9A2C42;
-}
+/* =========================================================
+   MyOrders.css
+   ========================================================= */
 
 .myorders-page {
+  --mo-bg: #faf6f3;
+  --mo-surface: #ffffff;
+  --mo-card: #f9f5f2;
+  --mo-ink: #2b1018;
+  --mo-muted: #7a6670;
+  --mo-accent: #9a2c5d;
+  --mo-accent-dark: #7e2250;
+  --mo-accent-soft: #f7e8ef;
+  --mo-border: #ecdfe4;
+  --mo-danger-bg: #fbe9ec;
+  --mo-danger-text: #9a2c42;
+
   min-height: 100vh;
-  background: var(--myorders-bg);
-  font-family: 'Work Sans', sans-serif;
-  color: var(--myorders-ink);
+  background: var(--mo-bg);
+  padding: 32px 16px 64px;
+  font-family: "Work Sans", system-ui, sans-serif;
+  color: var(--mo-ink);
 }
 
 .myorders-container {
-  max-width: 800px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 40px 24px 60px;
 }
+
+/* ---------- Loading / error ---------- */
 
 .myorders-loading,
 .myorders-error {
@@ -29,97 +36,200 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
+  gap: 10px;
   text-align: center;
-  color: var(--myorders-ink-muted);
-  gap: 12px;
+  color: var(--mo-muted);
 }
 
 .myorders-error h2 {
-  font-family: 'Fraunces', serif;
-  color: var(--myorders-ink);
   margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.4rem;
+  color: var(--mo-ink);
+}
+
+.myorders-error p {
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 .myorders-error button {
-  background: var(--myorders-accent);
+  margin-top: 8px;
+  padding: 12px 24px;
+  background: var(--mo-accent);
   color: #fff;
   border: none;
-  padding: 10px 22px;
-  border-radius: 8px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 
-/* Header */
-.myorders-header {
-  margin-bottom: 24px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--myorders-border);
-}
-
-.myorders-header h1 {
-  font-family: 'Fraunces', serif;
-  font-size: 26px;
-  font-weight: 600;
-  margin: 0 0 4px;
-}
-
-.myorders-header p {
-  font-size: 13px;
-  color: var(--myorders-ink-muted);
-  margin: 0;
+.myorders-error button:hover {
+  background: var(--mo-accent-dark);
 }
 
 .myorders-error-message {
-  background: var(--myorders-danger-bg);
-  color: var(--myorders-danger-text);
+  margin-bottom: 16px;
   padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 13.5px;
+  background: var(--mo-danger-bg);
+  color: var(--mo-danger-text);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+/* ---------- Header ---------- */
+
+.myorders-header {
   margin-bottom: 20px;
 }
 
-/* Empty state */
+.myorders-header h1 {
+  margin: 0 0 4px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mo-ink);
+}
+
+.myorders-header p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--mo-muted);
+}
+
+/* ---------- Filters ---------- */
+
+.myorders-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.myorders-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.myorders-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: var(--mo-surface);
+  color: var(--mo-muted);
+  border: 1px solid var(--mo-border);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.myorders-filter:hover {
+  border-color: var(--mo-accent);
+  color: var(--mo-accent);
+}
+
+.myorders-filter.active {
+  background: var(--mo-accent);
+  border-color: var(--mo-accent);
+  color: #fff;
+}
+
+.myorders-filter-count {
+  min-width: 20px;
+  padding: 1px 7px;
+  background: var(--mo-accent-soft);
+  color: var(--mo-accent);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.myorders-filter.active .myorders-filter-count {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.myorders-no-match {
+  padding: 40px 20px;
+  background: var(--mo-surface);
+  border: 1px dashed var(--mo-border);
+  border-radius: 14px;
+  text-align: center;
+  color: var(--mo-muted);
+  font-size: 0.92rem;
+}
+
+.myorders-no-match p {
+  margin: 0;
+}
+
+/* ---------- Empty state ---------- */
+
 .myorders-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 72px 20px;
+  background: var(--mo-surface);
+  border: 1px solid var(--mo-border);
+  border-radius: 16px;
   text-align: center;
-  padding: 90px 20px;
-  background: var(--myorders-surface);
-  border: 1px solid var(--myorders-border);
-  border-radius: 14px;
 }
 
 .myorders-empty-icon {
-  font-size: 38px;
-  margin-bottom: 10px;
-  opacity: 0.7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 14px;
+  background: var(--mo-accent-soft);
+  color: var(--mo-accent);
+  border-radius: 50%;
 }
 
 .myorders-empty h2 {
-  font-family: 'Fraunces', serif;
-  font-size: 19px;
   margin: 0 0 6px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.3rem;
 }
 
 .myorders-empty p {
-  color: var(--myorders-ink-muted);
-  font-size: 13.5px;
-  margin: 0 0 20px;
+  margin: 0 0 22px;
+  font-size: 0.92rem;
+  color: var(--mo-muted);
 }
 
 .myorders-browse-btn {
-  background: var(--myorders-accent);
+  padding: 13px 32px;
+  background: var(--mo-accent);
   color: #fff;
   border: none;
-  padding: 11px 26px;
-  border-radius: 8px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.92rem;
   font-weight: 600;
+  box-shadow: 0 6px 16px rgba(154, 44, 93, 0.25);
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 
-/* Order cards */
+.myorders-browse-btn:hover {
+  background: var(--mo-accent-dark);
+}
+
+/* ---------- Order cards ---------- */
+
 .myorders-list {
   display: flex;
   flex-direction: column;
@@ -127,54 +237,69 @@
 }
 
 .myorder-card {
-  background: var(--myorders-surface);
-  border: 1px solid var(--myorders-border);
-  border-radius: 12px;
+  display: block;
   padding: 18px 20px;
-  cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  background: var(--mo-surface);
+  border: 1px solid var(--mo-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(90, 30, 55, 0.04);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    transform 0.15s ease;
 }
 
 .myorder-card:hover {
-  border-color: #DCC8D2;
-  box-shadow: 0 6px 18px rgba(37, 19, 32, 0.08);
+  border-color: #dcc3cf;
+  box-shadow: 0 10px 28px rgba(90, 30, 55, 0.1);
+  transform: translateY(-1px);
+}
+
+.myorder-card:focus-visible {
+  outline: none;
+  border-color: var(--mo-accent);
+  box-shadow: 0 0 0 3px rgba(154, 44, 93, 0.2);
 }
 
 .myorder-card-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .myorder-card-top h2 {
-  font-size: 15px;
-  font-weight: 700;
   margin: 0 0 2px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--mo-ink);
 }
 
 .myorder-date {
-  font-size: 12px;
-  color: var(--myorders-ink-muted);
   margin: 0;
+  font-size: 0.82rem;
+  color: var(--mo-muted);
 }
 
-.order-status {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 5px 12px;
+/* Status pill (scoped so admin styles do not clash) */
+.myorders-page .order-status {
+  flex-shrink: 0;
+  padding: 6px 14px;
   border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
   white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
 }
 
-.order-status.pending { background: #FBEFD8; color: #93650F; }
-.order-status.confirmed { background: #E1EEFB; color: #1D5A9C; }
-.order-status.preparing { background: #F1E4FB; color: #6B2FA6; }
-.order-status.shipped { background: #E1F3EE; color: #157A5E; }
-.order-status.delivered { background: #E3F6E1; color: #2C8A2A; }
-.order-status.cancelled { background: var(--myorders-danger-bg); color: var(--myorders-danger-text); }
+.myorders-page .order-status.pending { background: #fbefd8; color: #93650f; }
+.myorders-page .order-status.confirmed { background: #e1eefb; color: #1d5a9c; }
+.myorders-page .order-status.preparing { background: #f1e4fb; color: #6b2fa6; }
+.myorders-page .order-status.shipped { background: #e1f3ee; color: #157a5e; }
+.myorders-page .order-status.delivered { background: #e3f6e1; color: #2c8a2a; }
+.myorders-page .order-status.cancelled { background: var(--mo-danger-bg); color: var(--mo-danger-text); }
 
 .myorder-card-items {
   display: flex;
@@ -184,40 +309,81 @@
 }
 
 .myorder-item-chip {
-  font-size: 12px;
-  background: var(--myorders-bg);
-  color: var(--myorders-ink-muted);
-  padding: 5px 10px;
-  border-radius: 6px;
+  padding: 5px 11px;
+  background: var(--mo-card);
+  border: 1px solid var(--mo-border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--mo-ink);
 }
 
 .myorder-item-chip.more {
+  background: var(--mo-accent-soft);
+  border-color: transparent;
   font-weight: 600;
-  color: var(--myorders-accent);
+  color: var(--mo-accent);
 }
 
 .myorder-card-bottom {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  color: var(--myorders-ink-muted);
-  padding-top: 12px;
-  border-top: 1px solid var(--myorders-border);
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--mo-border);
 }
 
-.myorder-card-bottom strong {
-  font-size: 15px;
-  color: var(--myorders-accent);
+.myorder-card-total {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
+
+.myorder-card-total span {
+  font-size: 0.8rem;
+  color: var(--mo-muted);
+}
+
+.myorder-card-total strong {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--mo-accent);
+}
+
+.myorder-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--mo-accent);
+}
+
+.myorder-card:hover .myorder-view svg {
+  transform: translateX(2px);
+}
+
+.myorder-view svg {
+  transition: transform 0.15s ease;
+}
+
+/* ---------- Responsive ---------- */
 
 @media (max-width: 560px) {
-  .myorders-container {
-    padding: 24px 16px 48px;
+  .myorders-page {
+    padding: 16px 12px 48px;
+  }
+
+  .myorders-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .myorder-card {
+    padding: 16px;
   }
 
   .myorder-card-top {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 }

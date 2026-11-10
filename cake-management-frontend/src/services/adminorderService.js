@@ -10,20 +10,27 @@ const getAuthHeaders = () => {
 
 // Get all orders (admin)
 export const getAllOrders = async () => {
-    const response = await fetch(`${API_BASE_URL}/AdminOrder`, {
+    const response = await fetch(`${API_BASE_URL}/admin/AdminOrder`, {
         method: "GET",
         headers: getAuthHeaders()
     });
 
+    console.log("Admin Orders API URL:", response.url);
+
     if (!response.ok) {
         throw new Error("Failed to fetch orders");
     }
-    return await response.json();
+
+    const data = await response.json();
+
+    console.log("Raw Admin Orders Response:", JSON.stringify(data, null, 2));
+
+    return data;
 };
 
 // Get order by ID
 export const getOrderById = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/AdminOrder/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/admin/AdminOrder/${id}`, {
         method: "GET",
         headers: getAuthHeaders()
     });
@@ -36,7 +43,7 @@ export const getOrderById = async (id) => {
 
 // Update order status
 export const updateOrderStatus = async (id, status) => {
-    const response = await fetch(`${API_BASE_URL}/AdminOrder/${id}/status`, {
+    const response = await fetch(`${API_BASE_URL}/admin/AdminOrder/${id}/status`, {
         method: "PUT",
         headers: getAuthHeaders(),
         body: JSON.stringify({ status })

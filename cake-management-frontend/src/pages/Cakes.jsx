@@ -105,7 +105,7 @@ function Cakes() {
                             {filteredCakes.map((cake) => (
                                 <Link
                                     key={cake.id}
-                                    to={`/cakes/${cake.id}`}
+                                    to={`/cakes/${cake.slug}`}
                                     state={{ cake }}
                                     className="cake-card"
                                 >

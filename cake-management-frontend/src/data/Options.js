@@ -116,7 +116,6 @@ export function initialConfig(template, initialColorId) {
     colorDbId: chosen?.dbId ?? null,
     colorHex: chosen?.hex ?? "#ff5c8a",
     size: template?.sizes?.[0] ?? SIZES[0].value,
-    // tier: template?.tiers ?? 1,
     tier: 1,
     flavor: FLAVORS[0].id,
     frosting: FROSTINGS[0].id,
@@ -178,11 +177,6 @@ export function stageView(template, cfg, baseline, decorations = []) {
         ? img.gallery
         : [img.preview];
 
-  // const useDrawnCake = cfg.tier !== template.tiers && !tierPhotos?.length;
-
-  // const tierNote = useDrawnCake
-  //   ? `Illustration · your ${cfg.tier}-tier cake (original design has ${template.tiers} tier${template.tiers === 1 ? "" : "s"})`
-  //   : "";
   const useDrawnCake = !tierPhotos?.length && !img.gallery?.length && !img.preview;
 
   const tierNote = useDrawnCake ? `Illustration · your ${cfg.tier}-tier cake` : "";
@@ -191,12 +185,7 @@ export function stageView(template, cfg, baseline, decorations = []) {
   const maxSize = SIZES[SIZES.length - 1].value;
   const t = (cfg.size - minSize) / (maxSize - minSize || 1);
   const sizeScale = +(0.8 + 0.2 * t).toFixed(3);
-
-//   const parts = [
-//   COLOR_TINTS[cfg.colorId],
-//   hasVariantPhotos ? "none" : (FLAVOR_TINTS?.[cfg.flavor] ?? "none"),
-//   FROSTING_TINTS?.[cfg.frosting] ?? "none",
-// ].filter((f) => f && f !== "none");
+  
   // Only the colour changes the photo. Flavour and frosting do not.
 const tint = COLOR_TINTS[cfg.colorId] ?? "none";
 

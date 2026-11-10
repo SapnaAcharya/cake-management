@@ -1,6 +1,20 @@
 import api from "./api";
 
-const login = async (email, password) => {
+const STORAGE_KEYS = ["token", "role", "user"];
+
+// Remove the saved login from both places
+const clearAuth = () => {
+    STORAGE_KEYS.forEach((key) => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+    });
+};
+
+// Read a saved value from either place
+const readAuth = (key) =>
+    localStorage.getItem(key) || sessionStorage.getItem(key);
+
+const login = async (email, password, rememberMe = false) => {
     const response = await api.post("/Auth/login", {
         email,
         password,
@@ -8,27 +22,33 @@ const login = async (email, password) => {
 
     const data = response.data;
 
-    // Save token
+    // Remove any old login first so the two places never disagree
+    clearAuth();
+
+    // Remember me ticked: stays after the browser closes.
+    // Not ticked: ends when the tab or browser closes.
+    const storage = rememberMe ? localStorage : sessionStorage;
+
     if (data.token) {
-        localStorage.setItem("token", data.token);
+        storage.setItem("token", data.token);
     }
 
     // Support either response.user.role or response.role
     const role = data.user?.role || data.role;
 
     if (role) {
-        localStorage.setItem("role", role);
+        storage.setItem("role", role);
     }
 
     // Save user information if available
     const user = data.user || {
-        id: data.id,
+        id: data.userId ?? data.id,
         name: data.name,
         email: data.email,
         role: role,
     };
 
-    localStorage.setItem("user", JSON.stringify(user));
+    storage.setItem("user", JSON.stringify(user));
 
     return data;
 };
@@ -40,25 +60,26 @@ const register = async (userData) => {
 };
 
 const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("user");
+    clearAuth();
+};
+
+const getToken = () => {
+    return readAuth("token");
 };
 
 const getCurrentUser = () => {
-    const user = localStorage.getItem("user");
+    const user = readAuth("user");
 
     return user ? JSON.parse(user) : null;
 };
 
 const getRole = () => {
-    return localStorage.getItem("role");
+    return readAuth("role");
 };
 
 const isLoggedIn = () => {
-    return Boolean(localStorage.getItem("token"));
+    return Boolean(readAuth("token"));
 };
-
 
 const verifyEmail = async (email, otp) => {
     const response = await api.post("/Auth/verify-email", {
@@ -77,7 +98,6 @@ const resendEmailOtp = async (email) => {
     return response.data;
 };
 
-
 const googleLogin = async (idToken) => {
     const response = await api.post("/Auth/google", { idToken });
     return response.data;
@@ -90,12 +110,12 @@ const forgotPassword = async (email) => {
 };
 
 const resetPassword = async (email, token, newPassword) => {
-  const response = await api.post("/Auth/reset-password", {
-    email,
-    token,
-    newPassword,
-  });
-  return response.data;
+    const response = await api.post("/Auth/reset-password", {
+        email,
+        token,
+        newPassword,
+    });
+    return response.data;
 };
 
 export default {
@@ -105,6 +125,7 @@ export default {
     verifyEmail,
     resendEmailOtp,
     logout,
+    getToken,
     getCurrentUser,
     getRole,
     isLoggedIn,

@@ -55,13 +55,6 @@ function Register() {
 
     setLoading(true);
     try {
-      // await authService.register({
-      //   name: formData.fullName,
-      //   email: formData.email,
-      //   password: formData.password,
-      // });
-
-      // navigate("/login");
       const result = await authService.register({
   name: formData.fullName,
   email: formData.email.trim().toLowerCase(),
