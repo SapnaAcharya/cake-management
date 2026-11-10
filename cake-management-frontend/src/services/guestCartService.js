@@ -109,5 +109,3 @@ const guestCartService = {
 };
 
 export default guestCartService;
-
-
