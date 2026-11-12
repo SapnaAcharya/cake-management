@@ -4,16 +4,19 @@ using CakeManagementAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CakeManagementAPI.Helpers;
+using CakeManagementAPI.Services;
+using System.Collections.Immutable;
+using CakeManagementAPI.Services;
 
 public class CakeTemplateService : ICakeTemplateService
 {
     private readonly AppDbContext _context;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IImageService _imageService;
 
-    public CakeTemplateService(AppDbContext context, IWebHostEnvironment environment)
+    public CakeTemplateService(AppDbContext context,IImageService imageService)
     {
         _context = context;
-        _environment = environment;
+        _imageService = imageService;
     }
 
     public async Task<IEnumerable<CakeTemplate>> GetAllAsync()
@@ -192,25 +195,8 @@ public class CakeTemplateService : ICakeTemplateService
                 "Image size cannot exceed 5 MB.");
         }
 
-        var uploadsFolder = Path.Combine(
-            _environment.WebRootPath,
-            "images",
-            "templates");
-
-        if (!Directory.Exists(uploadsFolder))
-        {
-            Directory.CreateDirectory(uploadsFolder);
-        }
-
-        var fileName = $"{Guid.NewGuid()}{extension}";
-
-        var filePath = Path.Combine(uploadsFolder, fileName);
-
-        using var stream = new FileStream(filePath, FileMode.Create);
-
-        await image.CopyToAsync(stream);
-
-        return $"/images/templates/{fileName}";
+        // Upload to cloudinary and return the full https URL
+        return await _imageService.UploadAsync(image, "templates");
     }
 
     public async Task<CakeTemplate?> UpdateAsync(int id, UpdateCakeTemplateDto dto)

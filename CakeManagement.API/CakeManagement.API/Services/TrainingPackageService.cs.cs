@@ -1,5 +1,4 @@
-﻿
-using CakeManagementAPI.Data;
+﻿using CakeManagementAPI.Data;
 using CakeManagementAPI.DTOs.Training;
 using CakeManagementAPI.Models;
 using CakeManagementAPI.Services.Interfaces;
@@ -13,11 +12,16 @@ namespace CakeManagementAPI.Services
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly IImageService _imageService;
 
-        public TrainingPackageService(AppDbContext context, IWebHostEnvironment environment)
+        public TrainingPackageService(
+            AppDbContext context,
+            IWebHostEnvironment environment,
+            IImageService imageService)
         {
             _context = context;
             _environment = environment;
+            _imageService = imageService;
         }
 
         public async Task<List<TrainingPackageResponseDto>>
@@ -126,7 +130,7 @@ namespace CakeManagementAPI.Services
             return true;
         }
 
-        // Save uploaded image to wwwroot/uploads/training-packages
+        // Validate the image, then upload it to Cloudinary
         private async Task<string> SaveImageAsync(
             IFormFile image)
         {
@@ -160,31 +164,19 @@ namespace CakeManagementAPI.Services
                     "Only JPG, JPEG, PNG and WEBP images are allowed.");
             }
 
-            var uploadsFolder = Path.Combine(
-                _environment.WebRootPath ?? Path.Combine(
-                    _environment.ContentRootPath, "wwwroot"),
-                "uploads",
-                "training-packages"
-            );
-
-            Directory.CreateDirectory(uploadsFolder);
-
-            var fileName = $"{Guid.NewGuid()}{extension}";
-
-            var filePath = Path.Combine(uploadsFolder, fileName);
-
-            using (var stream = new FileStream(
-                filePath, FileMode.Create))
-            {
-                await image.CopyToAsync(stream);
-            }
-
-            return $"/uploads/training-packages/{fileName}";
+            // Returns the full https://res.cloudinary.com/... URL
+            return await _imageService.UploadAsync(image, "training");
         }
 
         private void DeleteImageFile(string? imageUrl)
         {
-            if (string.IsNullOrWhiteSpace(imageUrl)) return;
+            // Only old images stored on this server's disk are deleted.
+            // Cloudinary URLs (https://...) are skipped.
+            if (string.IsNullOrWhiteSpace(imageUrl) ||
+                !imageUrl.StartsWith("/uploads/training-packages/"))
+            {
+                return;
+            }
 
             var webRoot = _environment.WebRootPath ??
                 Path.Combine(_environment.ContentRootPath, "wwwroot");
@@ -197,7 +189,6 @@ namespace CakeManagementAPI.Services
                 File.Delete(path);
             }
         }
-
 
         private static TrainingPackageResponseDto MapToResponse(
             TrainingPackage package)

@@ -10,12 +10,28 @@ namespace CakeManagementAPI.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // Slug column was added manually and backfilled, so only create the index
-            migrationBuilder.CreateIndex(
-                name: "IX_CakeTemplates_Slug",
-                table: "CakeTemplates",
-                column: "Slug",
-                unique: true);
+            // Works on a brand-new database and on one where Slug was already added manually
+            migrationBuilder.Sql(@"ALTER TABLE ""CakeTemplates"" ADD COLUMN IF NOT EXISTS ""Slug"" character varying(200) NOT NULL DEFAULT '';");
+
+            migrationBuilder.Sql(@"
+                UPDATE ""CakeTemplates""
+                SET ""Slug"" = LOWER(TRIM(BOTH '-' FROM
+                    REGEXP_REPLACE(TRIM(""Name""), '[^a-zA-Z0-9]+', '-', 'g')))
+                WHERE ""Slug"" = '';");
+
+            migrationBuilder.Sql(@"
+                UPDATE ""CakeTemplates""
+                SET ""Slug"" = 'template-' || ""Id""
+                WHERE ""Slug"" = '';");
+
+            migrationBuilder.Sql(@"
+                UPDATE ""CakeTemplates"" c
+                SET ""Slug"" = c.""Slug"" || '-' || c.""Id""
+                WHERE EXISTS (
+                    SELECT 1 FROM ""CakeTemplates"" d
+                    WHERE d.""Slug"" = c.""Slug"" AND d.""Id"" < c.""Id"");");
+
+            migrationBuilder.Sql(@"CREATE UNIQUE INDEX IF NOT EXISTS ""IX_CakeTemplates_Slug"" ON ""CakeTemplates"" (""Slug"");");
         }
 
         /// <inheritdoc />

@@ -115,7 +115,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrWhiteSpace(jwtKey) || jwtKey.Length < 32)
-    throw new InvalidOperationException("Jwt:Key must be set and at least 10 characters long.");
+    throw new InvalidOperationException("Jwt:Key must be set and at least 32 characters long.");
 
 builder.Services.AddAuthentication(
     JwtBearerDefaults.AuthenticationScheme)
@@ -197,7 +197,11 @@ builder.Services.AddScoped<ITrainingPackageService, TrainingPackageService>();
 builder.Services.AddScoped<ITrainerService, TrainerService>();
 
 // Add training batch services to the container
-builder.Services.AddScoped<ITrainingBatchService, TrainingBatchService>(); 
+builder.Services.AddScoped<ITrainingBatchService, TrainingBatchService>();
+
+// Add Cloudinary services to the container
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
+builder.Services.AddScoped<IImageService, CloudinaryImageService>();
 
 var app = builder.Build();
 
