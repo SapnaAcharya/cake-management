@@ -15,12 +15,15 @@ namespace CakeManagementAPI.Services
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly IImageService _imageService;
 
         public CakeService(AppDbContext context,
-                          IWebHostEnvironment environment)
+                          IWebHostEnvironment environment,
+                          IImageService imageService)
         {
             _context = context;
             _environment = environment;
+            _imageService = imageService;
         }
 
         public async Task<PaginatedResponseDto<CakeResponseDto>> GetAllAsync(
@@ -425,34 +428,16 @@ public async Task<bool> UpdateMessageSettingsAsync(
                     "Image size cannot exceed 5 MB.");
             }
 
-            var uploadsFolder = Path.Combine(
-                _environment.WebRootPath,
-                "images",
-                "cakes");
-
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
-
-            var fileName =
-                $"{Guid.NewGuid()}{extension}";
-
-            var filePath = Path.Combine(
-                uploadsFolder,
-                fileName);
-
-            using var stream =
-                new FileStream(filePath, FileMode.Create);
-
-            await image.CopyToAsync(stream);
-
-            return $"/images/cakes/{fileName}";
+            // Upload to Cloudinary and return the full https URL
+            return await _imageService.UploadAsync(image, "cakes");
         }
 
         private void DeleteImage(string? imageUrl)
         {
-            if (string.IsNullOrEmpty(imageUrl))
+            // Only old images stored on this server disk are deleted 
+            // Cloudinary URLs (https://...) are skipped.
+            if (string.IsNullOrEmpty(imageUrl) || 
+                !imageUrl.StartsWith("/images/cakes/"))
             {
                 return;
             }

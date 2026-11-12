@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Upload, X } from "lucide-react";
-import { API_ORIGIN } from "../../config/apiConfig";
+import { getImageUrl } from "../../utils/imageUrl";
 
 import AdminLayout from "../../layouts/AdminLayout";
 import trainingPackageAdminService from "../../services/training/trainingPackageAdminService";
@@ -325,7 +325,7 @@ if (imageFile) {
         {newPreview || existingImageUrl ? (
             <div className="training-image-preview">
                 <img
-                    src={newPreview || `${API_ORIGIN}${existingImageUrl}`}
+                    src={newPreview || getImageUrl(existingImageUrl)}
                     alt="Training course"
                 />
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Search, Pencil, Power } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { API_ORIGIN } from "../../config/apiConfig";
+import { getImageUrl } from "../../utils/imageUrl";
 
 import AdminLayout from "../../layouts/AdminLayout";
 import trainingPackageAdminService from "../../services/training/trainingPackageAdminService";
@@ -156,7 +156,7 @@ function ManageTrainingPackages() {
                                                 <td>
     {trainingPackage.imageUrl ? (
         <img
-            src={`${API_ORIGIN}${trainingPackage.imageUrl}`}
+            src={getImageUrl(trainingPackage.imageUrl)}
             alt={trainingPackage.name}
             className="training-table-thumb"
             onError={(event) => {

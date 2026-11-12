@@ -1,5 +1,6 @@
 ﻿using CakeManagementAPI.Data;
 using CakeManagementAPI.DTOs.Decoration;
+using CakeManagementAPI.Helpers;
 using CakeManagementAPI.Models;
 using CakeManagementAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +10,12 @@ namespace CakeManagementAPI.Services
     public class DecorationService : IDecorationService
     {
         private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _environment;
+        private readonly IImageService _imageService;
 
-        public DecorationService(AppDbContext context, IWebHostEnvironment environment)
+        public DecorationService(AppDbContext context, IImageService imageService)
         {
             _context = context;
-            _environment = environment;
+            _imageService = imageService;
         }
 
         public async Task<DecorationResponseDto> CreateAsync(CreateDecorationDto dto)
@@ -23,9 +24,6 @@ namespace CakeManagementAPI.Services
             {
                 throw new ArgumentException("Decoration price cannot be negative.");
             }
-
-            //var existingDecoration = await _context.Decorations
-            //    .FirstOrDefaultAsync(d => d.Name.ToLower() == dto.Name.ToLower());
 
             var existingDecoration = await _context.Decorations
                 .FirstOrDefaultAsync(d =>
@@ -56,6 +54,7 @@ namespace CakeManagementAPI.Services
 
             return MapToDto(decoration);
         }
+
         public async Task<List<DecorationResponseDto>> GetAllAsync()
         {
             var decorations = await _context.Decorations
@@ -136,27 +135,30 @@ namespace CakeManagementAPI.Services
             if (image == null || image.Length == 0)
                 return null;
 
-            var subfolder = string.IsNullOrWhiteSpace(category) ? "general" : category;
-            
-            var uploadsFolder = Path.Combine(
-                _environment.WebRootPath,
-                "images",
-                "decorations",
-                subfolder);
-
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
 
             var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
-            var fileName = $"{Guid.NewGuid()}{extension}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
 
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await image.CopyToAsync(stream);
+            if (!allowedExtensions.Contains(extension))
+            {
+                throw new InvalidOperationException(
+                    "Only JPG, JPEG, PNG and WEBP images are allowed.");
+            }
 
-            return $"/images/decorations/{subfolder}/{fileName}";
+            const long maxFileSize = 5 * 1024 * 1024;
+
+            if (image.Length > maxFileSize)
+            {
+                throw new InvalidOperationException(
+                    "Image size cannot exceed 5 MB.");
+            }
+
+            // One Cloudinary folder per category, with a safe folder name
+            var subfolder = string.IsNullOrWhiteSpace(category)
+                ? "general"
+                : SlugHelper.Generate(category, "general");
+
+            return await _imageService.UploadAsync(image, $"decorations/{subfolder}");
         }
 
         private static DecorationResponseDto MapToDto(Decoration decoration)
