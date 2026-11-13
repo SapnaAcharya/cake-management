@@ -19,6 +19,7 @@ import {
   GraduationCap,
   ClipboardCheck,
 } from "lucide-react";
+import useProfilePhoto from "../hooks/useProfilePhoto";
 import "../styles/AdminLayout.css";
 
 const navItems = [
@@ -56,6 +57,8 @@ const trainingNavItems = [
 
 function AdminLayout({ children, title, subtitle, headerAction }) {
   const location = useLocation();
+  const profilePhoto = useProfilePhoto();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [trainingOpen, setTrainingOpen] = useState(false);
@@ -80,10 +83,14 @@ function AdminLayout({ children, title, subtitle, headerAction }) {
 
       <aside className={`admin-sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="admin-sidebar-brand">
-          <span className="admin-brand-icon">
+          {/* <span className="admin-brand-icon">
             <Cake size={22} className="navbar-brand-icon" />
           </span>
-          <span>Cake Management</span>
+          <span>Cake Management</span> */}
+          <Link to="/admin/" className="admin-brand-link">
+  <Cake size={22} className="admin-brand-cake" aria-hidden="true" />
+  <span className="admin-brand-name">Sweet Cakes</span>
+</Link>
 
           {/* Close button, mobile only */}
           <button
@@ -188,7 +195,14 @@ function AdminLayout({ children, title, subtitle, headerAction }) {
               className="admin-user"
               onClick={() => setMenuOpen((open) => !open)}
             >
-              <div className="admin-avatar" />
+              {/* <div className="admin-avatar" /> */}
+              <div className="admin-avatar">
+  {profilePhoto ? (
+    <img src={profilePhoto} alt="Admin profile" />
+  ) : (
+    <span aria-hidden="true">A</span>
+  )}
+</div>
               <span>Admin</span>
               <ChevronDown size={15} />
             </div>

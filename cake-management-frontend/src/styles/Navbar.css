@@ -35,6 +35,19 @@
   gap: 28px;
 }
 
+.navbar-profile-img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+}
+
+.navbar-profile-img.is-active {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d6195f;
+}
+
 /* ---------- Brand ---------- */
 .navbar-brand {
   display: flex;

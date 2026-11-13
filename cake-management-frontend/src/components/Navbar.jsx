@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, LayoutDashboard, User, X, Cake, Menu } from "lucide-react";
+import useProfilePhoto from "../hooks/useProfilePhoto";
 import "../styles/Navbar.css";
 
 function Navbar({ cartCount = 0 }) {
@@ -14,6 +15,8 @@ function Navbar({ cartCount = 0 }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const profilePhoto = useProfilePhoto();
 
   // While open: Escape closes it, and so does growing past the mobile breakpoint
   useEffect(() => {
@@ -85,9 +88,17 @@ function Navbar({ cartCount = 0 }) {
       {isLoggedIn ? (
         <>
           <Link to="/profile" className="navbar-icon-btn" title="My Profile" onClick={() => setMenuOpen(false)}>
-            <User size={18} />
-            <span className="navbar-profile-label">My Profile</span>
-          </Link>
+  {profilePhoto ? (
+    <img
+  src={profilePhoto}
+  alt=""
+  className={"navbar-profile-img" + (location.pathname === "/profile" ? " is-active" : "")}
+/>
+  ) : (
+    <User size={18} />
+  )}
+  <span className="navbar-profile-label">My Profile</span>
+</Link>
           <button className="navbar-login" onClick={handleLogout}>
             Logout
           </button>

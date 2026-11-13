@@ -72,6 +72,51 @@ namespace CakeManagementAPI.Controllers
             });
         }
 
+        // POST: api/User/profile/photo
+        [HttpPost("profile/photo")]
+        [RequestSizeLimit(5 * 1024 * 1024)]
+        public async Task<IActionResult> UploadPhoto(IFormFile file)
+        {
+            var userId = GetUserIdFromToken();
+            if (userId == null) return Unauthorized("Invalid user token.");
+
+            if (file == null || file.Length == 0)
+                return BadRequest("Please choose an image.");
+
+            var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+            if (!allowedTypes.Contains(file.ContentType))
+                return BadRequest("Only JPG, PNG or WEBP images are allowed.");
+
+            if (file.Length > 5 * 1024 * 1024)
+                return BadRequest("Image must be 5 MB or smaller.");
+
+            try
+            {
+                var url = await _userService.UploadProfileImageAsync(userId.Value, file);
+                if (url == null) return NotFound("User not found.");
+
+                return Ok(new { profileImageUrl = url });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Cloudinary rejected the file
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // DELETE: api/User/profile/photo
+        [HttpDelete("profile/photo")]
+        public async Task<IActionResult> RemovePhoto()
+        {
+            var userId = GetUserIdFromToken();
+            if (userId == null) return Unauthorized("Invalid user token.");
+
+            var removed = await _userService.RemoveProfileImageAsync(userId.Value);
+            if (!removed) return NotFound("User not found.");
+
+            return Ok(new { message = "Profile photo removed." });
+        }
+
         // Change password
         //  Put: api/User/change-password
         [HttpPut("change-password")]

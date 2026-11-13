@@ -16,6 +16,8 @@
 
         public string? Phone { get; set; }
 
+        public string? ProfileImageUrl { get; set; }
+
         public string? Address { get; set; }
 
         public string? GoogleSubject { get; set; }
