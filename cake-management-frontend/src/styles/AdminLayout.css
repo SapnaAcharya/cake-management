@@ -139,6 +139,28 @@
   padding: 8px 12px;
 }
 
+.admin-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0e6dc;
+  color: #8b4513;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.admin-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
 /* ---------- Main area ---------- */
 
 .admin-main {
@@ -207,6 +229,60 @@
   margin: 0;
 }
 
+/* Sidebar logo, matches the navbar */
+.admin-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.admin-brand-cake {
+    flex-shrink: 0;
+    color: #d1477a;
+}
+
+.admin-brand-name {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #fff;
+}
+
+.admin-brand-link {
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+.admin-brand-name {
+    white-space: nowrap;
+    font-size: 22px;
+}
+
+.admin-brand-cake {
+    width: 24px;
+    height: 24px;
+}
+
+/* Profile photo in the top bar */
+.admin-avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ddd5e3;
+    font-weight: 700;
+}
+
+.admin-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* ---------- Hamburger & drawer (hidden on desktop) ---------- */
 
 .admin-hamburger {
@@ -256,6 +332,7 @@
     transform: translateX(0);
   }
 
+
   /* Show labels again inside the drawer — override the icon-only collapse */
   .admin-sidebar-brand span:last-child,
   .admin-nav-item span {
@@ -278,6 +355,14 @@
     background: rgba(0, 0, 0, 0.4);
     z-index: 99;
   }
+
+  .admin-sidebar {
+    background: #2a1224;
+}
+
+.admin-nav-item.active {
+    background: rgba(209, 71, 122, 0.22);
+}
 
   /* Main content takes full width since sidebar is now overlaid, not in-flow */
   .admin-main {

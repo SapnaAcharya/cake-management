@@ -9,7 +9,12 @@ namespace CakeManagementAPI.Services.Interfaces
 
         Task<UserProfileDto?> UpdateProfileAsync(int userId, UpdateProfileDto dto);
 
+        Task<string?> UploadProfileImageAsync(int userId, IFormFile file);
+
+        Task<bool> RemoveProfileImageAsync(int userId);
+
         Task<ChangePasswordResult> ChangePasswordAsync(int userId, ChangePasswordDto dto);
+        
         Task<List<UserOrderDto>> GetOrdersAsync(int userId);
     }
 }

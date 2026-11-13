@@ -10,6 +10,8 @@ namespace CakeManagementAPI.DTOs.Order
 
         public string CakeName { get; set; } = string.Empty;
 
+        public string? ImageUrl { get; set; }
+
         public int Quantity { get; set; }
 
         public decimal UnitPrice { get; set; }

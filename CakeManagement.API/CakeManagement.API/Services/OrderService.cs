@@ -33,14 +33,10 @@ namespace CakeManagementAPI.Services
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Cake)
                 .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.CakeTemplate);
+                    .ThenInclude(oi => oi.CakeTemplate)
+                    .ThenInclude(t => t!.Images);
 
-
-        // ==========================================
-        // GET ALL ORDERS
-        // Admin
-        // ==========================================
-
+        // GET ALL ORDERS: Admin
         public async Task<List<OrderResponseDto>> GetAllOrdersAsync()
         {
             var orders = await OrdersWithItems()
@@ -52,11 +48,7 @@ namespace CakeManagementAPI.Services
                 .ToList();
         }
 
-
-        // ==========================================
-        // GET ORDER BY ID
-        // Admin
-        // ==========================================
+        // GET ORDER BY ID: Admin
 
         public async Task<OrderResponseDto> GetOrderByIdForAdminAsync(
             int orderId)
@@ -73,10 +65,7 @@ namespace CakeManagementAPI.Services
             return MapOrderToDto(order);
         }
 
-
-        // ==========================================
         // GET GUEST ORDER BY ID
-        // ==========================================
 
         public async Task<OrderResponseDto> GetGuestOrderByIdAsync(
             int orderId,
@@ -96,10 +85,7 @@ namespace CakeManagementAPI.Services
             return MapOrderToDto(order);
         }
 
-
-        // ==========================================
         // GET GUEST ORDER BY PUBLIC GUID
-        // ==========================================
 
         public async Task<OrderResponseDto> GetGuestOrderByPublicIdAsync(
             Guid publicId,
@@ -122,11 +108,7 @@ namespace CakeManagementAPI.Services
             return MapOrderToDto(order);
         }
 
-
-        // ==========================================
-        // UPDATE ORDER STATUS
-        // Admin
-        // ==========================================
+        // UPDATE ORDER STATUS: Admin
 
         public async Task<OrderResponseDto> UpdateOrderStatusAsync(
             int orderId,
@@ -164,19 +146,14 @@ namespace CakeManagementAPI.Services
             return MapOrderToDto(order);
         }
 
-
-        // ==========================================
         // CREATE ORDER
         // Registered Customer and Guest Customer
-        // ==========================================
 
         public async Task<OrderResponseDto> CreateOrderAsync(
             int? userId,
             CreateOrderDto dto)
         {
-            // ----------------------------------
             // 1. VALIDATE GUEST PHONE NUMBER
-            // ----------------------------------
 
             if (!userId.HasValue)
             {
@@ -198,9 +175,7 @@ namespace CakeManagementAPI.Services
             }
 
 
-            // ----------------------------------
             // 2. VALIDATE SHIPPING ADDRESS
-            // ----------------------------------
 
             if (string.IsNullOrWhiteSpace(dto.ShippingAddress))
             {
@@ -209,9 +184,7 @@ namespace CakeManagementAPI.Services
             }
 
 
-            // ----------------------------------
             // 3. VALIDATE PAYMENT METHOD
-            // ----------------------------------
 
             if (!string.Equals(
                 dto.PaymentMethod?.Trim(),
@@ -222,11 +195,7 @@ namespace CakeManagementAPI.Services
                     "Invalid payment method. Only CashOnDelivery is supported.");
             }
 
-
-            // ----------------------------------
             // 4. VALIDATE DELIVERY COORDINATES
-            // ----------------------------------
-
             // Both coordinates must be provided together.
             // They cannot be provided individually.
 
@@ -256,10 +225,7 @@ namespace CakeManagementAPI.Services
                     "Invalid longitude. Longitude must be between -180 and 180.");
             }
 
-
-            // ----------------------------------
             // 5. CREATE ORDER OBJECT
-            // ----------------------------------
 
             var order = new Order
             {
@@ -282,10 +248,7 @@ namespace CakeManagementAPI.Services
 
             decimal totalAmount = 0;
 
-
-            // ==========================================
             // REGISTERED CUSTOMER CHECKOUT
-            // ==========================================
 
             if (userId.HasValue)
             {
@@ -321,9 +284,7 @@ namespace CakeManagementAPI.Services
                     string? personalizedMessage = null;
 
 
-                    // ----------------------------------
                     // CUSTOMIZED CAKE
-                    // ----------------------------------
 
                     if (isCustomized)
                     {
@@ -343,9 +304,7 @@ namespace CakeManagementAPI.Services
                     }
 
 
-                    // ----------------------------------
                     // NORMAL CAKE
-                    // ----------------------------------
 
                     else
                     {
@@ -388,17 +347,12 @@ namespace CakeManagementAPI.Services
                     }
 
 
-                    // ----------------------------------
                     // CALCULATE SUBTOTAL
-                    // ----------------------------------
 
                     decimal subtotal =
                         unitPrice * cartItem.Quantity;
 
-
-                    // ----------------------------------
                     // CREATE ORDER ITEM
-                    // ----------------------------------
 
                     order.OrderItems.Add(new OrderItem
                     {
@@ -417,10 +371,8 @@ namespace CakeManagementAPI.Services
                     totalAmount += subtotal;
 
 
-                    // ----------------------------------
                     // REDUCE STOCK
                     // Normal cakes only
-                    // ----------------------------------
 
                     if (!isCustomized && cake != null)
                     {
@@ -434,9 +386,7 @@ namespace CakeManagementAPI.Services
                 }
 
 
-                // ----------------------------------
                 // REMOVE PURCHASED CART ITEMS
-                // ----------------------------------
 
                 _context.CartItems.RemoveRange(cart.CartItems);
 
@@ -444,9 +394,7 @@ namespace CakeManagementAPI.Services
             }
 
 
-            // ==========================================
             // GUEST CUSTOMER CHECKOUT
-            // ==========================================
 
             else
             {
@@ -458,9 +406,7 @@ namespace CakeManagementAPI.Services
 
                 foreach (var item in dto.Items)
                 {
-                    // ----------------------------------
                     // VALIDATE QUANTITY
-                    // ----------------------------------
 
                     if (item.Quantity < 1)
                     {
@@ -470,10 +416,7 @@ namespace CakeManagementAPI.Services
 
                     var isCustomized = item.Customization != null;
 
-
-                    // ----------------------------------
                     // VALIDATE ITEM TYPE
-                    // ----------------------------------
 
                     if (item.CakeId == null &&
                         item.Customization == null)
@@ -510,10 +453,7 @@ namespace CakeManagementAPI.Services
                     string? json = null;
                     string? personalizedMessage = null;
 
-
-                    // ----------------------------------
                     // CUSTOMIZED CAKE
-                    // ----------------------------------
 
                     if (isCustomized)
                     {
@@ -537,10 +477,7 @@ namespace CakeManagementAPI.Services
                             .FindAsync(snapshot.TemplateId);
                     }
 
-
-                    // ----------------------------------
                     // NORMAL CAKE
-                    // ----------------------------------
 
                     else
                     {
@@ -592,18 +529,12 @@ namespace CakeManagementAPI.Services
                             cake.Price + messageAdditionalPrice;
                     }
 
-
-                    // ----------------------------------
                     // CALCULATE SUBTOTAL
-                    // ----------------------------------
 
                     decimal subtotal =
                         unitPrice * item.Quantity;
 
-
-                    // ----------------------------------
                     // CREATE ORDER ITEM
-                    // ----------------------------------
 
                     order.OrderItems.Add(new OrderItem
                     {
@@ -621,11 +552,8 @@ namespace CakeManagementAPI.Services
 
                     totalAmount += subtotal;
 
-
-                    // ----------------------------------
                     // REDUCE STOCK
                     // Normal cakes only
-                    // ----------------------------------
 
                     if (!isCustomized && cake != null)
                     {
@@ -640,9 +568,7 @@ namespace CakeManagementAPI.Services
             }
 
 
-            // ==========================================
             // SAVE ORDER
-            // ==========================================
 
             order.TotalAmount = totalAmount;
 
@@ -653,10 +579,7 @@ namespace CakeManagementAPI.Services
             return MapOrderToDto(order);
         }
 
-
-        // ==========================================
         // VALIDATE PERSONALIZED MESSAGE
-        // ==========================================
 
         private string? ValidatePersonalizedMessage(
             Cake cake,
@@ -704,10 +627,7 @@ namespace CakeManagementAPI.Services
             return message;
         }
 
-
-        // ==========================================
         // GET ONE ORDER FOR LOGGED-IN CUSTOMER
-        // ==========================================
 
         public async Task<OrderResponseDto> GetOrderByIdAsync(
             int userId,
@@ -727,10 +647,7 @@ namespace CakeManagementAPI.Services
             return MapOrderToDto(order);
         }
 
-
-        // ==========================================
         // GET ONE ORDER FOR LOGGED-IN CUSTOMER BY GUID
-        // ==========================================
 
         public async Task<OrderResponseDto> GetOrderByPublicIdAsync(
             int userId,
@@ -750,10 +667,7 @@ namespace CakeManagementAPI.Services
             return MapOrderToDto(order);
         }
 
-
-        // ==========================================
         // GET ALL ORDERS FOR LOGGED-IN CUSTOMER
-        // ==========================================
 
         public async Task<List<OrderResponseDto>> GetMyOrdersAsync(
             int userId)
@@ -768,10 +682,22 @@ namespace CakeManagementAPI.Services
                 .ToList();
         }
 
+// IMAGE FOR AN ORDER ITEM
+// Normal cakes use the cake image; customized cakes use the template's first image
 
-        // ==========================================
+private static string? GetItemImageUrl(OrderItem oi)
+{
+    if (!string.IsNullOrWhiteSpace(oi.Cake?.ImageUrl))
+    {
+        return oi.Cake.ImageUrl;
+    }
+
+    return oi.CakeTemplate?.Images?
+        .Select(img => img.ImageUrl)
+        .FirstOrDefault(url => !string.IsNullOrWhiteSpace(url));
+}
+
         // MAP ORDER TO DTO
-        // ==========================================
 
         private OrderResponseDto MapOrderToDto(
             Order order)
@@ -786,6 +712,8 @@ namespace CakeManagementAPI.Services
                     CakeName = oi.Cake?.Name
                                ?? oi.CakeTemplate?.Name
                                ?? "Custom Cake",
+
+                    ImageUrl = GetItemImageUrl(oi),
 
                     Quantity = oi.Quantity,
 

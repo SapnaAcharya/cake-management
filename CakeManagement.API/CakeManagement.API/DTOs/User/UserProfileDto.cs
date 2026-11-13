@@ -12,6 +12,8 @@
 
         public string? Address { get; set; }
 
+        public string? ProfileImageUrl { get; set; }
+
         public string Role { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; }

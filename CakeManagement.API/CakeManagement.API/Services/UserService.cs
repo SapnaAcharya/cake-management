@@ -3,7 +3,7 @@ using CakeManagementAPI.DTOs.User;
 using CakeManagementAPI.Models;
 using CakeManagementAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using BCrypt.Net;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CakeManagementAPI.Services
@@ -11,12 +11,29 @@ namespace CakeManagementAPI.Services
     public class UserService : IUserService
     {
         private readonly AppDbContext _context;
+        private readonly IImageService _imageService;
         private readonly PasswordHasher<User> _passwordHasher;
 
-        public UserService(AppDbContext context)
+        public UserService(AppDbContext context, IImageService imageService)
         {
             _context = context;
+            _imageService = imageService;
             _passwordHasher = new PasswordHasher<User>();
+        }
+
+        private static UserProfileDto ToProfileDto(User user)
+        {
+            return new UserProfileDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Phone = user.Phone,
+                Address = user.Address,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt,
+                ProfileImageUrl = user.ProfileImageUrl
+            };
         }
 
         // Get profile
@@ -32,16 +49,7 @@ namespace CakeManagementAPI.Services
                 return null;
             }
 
-            return new UserProfileDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                Phone = user.Phone,
-                Address = user.Address,
-                Role = user.Role,
-                CreatedAt = user.CreatedAt
-            };
+            return ToProfileDto(user);
         }
 
         // Update profile
@@ -62,16 +70,64 @@ namespace CakeManagementAPI.Services
 
             await _context.SaveChangesAsync();
 
-            return new UserProfileDto
+            return ToProfileDto(user);
+        }
+
+        //public async Task<string?> UploadProfileImageAsync(int userId, IFormFile file)
+        //{
+        //    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        //    if (user == null) return null;
+
+        //    var url = await _imageService.UploadAsync(file, "profile-photos");
+
+        //    user.ProfileImageUrl = url;
+        //    await _context.SaveChangesAsync();
+
+        //    return url;
+        //}
+
+        //public async Task<bool> RemoveProfileImageAsync(int userId)
+        //{
+        //    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        //    if (user == null) return false;
+
+        //    user.ProfileImageUrl = null;
+        //    await _context.SaveChangesAsync();
+
+        //    return true;
+        //}
+
+        public async Task<string?> UploadProfileImageAsync(int userId, IFormFile file)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return null;
+
+            var url = await _imageService.UploadProfilePhotoAsync(file, userId);
+
+            user.ProfileImageUrl = url;
+            await _context.SaveChangesAsync();
+
+            return url;
+        }
+
+        public async Task<bool> RemoveProfileImageAsync(int userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return false;
+
+            try
             {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                Phone = user.Phone,
-                Address = user.Address,
-                Role = user.Role,
-                CreatedAt = user.CreatedAt
-            };
+                await _imageService.DeleteProfilePhotoAsync(userId);
+            }
+            catch
+            {
+                // Don't block the user if Cloudinary cleanup fails
+            }
+
+            user.ProfileImageUrl = null;
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         // change password
