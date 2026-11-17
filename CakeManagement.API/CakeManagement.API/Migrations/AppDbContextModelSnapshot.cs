@@ -755,9 +755,16 @@ namespace CakeManagementAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
                         .IsUnique();
 
                     b.ToTable("TrainingPackages");

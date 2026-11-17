@@ -49,6 +49,26 @@ namespace CakeManagementAPI.Controllers
             return Ok(package);
         }
 
+        // GET: api/trainingpackages/by-slug/basic-cake-baking
+        // Customers and admins can view an individual active package by its slug.
+        [HttpGet("by-slug/{slug}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<TrainingPackageResponseDto>>
+            GetBySlug(string slug)
+        {
+            var package = await _service.GetActiveBySlugAsync(slug);
+
+            if (package == null)
+            {
+                return NotFound(new
+                {
+                    message = "Training package not found."
+                });
+            }
+
+            return Ok(package);
+        }
+
         // POST: api/trainingpackages
         // Only admins can create training packages.
         [HttpPost]

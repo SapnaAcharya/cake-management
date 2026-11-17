@@ -447,19 +447,23 @@ export default function TrainingCourses() {
 
                     {/* Loading state */}
                     {loading && (
-                        <div
-                            className="training-state"
-                            role="status"
-                            aria-live="polite"
-                        >
-                            <span className="training-spinner" />
-
-                            <h3>Discovering our courses...</h3>
-
-                            <p>
-                                Please wait while we load available training
-                                courses.
-                            </p>
+                        <div className="training-courses-grid training-skeleton-grid" role="status" aria-label="Loading training courses">
+                            {Array.from({ length: 8 }, (_, index) => (
+                                <article className="training-course-card training-course-skeleton" key={index} aria-hidden="true">
+                                    <div className="training-course-image training-skeleton-block" />
+                                    <div className="training-course-card__body">
+                                        <i className="training-skeleton-block training-skeleton-pill" />
+                                        <i className="training-skeleton-block training-skeleton-title" />
+                                        <i className="training-skeleton-block training-skeleton-line" />
+                                        <i className="training-skeleton-block training-skeleton-line medium" />
+                                        <div className="training-skeleton-meta">
+                                            <i className="training-skeleton-block" />
+                                            <i className="training-skeleton-block" />
+                                        </div>
+                                        <i className="training-skeleton-block training-skeleton-button" />
+                                    </div>
+                                </article>
+                            ))}
                         </div>
                     )}
 
@@ -575,12 +579,18 @@ export default function TrainingCourses() {
 
                                                 <h3>
                                                     {/* Stretched link: the whole card is clickable */}
-                                                    <Link
+                                                    {/* <Link
                                                         to={`/training/${course.id}`}
                                                         className="training-course-link"
                                                     >
                                                         {course.name}
-                                                    </Link>
+                                                    </Link> */}
+                                                    <Link
+    to={`/training/${course.slug || course.id}`}
+    className="training-course-link"
+>
+    {course.name}
+</Link>
                                                 </h3>
 
                                                 <p className="training-course-duration">

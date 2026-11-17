@@ -408,7 +408,15 @@ const CartPage = () => {
         return (
             <div className="cart-page">
                 <div className="cart-loading">
-                    <p>Loading your cart...</p>
+                    <div className="cart-skeleton" role="status" aria-label="Loading your cart">
+                        <div className="cart-skeleton-heading" />
+                        <div className="cart-skeleton-layout">
+                            <div className="cart-skeleton-items">
+                                {[0, 1, 2].map((item) => <div className="cart-skeleton-item" key={item}><div className="cart-skeleton-thumb" /><div className="cart-skeleton-copy"><i /><i /><i /></div></div>)}
+                            </div>
+                            <div className="cart-skeleton-summary"><i /><i /><i /><i /></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

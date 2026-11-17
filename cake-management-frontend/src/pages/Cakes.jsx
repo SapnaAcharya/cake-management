@@ -90,7 +90,17 @@ function Cakes() {
                 </div>
 
                 {loading ? (
-                    <div className="cakes-loading">Loading cakes...</div>
+                    <div className="cakes-grid cakes-skeleton-grid" role="status" aria-label="Loading cakes">
+                        {Array.from({ length: pageSize }, (_, index) => (
+                            <div className="cakes-skeleton-card" key={index} aria-hidden="true">
+                                <div className="cakes-skeleton-image" />
+                                <div className="cakes-skeleton-copy">
+                                    <div className="cakes-skeleton-line cakes-skeleton-name" />
+                                    <div className="cakes-skeleton-line cakes-skeleton-price" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 ) : error ? (
                     <div className="cakes-error">{error}</div>
                 ) : filteredCakes.length === 0 ? (

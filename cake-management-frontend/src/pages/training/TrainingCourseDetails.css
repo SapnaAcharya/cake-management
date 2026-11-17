@@ -414,6 +414,26 @@
     border: 1px solid var(--border);
     border-radius: 14px;
 }
+.training-details-skeleton { display: block; }
+.training-details-skeleton-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 0 0 22px; }
+.training-details-skeleton-heading i, .training-detail-skeleton-block {
+    display: block;
+    background: linear-gradient(100deg, #eee8eb 20%, #fbf7f8 45%, #eee8eb 70%);
+    background-size: 200% 100%;
+    animation: training-details-skeleton-shimmer 1.35s ease-in-out infinite;
+}
+.training-details-skeleton-heading i:first-child { width: min(360px, 55%); height: 30px; border-radius: 7px; }
+.training-details-skeleton-heading i:last-child { width: 90px; height: 24px; border-radius: 999px; }
+.training-details-course-skeleton { pointer-events: none; }
+.training-detail-skeleton-block.title { width: 70%; height: 24px; border-radius: 6px; }
+.training-detail-skeleton-block.pill { width: 90px; height: 22px; border-radius: 999px; }
+.training-detail-skeleton-block.line { width: 100%; height: 12px; border-radius: 5px; }
+.training-detail-skeleton-block.line.short { width: 64%; }
+.training-detail-skeleton-facts { display: grid; gap: 8px; }
+.training-detail-skeleton-facts i { height: 14px; border-radius: 5px; }
+.training-detail-skeleton-block.enroll { height: 44px; margin-top: auto; border-radius: 8px; }
+@keyframes training-details-skeleton-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .training-details-skeleton-heading i, .training-detail-skeleton-block { animation: none; } }
 .training-details-state h2 { margin: 15px 0 8px; font-size: 22px; }
 .training-details-state p { max-width: 520px; margin: 0; color: var(--muted); line-height: 1.7; }
 .training-details-state .training-details-button { margin-top: 22px; color: #fff; background: var(--brand-purple); }

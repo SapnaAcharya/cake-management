@@ -1,0 +1,52 @@
+/* ===== Base shimmer (used by every skeleton piece) ===== */
+.skeleton {
+  display: block;
+  background: linear-gradient(100deg, #f0e9ec 20%, #fbf7f8 45%, #f0e9ec 70%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.35s infinite ease-in-out;
+  border-radius: 6px;
+}
+
+@keyframes skeleton-loading {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ===== Cake card skeleton ===== */
+.cake-skeleton-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+}
+
+.skeleton-image {
+  width: 100%;
+  aspect-ratio: 4 / 3; /* match the home and related cake image cards */
+  border-radius: 0;
+}
+
+.skeleton-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 16px; /* match .cake-card-body */
+}
+
+.skeleton-title {
+  height: 18px;
+  width: 75%;
+  margin-bottom: 0;
+}
+
+.skeleton-price {
+  height: 16px;
+  width: 35%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

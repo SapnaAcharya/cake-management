@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton from "../../components/AdminTableSkeleton";
 import decorationService from "../../services/admindecorationService";
 import { useNavigate } from "react-router-dom";
 
@@ -345,11 +346,7 @@ value={category}
 {
 loading &&
 
-<div className="manage-cakes-status">
-
-Loading decorations...
-
-</div>
+<AdminTableSkeleton columns={6} />
 
 }
 

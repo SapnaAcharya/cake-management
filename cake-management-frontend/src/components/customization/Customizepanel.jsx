@@ -312,7 +312,11 @@ export default function CustomizePanel({
           title="Decorations"
           summary={cfg.decorations.length ? `${cfg.decorations.length} selected` : "None"}
         >
-          {decorationsLoading && <p className="cz-sec__status">Loading decorations...</p>}
+          {decorationsLoading && (
+            <div className="cz-decoration-skeleton" role="status" aria-label="Loading decorations">
+              {[0, 1, 2, 3].map((item) => <div className="cz-decoration-skeleton-card" key={item}><i /><i /></div>)}
+            </div>
+          )}
 
           {!decorationsLoading && decorationsError && (
             <p className="cz-sec__status cz-sec__status--error">{decorationsError}</p>

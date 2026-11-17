@@ -46,6 +46,17 @@ namespace CakeManagementAPI.Services
             return package == null ? null : MapToResponse(package);
         }
 
+        public async Task<TrainingPackageResponseDto?>
+    GetActiveBySlugAsync(string slug)
+        {
+            var package = await _context.TrainingPackages
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    p => p.Slug == slug && p.IsActive);
+
+            return package == null ? null : MapToResponse(package);
+        }
+
         public async Task<TrainingPackageResponseDto> CreateAsync(
             CreateTrainingPackageDto dto)
         {
@@ -59,6 +70,7 @@ namespace CakeManagementAPI.Services
             var package = new TrainingPackage
             {
                 Name = dto.Name.Trim(),
+                Slug = await GenerateUniqueSlugAsync(dto.Name),
                 SkillLevel = dto.SkillLevel,
                 Description = dto.Description.Trim(),
                 LearningOutcomes = dto.LearningOutcomes.Trim(),
@@ -168,6 +180,28 @@ namespace CakeManagementAPI.Services
             return await _imageService.UploadAsync(image, "training");
         }
 
+        private async Task<string> GenerateUniqueSlugAsync(string name)
+        {
+            var baseSlug = System.Text.RegularExpressions.Regex
+                .Replace(name.ToLowerInvariant().Trim(), "[^a-z0-9]+", "-")
+                .Trim('-');
+
+            if (string.IsNullOrEmpty(baseSlug))
+            {
+                baseSlug = "course";
+            }
+
+            var slug = baseSlug;
+            var counter = 2;
+
+            while (await _context.TrainingPackages.AnyAsync(p => p.Slug == slug))
+            {
+                slug = $"{baseSlug}-{counter++}";
+            }
+
+            return slug;
+        }
+
         private void DeleteImageFile(string? imageUrl)
         {
             // Only old images stored on this server's disk are deleted.
@@ -197,6 +231,7 @@ namespace CakeManagementAPI.Services
             {
                 Id = package.Id,
                 Name = package.Name,
+                Slug = package.Slug,
                 SkillLevel = package.SkillLevel,
                 Description = package.Description,
                 LearningOutcomes = package.LearningOutcomes,

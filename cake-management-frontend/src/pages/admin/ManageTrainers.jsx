@@ -3,6 +3,7 @@ import { Plus, Search, Pencil, Power, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton from "../../components/AdminTableSkeleton";
 import trainingTrainerAdminService from "../../services/training/trainingTrainerAdminService";
 import "../../styles/AdminDashboard.css";
 
@@ -132,9 +133,7 @@ function ManageTrainers() {
                 </div>
 
                 {loading && (
-                    <div className="manage-cakes-status">
-                        Loading trainers...
-                    </div>
+                    <AdminTableSkeleton columns={5} />
                 )}
 
                 {!loading && error && (

@@ -127,7 +127,7 @@ export default function DesignByTemplate() {
     return (
       <div className="dbt app">
         <Header />
-        <div className="dbt-body">
+        <div className="dbt-body dbt-loading-body" role="status" aria-label="Loading template designs">
           <aside className="sidebar">
             <div className="sidebar__head">
               <h1 className="sidebar__title">Design by Template</h1>
@@ -145,12 +145,18 @@ export default function DesignByTemplate() {
           <div className="preview-col">
             <div
               className="ps ps--skeleton"
-              style={{ background: "var(--surface-2)" }}
               aria-hidden="true"
-            />
+            >
+              <div className="dbt-preview-skeleton" />
+            </div>
           </div>
 
-          <aside className="details details--skeleton" aria-hidden="true" />
+          <aside className="details details--skeleton" aria-hidden="true">
+            <div className="dbt-detail-skeleton-title" />
+            <div className="dbt-detail-skeleton-line" />
+            <div className="dbt-detail-skeleton-line short" />
+            <div className="dbt-detail-skeleton-button" />
+          </aside>
         </div>
       </div>
     );

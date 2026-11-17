@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton from "../../components/AdminTableSkeleton";
 import cakeService from "../../services/cakeService";
 import categoryService from "../../services/categoryService";
 import { useNavigate } from "react-router-dom";
@@ -311,9 +312,7 @@ const handleSaveMessageSettings = async (e) => {
 
         {/* Loading */}
         {loading && (
-          <div className="manage-cakes-status">
-            Loading cakes...
-          </div>
+          <AdminTableSkeleton columns={6} />
         )}
 
         {/* Error */}

@@ -1,0 +1,30 @@
+.category-skeleton-chip {
+  display: inline-block;
+  width: 96px;
+  height: 38px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #eeeeee 25%,
+    #f8f8f8 37%,
+    #eeeeee 63%
+  );
+  background-size: 400% 100%;
+  animation: category-skeleton-shimmer 1.4s ease infinite;
+}
+
+.category-skeleton-chip:nth-child(3n + 2) { width: 118px; }
+.category-skeleton-chip:nth-child(3n) { width: 82px; }
+
+@keyframes category-skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-skeleton-chip { animation: none; }
+}

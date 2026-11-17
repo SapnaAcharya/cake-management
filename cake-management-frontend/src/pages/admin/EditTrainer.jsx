@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save } from "lucide-react";
 
 import AdminLayout from "../../layouts/AdminLayout";
+import { AdminFormSkeleton } from "../../components/AdminTableSkeleton";
 import trainingTrainerAdminService from "../../services/training/trainingTrainerAdminService";
 import "../../styles/AdminDashboard.css";
 
@@ -136,9 +137,7 @@ function EditTrainer() {
         >
             <div className="manage-cakes-card training-form-card">
                 {loading ? (
-                    <div className="manage-cakes-status">
-                        Loading trainer...
-                    </div>
+                    <AdminFormSkeleton fields={6} />
                 ) : (
                     <form onSubmit={handleSubmit}>
                         {error && (

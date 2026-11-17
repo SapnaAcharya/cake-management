@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { Search, RefreshCw, Eye, X } from "lucide-react";
 
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton, { AdminDetailSkeleton } from "../../components/AdminTableSkeleton";
 import {
     getAllTrainingEnrollments,
     getTrainingEnrollmentById,
@@ -155,9 +156,7 @@ function ManageTrainingEnrollments() {
                 </div>
 
                 {loading && (
-                    <div className="manage-cakes-status">
-                        Loading training enrollments...
-                    </div>
+                    <AdminTableSkeleton columns={6} />
                 )}
 
                 {!loading && error && (
@@ -276,9 +275,7 @@ function ManageTrainingEnrollments() {
                         </div>
 
                         {detailsLoading ? (
-                            <div className="manage-cakes-status">
-                                Loading enrollment details...
-                            </div>
+                            <AdminDetailSkeleton rows={6} />
                         ) : (
                             <div className="enrollment-details-content">
                                 <div className="enrollment-detail-section">

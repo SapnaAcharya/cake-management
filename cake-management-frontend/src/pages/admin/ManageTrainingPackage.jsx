@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getImageUrl } from "../../utils/imageUrl";
 
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton from "../../components/AdminTableSkeleton";
 import trainingPackageAdminService from "../../services/training/trainingPackageAdminService";
 import "../../styles/AdminDashboard.css";
 
@@ -98,9 +99,7 @@ function ManageTrainingPackages() {
                 </div>
 
                 {loading && (
-                    <div className="manage-cakes-status">
-                        Loading training packages...
-                    </div>
+                    <AdminTableSkeleton columns={5} />
                 )}
 
                 {!loading && error && (

@@ -80,6 +80,20 @@
     color: #111827;
 }
 
+.overview-stat-skeleton {
+    display: inline-block;
+    width: 86px;
+    height: 22px;
+    border-radius: 6px;
+    vertical-align: middle;
+    background: linear-gradient(90deg, #eee8eb 25%, #f8f4f5 50%, #eee8eb 75%);
+    background-size: 200% 100%;
+    animation: admin-overview-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes admin-overview-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .overview-stat-skeleton { animation: none; } }
+
 /* SECTION TITLE*/
 
 .overview-section-title {

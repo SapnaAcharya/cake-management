@@ -571,6 +571,25 @@
     overflow-wrap: anywhere;
 }
 
+.training-course-skeleton { pointer-events: none; }
+.training-skeleton-block {
+    display: block;
+    background: linear-gradient(100deg, #eee8eb 20%, #fbf7f8 45%, #eee8eb 70%);
+    background-size: 200% 100%;
+    animation: training-skeleton-shimmer 1.35s ease-in-out infinite;
+}
+.training-course-skeleton .training-course-image { height: 150px; }
+.training-course-skeleton .training-course-card__body { gap: 11px; }
+.training-skeleton-pill { width: 92px; height: 22px; border-radius: 999px; }
+.training-skeleton-title { width: 78%; height: 20px; border-radius: 6px; }
+.training-skeleton-line { width: 100%; height: 12px; border-radius: 5px; }
+.training-skeleton-line.medium { width: 72%; }
+.training-skeleton-meta { display: flex; gap: 10px; margin-top: 4px; }
+.training-skeleton-meta i { width: 42%; height: 28px; border-radius: 6px; }
+.training-skeleton-button { width: 100%; height: 38px; margin-top: auto; border-radius: 8px; }
+@keyframes training-skeleton-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .training-skeleton-block { animation: none; } }
+
 .training-course-description {
     display: -webkit-box;
     min-height: 57px;
