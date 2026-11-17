@@ -4,6 +4,7 @@ import { ArrowLeft, Save, Upload, X } from "lucide-react";
 import { getImageUrl } from "../../utils/imageUrl";
 
 import AdminLayout from "../../layouts/AdminLayout";
+import { AdminFormSkeleton } from "../../components/AdminTableSkeleton";
 import trainingPackageAdminService from "../../services/training/trainingPackageAdminService";
 import "../../styles/AdminDashboard.css";
 
@@ -208,9 +209,7 @@ if (imageFile) {
         >
             <div className="manage-cakes-card training-form-card">
                 {loading ? (
-                    <div className="manage-cakes-status">
-                        Loading training package...
-                    </div>
+                    <AdminFormSkeleton fields={7} />
                 ) : error && !form.name ? (
                     <div className="manage-cakes-status error" role="alert">
                         {error}

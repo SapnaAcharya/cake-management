@@ -41,6 +41,16 @@
   color: var(--mo-muted);
 }
 
+.myorders-skeleton-title, .myorders-skeleton-card { background: var(--mo-surface); border: 1px solid var(--mo-border); border-radius: 14px; }
+.myorders-skeleton-title { width: 180px; height: 30px; margin-bottom: 20px; }
+.myorders-skeleton-card { display: grid; gap: 13px; margin-bottom: 14px; padding: 20px; }
+.myorders-skeleton-card i, .myorders-skeleton-title { background-image: linear-gradient(90deg, #eee8eb 25%, #f8f4f5 50%, #eee8eb 75%); background-size: 200% 100%; animation: myorders-skeleton-shimmer 1.4s ease-in-out infinite; }
+.myorders-skeleton-card i { display: block; height: 14px; width: 62%; border-radius: 6px; }
+.myorders-skeleton-card i:nth-child(2) { width: 86%; }
+.myorders-skeleton-card i:last-child { width: 38%; }
+@keyframes myorders-skeleton-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .myorders-skeleton-card i, .myorders-skeleton-title { animation: none; } }
+
 .myorders-error h2 {
   margin: 0;
   font-family: "Fraunces", Georgia, serif;

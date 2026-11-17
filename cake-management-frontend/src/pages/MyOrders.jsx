@@ -114,7 +114,10 @@ const MyOrders = () => {
         return (
             <div className="myorders-page">
                 <div className="myorders-loading">
-                    <p>Loading your orders...</p>
+                    <div className="myorders-container" role="status" aria-label="Loading your orders">
+                        <div className="myorders-skeleton-title" />
+                        {[0, 1, 2].map((item) => <div className="myorders-skeleton-card" key={item}><i /><i /><i /><i /></div>)}
+                    </div>
                 </div>
             </div>
         );

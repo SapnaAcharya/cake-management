@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Plus, X } from "lucide-react";
 import AdminLayout from "../../layouts/AdminLayout";
+import { AdminFormSkeleton } from "../../components/AdminTableSkeleton";
 import templateService from "../../services/admintemplateService";
 import "../../styles/AddCake.css";
 
@@ -219,8 +220,8 @@ function EditTemplate() {
 
   if (initialLoading) {
     return (
-      <AdminLayout title="Edit Template" subtitle="Loading template details...">
-        <div className="add-cake-card">Loading...</div>
+      <AdminLayout title="Edit Template">
+        <div className="add-cake-card"><AdminFormSkeleton /></div>
       </AdminLayout>
     );
   }

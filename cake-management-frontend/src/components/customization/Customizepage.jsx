@@ -99,7 +99,22 @@ export default function CustomizePage() {
     return (
       <div className="cz">
         <Header step={2} leftTitle="Customize" rightTitle="" variant="customize" />
-        <div className="cz-loading">Loading template...</div>
+        <div className="cz-loading" role="status" aria-label="Loading cake customization">
+          <div className="cz-loading-layout" aria-hidden="true">
+            <aside className="cz-loading-sidebar">
+              <i className="cz-skeleton-block wide" />
+              <i className="cz-skeleton-block" />
+              <i className="cz-skeleton-block" />
+              <i className="cz-skeleton-block short" />
+              <div className="cz-loading-swatches">{Array.from({ length: 8 }, (_, index) => <i key={index} />)}</div>
+            </aside>
+            <div className="cz-loading-stage"><div className="cz-loading-cake" /></div>
+            <aside className="cz-loading-panel">
+              {[0, 1, 2, 3, 4].map((item) => <div className="cz-loading-section" key={item}><i /><i /></div>)}
+              <i className="cz-skeleton-block button" />
+            </aside>
+          </div>
+        </div>
       </div>
     );
   }

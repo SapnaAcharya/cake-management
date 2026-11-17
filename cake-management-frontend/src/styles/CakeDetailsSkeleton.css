@@ -1,0 +1,123 @@
+/* Skeleton for CakeDetails: sizes mirror CakeDetails.css */
+
+.cds-breadcrumb {
+  width: 220px;
+  height: 14px;
+  margin-bottom: 24px;
+  border-radius: 6px;
+}
+
+/* Gallery (the layout and the 440px max-width come from .cake-details-gallery) */
+.cds-main-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+}
+.cds-thumbs {
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+}
+.cds-thumb {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+}
+
+/* Info column (gap: 18px comes from .cake-details-info) */
+.cds-category {
+  align-self: flex-start;
+  width: 96px;
+  height: 26px;
+  border-radius: 999px;
+}
+.cds-title {
+  width: 75%;
+  height: 44px;
+  border-radius: 8px;
+}
+.cds-rating {
+  width: 160px;
+  height: 18px;
+  margin-top: -6px;
+  border-radius: 6px;
+}
+.cds-price {
+  width: 150px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+.cds-description {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.cds-line {
+  width: 100%;
+  height: 14px;
+  border-radius: 6px;
+}
+.cds-line.short { width: 60%; }
+
+.cds-badges {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+.cds-badge {
+  height: 62px;
+  border-radius: 12px;
+}
+
+.cds-order-box {
+  height: 330px;
+  border-radius: 16px;
+}
+
+.cds-actions {
+  display: flex;
+  gap: 12px;
+}
+.cds-qty {
+  flex-shrink: 0;
+  width: 126px;
+  height: 50px;
+  border-radius: 12px;
+}
+.cds-btn {
+  flex: 1;
+  height: 50px;
+  border-radius: 12px;
+}
+.cds-btn.full { width: 100%; flex: none; }
+
+/* Related cakes skeleton (matches .cake-related-card) */
+.cake-details-page .cds-related-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #ece2e5;
+  border-radius: 16px;
+}
+.cds-related-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 0;
+}
+.cake-details-page .cake-related-img.skeleton {
+  background: linear-gradient(100deg, #f0e9ec 20%, #fbf7f8 45%, #f0e9ec 70%);
+  background-size: 200% 100%;
+}
+.cds-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px 14px;
+}
+.cds-related-title { width: 75%; height: 16px; border-radius: 6px; }
+.cds-related-price { width: 40%; height: 14px; border-radius: 6px; }
+
+.cake-details-skeleton { width: 100%; }

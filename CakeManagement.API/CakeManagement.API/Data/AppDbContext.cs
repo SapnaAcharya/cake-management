@@ -161,6 +161,11 @@ namespace CakeManagementAPI.Data
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // TrainingPackage -> UniqueIndex
+            modelBuilder.Entity<TrainingPackage>()
+                .HasIndex(p => p.Slug)
+                .IsUnique();
+
             // TrainingPackage -> TrainingBatch
             modelBuilder.Entity<TrainingBatch>()
                 .HasOne(b => b.TrainingPackage)

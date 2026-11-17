@@ -1,0 +1,39 @@
+/* Shimmer shown on the <img> itself until it has loaded */
+.iws-img {
+  background-color: #f1e9ec;
+  transition: opacity 0.25s ease;
+}
+
+.iws-img.iws-loading {
+  /* hide alt text and any broken-image icon while loading */
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    #f1e9ec 25%,
+    #f9f3f5 37%,
+    #f1e9ec 63%
+  );
+  background-size: 400% 100%;
+  animation: iws-shimmer 1.4s ease infinite;
+}
+
+.iws-img.iws-loaded {
+  animation: none;
+  background-image: none;
+}
+
+/* Failed to load: keep the soft box, hide the broken-image icon */
+.iws-img.iws-error {
+  color: transparent;
+  background-image: none;
+  opacity: 0.6;
+}
+
+@keyframes iws-shimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iws-img.iws-loading { animation: none; }
+}

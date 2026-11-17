@@ -10,6 +10,7 @@ import {
     X
 } from "lucide-react";
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton, { AdminDetailSkeleton } from "../../components/AdminTableSkeleton";
 import {
     getAllOrders,
     getOrderById,
@@ -326,9 +327,7 @@ function ManageOrders() {
                 </div>
 
                 {loading ? (
-                    <div className="orders-loading">
-                        Loading orders...
-                    </div>
+                    <AdminTableSkeleton columns={6} />
                 ) : filteredOrders.length === 0 ? (
                     <div className="orders-empty">
                         <ShoppingBag size={40} />
@@ -552,9 +551,7 @@ function ManageOrders() {
                         </div>
 
                         {detailsLoading ? (
-                            <div className="orders-loading">
-                                Loading order details...
-                            </div>
+                            <AdminDetailSkeleton rows={5} />
                         ) : (
                             <>
 

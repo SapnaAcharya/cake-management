@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import trainingPackageAdminService from "../../services/training/trainingPackageAdminService";
 import trainingTrainerAdminService from "../../services/training/trainingTrainerAdminService";
 import trainingBatchAdminService from "../../services/training/trainingBatchAdminService";
+import { AdminFormSkeleton } from "../../components/AdminTableSkeleton";
 import "../../styles/EditTrainingBatch.css";
 
 const initialForm = {
@@ -268,7 +269,7 @@ export default function EditTrainingBatch() {
   if (loading) {
     return (
       <div className="edit-training-batch">
-        <div className="etb-state">Loading training batch...</div>
+        <AdminFormSkeleton fields={8} />
       </div>
     );
   }

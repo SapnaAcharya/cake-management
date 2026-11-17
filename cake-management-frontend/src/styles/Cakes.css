@@ -109,6 +109,35 @@
   gap: 24px;
 }
 
+.cakes-page .cakes-skeleton-card {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.cakes-page .cakes-skeleton-image,
+.cakes-page .cakes-skeleton-line {
+  background: linear-gradient(90deg, #eee8eb 25%, #f8f4f5 50%, #eee8eb 75%);
+  background-size: 200% 100%;
+  animation: cakes-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.cakes-page .cakes-skeleton-image { aspect-ratio: 4 / 3; }
+.cakes-page .cakes-skeleton-copy { padding: 14px 18px 16px; }
+.cakes-page .cakes-skeleton-line { height: 15px; border-radius: 6px; }
+.cakes-page .cakes-skeleton-name { width: 75%; margin-bottom: 10px; }
+.cakes-page .cakes-skeleton-price { width: 38%; height: 14px; }
+
+@keyframes cakes-skeleton-shimmer {
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cakes-page .cakes-skeleton-image,
+  .cakes-page .cakes-skeleton-line { animation: none; }
+}
+
 
 /* ==========================================================================
    6. Card (a single link: image, name, price)

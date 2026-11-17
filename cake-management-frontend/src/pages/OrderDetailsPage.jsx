@@ -132,7 +132,12 @@ const OrderDetails = () => {
         return (
             <div className="orderdetails-page">
                 <div className="orderdetails-loading">
-                    <p>Loading order details...</p>
+                    <div className="orderdetails-skeleton" role="status" aria-label="Loading order details">
+                        <div className="orderdetails-skeleton-heading" />
+                        <div className="orderdetails-skeleton-card"><i /><i /><i /></div>
+                        <div className="orderdetails-skeleton-card"><i /><i /><i /><i /></div>
+                        <div className="orderdetails-skeleton-card"><i /><i /></div>
+                    </div>
                 </div>
             </div>
         );

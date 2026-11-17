@@ -105,7 +105,7 @@ function AppContent() {
         <Route path="/profile" element={<Profile />} />
        
         {/* Training Courses */}
-        <Route path="/training/:id" element={<TrainingCourseDetails />} />
+        <Route path="/training/:slug" element={<TrainingCourseDetails />} />
 
         {/* Admin */}
         <Route path="/admin" element={<AdminOverview />} />

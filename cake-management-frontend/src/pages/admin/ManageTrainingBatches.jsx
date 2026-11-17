@@ -3,6 +3,7 @@ import { Plus, Search, Pencil, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton from "../../components/AdminTableSkeleton";
 import trainingBatchAdminService from "../../services/training/trainingBatchAdminService";
 import "../../styles/AdminDashboard.css";
 
@@ -129,9 +130,7 @@ function ManageTrainingBatches() {
                 </div>
 
                 {loading && (
-                    <div className="manage-cakes-status">
-                        Loading training batches...
-                    </div>
+                    <AdminTableSkeleton columns={6} />
                 )}
 
                 {!loading && error && (

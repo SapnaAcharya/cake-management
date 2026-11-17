@@ -6,6 +6,7 @@ import {
     deleteCategory
 } from "../../services/categoryService";
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton from "../../components/AdminTableSkeleton";
 import "../../styles/ManageCategories.css";
 
 function ManageCategories() {
@@ -186,7 +187,7 @@ function ManageCategories() {
                     </div>
 
                     {loading ? (
-                        <p>Loading categories...</p>
+                        <AdminTableSkeleton columns={4} />
                     ) : categories.length === 0 ? (
                         <p>No categories found.</p>
                     ) : (

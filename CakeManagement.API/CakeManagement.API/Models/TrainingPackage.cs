@@ -6,6 +6,8 @@
 
         public string Name { get; set; } = string.Empty;
 
+        public string Slug { get; set; } = string.Empty;
+
         public string SkillLevel { get; set; } = "Beginner";
 
         public string Description { get; set; } = string.Empty;

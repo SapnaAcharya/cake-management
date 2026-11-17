@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import AdminLayout from "../../layouts/AdminLayout";
+import { AdminFormSkeleton } from "../../components/AdminTableSkeleton";
 import trainingPackageAdminService from "../../services/training/trainingPackageAdminService";
 import trainingTrainerAdminService from "../../services/training/trainingTrainerAdminService";
 import trainingBatchAdminService from "../../services/training/trainingBatchAdminService";
@@ -204,7 +205,7 @@ export default function AddTrainingBatch() {
         )}
 
         {loadingOptions ? (
-          <div className="atb-state">Loading packages and trainers...</div>
+          <AdminFormSkeleton fields={2} />
         ) : (
           <form className="atb-form" onSubmit={handleSubmit}>
             <section className="atb-section">

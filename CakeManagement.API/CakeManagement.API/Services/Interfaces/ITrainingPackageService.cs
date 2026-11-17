@@ -9,6 +9,8 @@ namespace CakeManagementAPI.Services.Interfaces
 
         Task<TrainingPackageResponseDto?> GetActiveByIdAsync(int id);
 
+        Task<TrainingPackageResponseDto?> GetActiveBySlugAsync(string slug);
+
         Task<TrainingPackageResponseDto> CreateAsync(
             CreateTrainingPackageDto dto);
 

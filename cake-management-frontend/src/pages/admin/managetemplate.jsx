@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Search, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton from "../../components/AdminTableSkeleton";
 import templateService from "../../services/admintemplateService";
 import { useNavigate } from "react-router-dom";
 import "../../styles/AdminDashboard.css";
@@ -129,7 +130,7 @@ function AdminTemplates() {
 </select>
         </div>
 
-        {loading && <div className="manage-cakes-status">Loading templates...</div>}
+        {loading && <AdminTableSkeleton columns={6} />}
 
         {!loading && error && (
           <div className="manage-cakes-status error">

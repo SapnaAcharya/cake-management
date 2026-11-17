@@ -146,7 +146,8 @@ function CourseCard({ course, nextBatch, onEnroll }) {
 }
 
 export default function TrainingCourseDetails() {
-    const { id } = useParams();
+    // The URL is now /training/:slug (old /training/2 links are redirected)
+    const { slug } = useParams();
     const navigate = useNavigate();
 
     const [course, setCourse] = useState(null);
@@ -162,19 +163,36 @@ export default function TrainingCourseDetails() {
         let isMounted = true;
 
         const loadDetails = async () => {
+            let redirected = false;
+
             try {
                 setLoading(true);
                 setError("");
 
+                // Old links like /training/2 still work and redirect to the slug URL
+                const isNumeric = /^\d+$/.test(slug);
+
                 const [courseData, batchData] = await Promise.all([
-                    trainingPackageService.getActiveById(id),
+                    isNumeric
+                        ? trainingPackageService.getActiveById(slug)
+                        : trainingPackageService.getActiveBySlug(slug),
                     trainingBatchService.getAllOpen(),
                 ]);
 
                 if (!isMounted) return;
+
+                if (isNumeric && courseData?.slug) {
+                    redirected = true;
+                    navigate(`/training/${courseData.slug}`, { replace: true });
+                    return;
+                }
+
                 setCourse(courseData);
 
+                // Batches belong to the course by id, so use the loaded course's id
+                const courseId = Number(courseData.id ?? courseData.Id);
                 const openBatches = Array.isArray(batchData) ? batchData : [];
+
                 setAllBatches(openBatches);
                 setBatches(
                     openBatches.filter((batch) => {
@@ -183,7 +201,7 @@ export default function TrainingCourseDetails() {
                         const status = String(
                             batch.status ?? batch.Status ?? "Open"
                         ).toLowerCase();
-                        return Number(packageId) === Number(id) && status === "open";
+                        return Number(packageId) === courseId && status === "open";
                     })
                 );
             } catch (err) {
@@ -195,7 +213,8 @@ export default function TrainingCourseDetails() {
                     );
                 }
             } finally {
-                if (isMounted) setLoading(false);
+                // Keep the skeleton showing while the redirect reloads the page
+                if (isMounted && !redirected) setLoading(false);
             }
         };
 
@@ -203,7 +222,7 @@ export default function TrainingCourseDetails() {
         return () => {
             isMounted = false;
         };
-    }, [id]);
+    }, [slug, navigate]);
 
     /* ---------- Load all courses ---------- */
     useEffect(() => {
@@ -231,7 +250,7 @@ export default function TrainingCourseDetails() {
         return () => {
             isMounted = false;
         };
-    }, [id]);
+    }, [slug]);
 
     /* ---------- Next batch date for any course ---------- */
     const getNextBatchLabel = (courseId) => {
@@ -252,50 +271,54 @@ export default function TrainingCourseDetails() {
     };
 
     /* ---------- Current course first, then the rest ---------- */
+    const currentCourseId = course ? Number(course.id ?? course.Id) : null;
+
     const orderedCourses = useMemo(() => {
-        const rest = allCourses.filter((c) => Number(c.id ?? c.Id) !== Number(id));
+        const rest = allCourses.filter(
+            (c) => Number(c.id ?? c.Id) !== currentCourseId
+        );
         return course ? [course, ...rest] : rest;
-    }, [allCourses, course, id]);
+    }, [allCourses, course, currentCourseId]);
 
     const handleEnroll = (c) => setEnrollCourse(c);
 
     const enrollmentBatches = useMemo(() => {
-    if (!enrollCourse) return [];
+        if (!enrollCourse) return [];
 
-    const selectedTrainingId = Number(
-        enrollCourse.id ?? enrollCourse.Id
-    );
-
-    return allBatches.filter((batch) => {
-        const packageId =
-            batch.trainingPackageId ?? batch.TrainingPackageId;
-
-        const status = String(
-            batch.status ?? batch.Status ?? ""
-        ).toLowerCase();
-
-        return (
-            Number(packageId) === selectedTrainingId &&
-            status === "open"
+        const selectedTrainingId = Number(
+            enrollCourse.id ?? enrollCourse.Id
         );
-    });
-}, [enrollCourse, allBatches]);
+
+        return allBatches.filter((batch) => {
+            const packageId =
+                batch.trainingPackageId ?? batch.TrainingPackageId;
+
+            const status = String(
+                batch.status ?? batch.Status ?? ""
+            ).toLowerCase();
+
+            return (
+                Number(packageId) === selectedTrainingId &&
+                status === "open"
+            );
+        });
+    }, [enrollCourse, allBatches]);
 
     const handleEnrollSubmit = (formData) =>
-    enrollInTraining({
-        trainingId: Number(enrollCourse?.id ?? enrollCourse?.Id),
+        enrollInTraining({
+            trainingId: Number(enrollCourse?.id ?? enrollCourse?.Id),
 
-        trainingBatchId: Number(formData.trainingBatchId),
+            trainingBatchId: Number(formData.trainingBatchId),
 
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
 
-        whatsApp: formData.whatsApp?.trim() || null,
-        city: formData.city?.trim() || null,
+            whatsApp: formData.whatsApp?.trim() || null,
+            city: formData.city?.trim() || null,
 
-        experienceLevel: formData.experienceLevel
-    });
+            experienceLevel: formData.experienceLevel,
+        });
 
     const showContent = !loading && !error && course;
 
@@ -323,10 +346,29 @@ export default function TrainingCourseDetails() {
                 </nav>
 
                 {loading && (
-                    <section className="training-details-state" role="status" aria-live="polite">
-                        <span className="training-details-spinner" />
-                        <h2>Loading course details...</h2>
-                        <p>Please wait while we load the course and its schedules.</p>
+                    <section className="training-details-skeleton" role="status" aria-label="Loading course details">
+                        <div className="training-details-skeleton-heading" aria-hidden="true">
+                            <i />
+                            <i />
+                        </div>
+                        <div className="course-grid" aria-hidden="true">
+                            {[0, 1].map((item) => (
+                                <article className="course-card training-details-course-skeleton" key={item}>
+                                    <div className="course-card__image training-detail-skeleton-block" />
+                                    <div className="course-card__body">
+                                        <i className="training-detail-skeleton-block title" />
+                                        <i className="training-detail-skeleton-block pill" />
+                                        <i className="training-detail-skeleton-block line" />
+                                        <i className="training-detail-skeleton-block line" />
+                                        <i className="training-detail-skeleton-block line short" />
+                                        <div className="training-detail-skeleton-facts">
+                                            {[0, 1, 2].map((fact) => <i className="training-detail-skeleton-block" key={fact} />)}
+                                        </div>
+                                        <i className="training-detail-skeleton-block enroll" />
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
                     </section>
                 )}
 
@@ -356,7 +398,7 @@ export default function TrainingCourseDetails() {
                         {/* Section heading */}
                         <div className="training-details-section-heading training-packages-heading">
                             <div>
-                                
+
                                 <h2>Our Training Packages</h2>
                                 {/* <p>Choose the program that fits your goals and enroll today.</p> */}
                             </div>
@@ -557,14 +599,14 @@ export default function TrainingCourseDetails() {
             )}
 
             {enrollCourse && (
-    <TrainingEnrollModal
-        courseName={enrollCourse.name ?? enrollCourse.Name}
-        trainingId={enrollCourse.id ?? enrollCourse.Id}
-        batches={enrollmentBatches}
-        onClose={() => setEnrollCourse(null)}
-        onSubmit={handleEnrollSubmit}
-    />
-)}
+                <TrainingEnrollModal
+                    courseName={enrollCourse.name ?? enrollCourse.Name}
+                    trainingId={enrollCourse.id ?? enrollCourse.Id}
+                    batches={enrollmentBatches}
+                    onClose={() => setEnrollCourse(null)}
+                    onSubmit={handleEnrollSubmit}
+                />
+            )}
         </div>
     );
 }

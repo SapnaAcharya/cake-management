@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
     ChevronRight,
@@ -18,7 +18,10 @@ import {
     ShieldCheck,
     CakeSlice,
 } from "lucide-react";
-
+import CakeDetailsSkeleton, {
+    RelatedCakesSkeleton,
+} from "../components/CakeDetailsSkeleton";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
 import Navbar from "../components/Navbar";
 import cakeService from "../services/cakeService";
 import cartService from "../services/cartService";
@@ -50,13 +53,35 @@ const LOVE_POINTS = [
     },
 ];
 
+// --------------------------------------------------
+// Route wrapper
+// Using the slug as a key remounts the page whenever
+// the cake changes (e.g. clicking a related cake), so
+// every piece of state resets and the skeleton shows
+// cleanly instead of flashing the previous cake.
+// --------------------------------------------------
+
+function CakeDetailsRoute() {
+    const { slug } = useParams();
+    return <CakeDetails key={slug} />;
+}
+
 function CakeDetails() {
     const { slug } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [cake, setCake] = useState(location.state?.cake ?? null);
-    const [loading, setLoading] = useState(!location.state?.cake);
+    // Preview passed through router state. Only trusted when it
+    // actually belongs to the slug in the URL.
+    const stateCake = location.state?.cake;
+    const preview =
+        stateCake &&
+        (stateCake.slug === slug || String(stateCake.id) === slug)
+            ? stateCake
+            : null;
+
+    const [cake, setCake] = useState(preview);
+    const [loading, setLoading] = useState(!preview);
     const [error, setError] = useState("");
 
     const [quantity, setQuantity] = useState(1);
@@ -64,12 +89,17 @@ function CakeDetails() {
     const [adding, setAdding] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const [toast, setToast] = useState(null);
+    const toastTimer = useRef(null);
 
     const [activeImage, setActiveImage] = useState(0);
     const [related, setRelated] = useState([]);
+    const [relatedLoading, setRelatedLoading] = useState(true);
 
     // --------------------------------------------------
     // Load cake details using its slug
+    // Shows the preview from router state instantly when
+    // available, otherwise the skeleton stays visible.
+    // State resets are handled by the remount (see wrapper).
     // --------------------------------------------------
 
     useEffect(() => {
@@ -77,21 +107,14 @@ function CakeDetails() {
 
         const loadCake = async () => {
             try {
-                setLoading(true);
-                setError("");
-
                 const data = await cakeService.getCakeBySlug(slug);
 
                 if (!cancelled) {
                     setCake(data);
-                    setActiveImage(0);
-                    setQuantity(1);
-                    setExpanded(false);
                 }
             } catch (err) {
-                if (!cancelled) {
+                if (!cancelled && !preview) {
                     setError(err.message || "Failed to load this cake.");
-                    setCake(null);
                 }
             } finally {
                 if (!cancelled) {
@@ -106,6 +129,7 @@ function CakeDetails() {
         return () => {
             cancelled = true;
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [slug]);
 
     // --------------------------------------------------
@@ -119,6 +143,8 @@ function CakeDetails() {
 
         const loadRelatedCakes = async () => {
             try {
+                setRelatedLoading(true);
+
                 const response = await cakeService.getCakes();
 
                 const list = Array.isArray(response)
@@ -146,6 +172,10 @@ function CakeDetails() {
                 }
             } catch (err) {
                 console.error("Failed to load related cakes:", err);
+            } finally {
+                if (!cancelled) {
+                    setRelatedLoading(false);
+                }
             }
         };
 
@@ -194,6 +224,11 @@ function CakeDetails() {
         };
     }, []);
 
+    // Clear any pending toast timer when leaving the page
+    useEffect(() => {
+        return () => clearTimeout(toastTimer.current);
+    }, []);
+
     // --------------------------------------------------
     // Toast notification
     // --------------------------------------------------
@@ -201,7 +236,8 @@ function CakeDetails() {
     const showToast = (message, type = "success") => {
         setToast({ message, type });
 
-        setTimeout(() => {
+        clearTimeout(toastTimer.current);
+        toastTimer.current = setTimeout(() => {
             setToast(null);
         }, 2500);
     };
@@ -262,12 +298,9 @@ function CakeDetails() {
     const handleCustomize = () => {
         if (!cake) return;
 
-        navigate(
-            `/design-by-template/${cake.slug ?? slug}`,
-            {
-                state: { cake },
-            }
-        );
+        navigate(`/design-by-template/${cake.slug ?? slug}`, {
+            state: { cake },
+        });
     };
 
     // --------------------------------------------------
@@ -282,9 +315,7 @@ function CakeDetails() {
 
         const extraImages = (cake.images ?? [])
             .map((item) =>
-                typeof item === "string"
-                    ? item
-                    : item?.imageUrl
+                typeof item === "string" ? item : item?.imageUrl
             )
             .filter(Boolean);
 
@@ -293,9 +324,7 @@ function CakeDetails() {
             : [cake.imageUrl].filter(Boolean);
     }, [cake]);
 
-    const rating = Number(
-        cake?.rating ?? cake?.averageRating ?? 0
-    );
+    const rating = Number(cake?.rating ?? cake?.averageRating ?? 0);
 
     const reviewCount = Number(
         cake?.reviewCount ?? cake?.reviewsCount ?? 0
@@ -321,9 +350,7 @@ function CakeDetails() {
               cake.isEggless !== undefined && {
                   icon: Egg,
                   label: "Type",
-                  value: cake.isEggless
-                      ? "Eggless"
-                      : "Contains egg",
+                  value: cake.isEggless ? "Eggless" : "Contains egg",
               },
           ].filter(Boolean)
         : [];
@@ -350,25 +377,18 @@ function CakeDetails() {
             <Navbar cartCount={cartCount} />
 
             {toast && (
-                <div
-                    className={`toast toast-${toast.type}`}
-                    role="status"
-                >
+                <div className={`toast toast-${toast.type}`} role="status">
                     {toast.message}
                 </div>
             )}
 
             <main className="cake-details-content">
                 {loading ? (
-                    <div className="cake-details-state">
-                        Loading cake...
-                    </div>
+                    <CakeDetailsSkeleton />
                 ) : error && !cake ? (
                     <div className="cake-details-state cake-details-state-error">
                         {error}
-                        <Link to="/cakes">
-                            Back to all cakes
-                        </Link>
+                        <Link to="/cakes">Back to all cakes</Link>
                     </div>
                 ) : cake ? (
                     <>
@@ -383,21 +403,22 @@ function CakeDetails() {
                             <Link to="/cakes">Cakes</Link>
                             <ChevronRight size={14} />
 
-                            <span aria-current="page">
-                                {cake.name}
-                            </span>
+                            <span aria-current="page">{cake.name}</span>
                         </nav>
 
                         {/* Image and cake overview */}
                         <div className="cake-details-layout">
-
                             {/* Image gallery */}
                             <div className="cake-details-gallery">
                                 <div className="cake-details-media">
-                                    <img
-                                        src={getImageUrl(
+                                    <ImageWithSkeleton
+                                        key={
                                             images[activeImage] ??
                                             cake.imageUrl
+                                        }
+                                        src={getImageUrl(
+                                            images[activeImage] ??
+                                                cake.imageUrl
                                         )}
                                         crossOrigin="anonymous"
                                         alt={cake.name}
@@ -420,7 +441,7 @@ function CakeDetails() {
                                                 }
                                                 aria-label={`Show image ${index + 1}`}
                                             >
-                                                <img
+                                                <ImageWithSkeleton
                                                     src={getImageUrl(img)}
                                                     crossOrigin="anonymous"
                                                     alt=""
@@ -433,7 +454,6 @@ function CakeDetails() {
 
                             {/* Cake information */}
                             <div className="cake-details-info">
-
                                 {cake.categoryName && (
                                     <span className="cake-details-category">
                                         {cake.categoryName}
@@ -453,7 +473,8 @@ function CakeDetails() {
                                                 key={number}
                                                 size={16}
                                                 className={
-                                                    number <= Math.round(rating)
+                                                    number <=
+                                                    Math.round(rating)
                                                         ? "filled"
                                                         : ""
                                                 }
@@ -464,9 +485,7 @@ function CakeDetails() {
                                     <span className="reviews">
                                         {reviewCount > 0
                                             ? `${rating.toFixed(1)} · ${reviewCount} review${
-                                                  reviewCount === 1
-                                                      ? ""
-                                                      : "s"
+                                                  reviewCount === 1 ? "" : "s"
                                               }`
                                             : "No reviews yet"}
                                     </span>
@@ -474,8 +493,7 @@ function CakeDetails() {
 
                                 {/* Price */}
                                 <div className="cake-details-price">
-                                    NPR{" "}
-                                    {Number(cake.price).toLocaleString()}
+                                    NPR {Number(cake.price).toLocaleString()}
                                 </div>
 
                                 {/* Description */}
@@ -572,8 +590,8 @@ function CakeDetails() {
                                             <strong>Same-Day Delivery</strong>
                                             <p>
                                                 Available for selected
-                                                locations when ordered
-                                                before 12 PM.
+                                                locations when ordered before
+                                                12 PM.
                                             </p>
                                         </div>
                                     </div>
@@ -595,7 +613,6 @@ function CakeDetails() {
 
                                 {/* Quantity and add to cart */}
                                 <div className="cake-details-actions">
-
                                     <div
                                         className="cake-details-qty"
                                         aria-label="Quantity"
@@ -604,10 +621,7 @@ function CakeDetails() {
                                             type="button"
                                             onClick={() =>
                                                 setQuantity((current) =>
-                                                    Math.max(
-                                                        1,
-                                                        current - 1
-                                                    )
+                                                    Math.max(1, current - 1)
                                                 )
                                             }
                                             disabled={quantity === 1}
@@ -622,10 +636,7 @@ function CakeDetails() {
                                             type="button"
                                             onClick={() =>
                                                 setQuantity((current) =>
-                                                    Math.min(
-                                                        20,
-                                                        current + 1
-                                                    )
+                                                    Math.min(20, current + 1)
                                                 )
                                             }
                                             aria-label="Increase quantity"
@@ -659,7 +670,6 @@ function CakeDetails() {
                                 >
                                     Customize Cake
                                 </button>
-
                             </div>
                         </div>
 
@@ -706,44 +716,52 @@ function CakeDetails() {
                         </section>
 
                         {/* Related cakes */}
-                        {related.length > 0 && (
+                        {(relatedLoading || related.length > 0) && (
                             <section className="cake-section">
                                 <h2>Related Cakes</h2>
 
-                                <div className="cake-related-grid">
-                                    {related.map((item) => (
-                                        <Link
-                                            to={`/cakes/${item.slug ?? item.id}`}
-                                            state={{ cake: item }}
-                                            className="cake-related-card"
-                                            key={item.id}
-                                        >
-                                            <div className="cake-related-img">
-                                                {item.imageUrl ? (
-                                                    <img
-                                                        src={getImageUrl(
-                                                            item.imageUrl
-                                                        )}
-                                                        crossOrigin="anonymous"
-                                                        alt={item.name}
-                                                    />
-                                                ) : (
-                                                    <CakeSlice size={32} />
-                                                )}
-                                            </div>
+                                <div
+                                    className="cake-related-grid"
+                                    role={relatedLoading ? "status" : undefined}
+                                    aria-label={relatedLoading ? "Loading related cakes" : undefined}
+                                >
+                                    {relatedLoading ? (
+                                        <RelatedCakesSkeleton />
+                                    ) : (
+                                        related.map((item) => (
+                                            <Link
+                                                to={`/cakes/${item.slug ?? item.id}`}
+                                                state={{ cake: item }}
+                                                className="cake-related-card"
+                                                key={item.id}
+                                            >
+                                                <div className="cake-related-img">
+                                                    {item.imageUrl ? (
+                                                        <ImageWithSkeleton
+                                                            src={getImageUrl(
+                                                                item.imageUrl
+                                                            )}
+                                                            crossOrigin="anonymous"
+                                                            alt={item.name}
+                                                        />
+                                                    ) : (
+                                                        <CakeSlice size={32} />
+                                                    )}
+                                                </div>
 
-                                            <div className="cake-related-body">
-                                                <h4>{item.name}</h4>
+                                                <div className="cake-related-body">
+                                                    <h4>{item.name}</h4>
 
-                                                <span>
-                                                    NPR{" "}
-                                                    {Number(
-                                                        item.price
-                                                    ).toLocaleString()}
-                                                </span>
-                                            </div>
-                                        </Link>
-                                    ))}
+                                                    <span>
+                                                        NPR{" "}
+                                                        {Number(
+                                                            item.price
+                                                        ).toLocaleString()}
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                        ))
+                                    )}
                                 </div>
                             </section>
                         )}
@@ -759,4 +777,4 @@ function CakeDetails() {
     );
 }
 
-export default CakeDetails;
+export default CakeDetailsRoute;

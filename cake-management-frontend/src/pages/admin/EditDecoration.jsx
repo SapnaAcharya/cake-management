@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminLayout from "../../layouts/AdminLayout";
+import { AdminFormSkeleton } from "../../components/AdminTableSkeleton";
 import decorationService from "../../services/admindecorationService";
 import { getImageUrl } from "../../utils/imageUrl";
 import "../../styles/AddCake.css";
@@ -304,13 +305,11 @@ function EditDecoration(){
 
         title="Edit Decoration"
 
-        subtitle="Loading decoration details..."
-
         >
 
         <div className="add-cake-card">
 
-        Loading...
+        <AdminFormSkeleton />
 
         </div>
 

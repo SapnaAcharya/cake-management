@@ -307,6 +307,22 @@
   display: none;
 }
 
+.admin-nav-heading {
+    cursor: default;
+}
+
+.admin-subnav-item span {
+    white-space: nowrap;
+}
+
+.admin-nav-heading {
+    cursor: default;
+}
+
+.admin-subnav-item span {
+    white-space: nowrap;
+}
+
 @media (max-width: 640px) {
   .admin-hamburger {
     display: block;

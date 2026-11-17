@@ -12,9 +12,17 @@ const getActiveById = async (id) => {
     return response.data;
 };
 
+const getActiveBySlug = async (slug) => {
+    const response = await api.get(
+        `${TRAINING_PACKAGES_URL}/by-slug/${encodeURIComponent(slug)}`
+    );
+    return response.data;
+};
+
 const trainingPackageService = {
     getAllActive,
     getActiveById,
+    getActiveBySlug,
 };
 
 export default trainingPackageService;

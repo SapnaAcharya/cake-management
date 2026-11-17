@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminLayout from "../../layouts/AdminLayout";
+import { AdminFormSkeleton } from "../../components/AdminTableSkeleton";
 import cakeService from "../../services/cakeService";
 import { getCategories } from "../../services/categoryService";
 import { getImageUrl } from "../../utils/imageUrl";
@@ -119,8 +120,8 @@ function EditCake() {
 
   if (initialLoading) {
     return (
-      <AdminLayout title="Edit Cake" subtitle="Loading cake details...">
-        <div className="add-cake-card">Loading...</div>
+      <AdminLayout title="Edit Cake">
+        <div className="add-cake-card"><AdminFormSkeleton /></div>
       </AdminLayout>
     );
   }

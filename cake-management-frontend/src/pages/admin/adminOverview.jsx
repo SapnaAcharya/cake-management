@@ -10,6 +10,7 @@ import {
     CheckCircle
 } from "lucide-react";
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton from "../../components/AdminTableSkeleton";
 import { getAllOrders } from "../../services/adminorderService";
 import { getAllUsers } from "../../services/adminuserService";
 import "../../styles/AdminOverview.css";
@@ -114,7 +115,7 @@ function AdminOverview() {
                     </div>
                     <div>
                         <p>Total Revenue</p>
-                        <h2>{loading ? "—" : formatCurrency(totalRevenue)}</h2>
+                        <h2>{loading ? <span className="overview-stat-skeleton" /> : formatCurrency(totalRevenue)}</h2>
                     </div>
                 </div>
 
@@ -127,7 +128,7 @@ function AdminOverview() {
                     </div>
                     <div>
                         <p>Total Orders</p>
-                        <h2>{loading ? "—" : totalOrders}</h2>
+                        <h2>{loading ? <span className="overview-stat-skeleton" /> : totalOrders}</h2>
                     </div>
                 </div>
 
@@ -137,7 +138,7 @@ function AdminOverview() {
                     </div>
                     <div>
                         <p>Pending Orders</p>
-                        <h2>{loading ? "—" : pendingOrders}</h2>
+                        <h2>{loading ? <span className="overview-stat-skeleton" /> : pendingOrders}</h2>
                     </div>
                 </div>
 
@@ -150,7 +151,7 @@ function AdminOverview() {
                     </div>
                     <div>
                         <p>Total Users</p>
-                        <h2>{loading ? "—" : totalUsers}</h2>
+                        <h2>{loading ? <span className="overview-stat-skeleton" /> : totalUsers}</h2>
                     </div>
                 </div>
 
@@ -214,7 +215,7 @@ function AdminOverview() {
                 </div>
 
                 {loading ? (
-                    <div className="overview-loading">Loading recent orders...</div>
+                    <AdminTableSkeleton columns={5} rows={4} />
                 ) : recentOrders.length === 0 ? (
                     <div className="overview-empty">
                         <CheckCircle size={32} />

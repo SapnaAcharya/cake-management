@@ -11,6 +11,7 @@ import {
     X
 } from "lucide-react";
 import AdminLayout from "../../layouts/AdminLayout";
+import AdminTableSkeleton from "../../components/AdminTableSkeleton";
 import {
     getAllUsers,
     updateUser,
@@ -297,9 +298,7 @@ function ManageUsers() {
                 </div>
 
                 {loading ? (
-                    <div className="users-loading">
-                        Loading users...
-                    </div>
+                    <AdminTableSkeleton columns={6} />
                 ) : filteredUsers.length === 0 ? (
                     <div className="users-empty">
                         <Users size={40} />
