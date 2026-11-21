@@ -1,0 +1,229 @@
+
+/* MODAL OVERLAY */
+
+.contact-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(30, 22, 18, 0.55);
+    overflow-y: auto;
+}
+
+/* MODAL */
+
+.contact-message-modal {
+    width: 100%;
+    max-width: 720px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.18);
+}
+
+/* HEADER */
+
+.contact-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 23px 25px;
+    border-bottom: 1px solid #eee6df;
+}
+
+.contact-modal-header h2 {
+    margin: 0 0 6px;
+    color: #34251e;
+    font-size: 20px;
+}
+
+.contact-modal-header p {
+    margin: 0;
+    color: #888;
+    font-size: 13px;
+}
+
+.contact-modal-close {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 7px;
+    background: #f7f2ee;
+    color: #654a3a;
+    cursor: pointer;
+}
+
+.contact-modal-close:hover {
+    background: #eee2d9;
+}
+
+/* BODY */
+
+.contact-modal-body {
+    padding: 24px 25px;
+}
+
+.contact-modal-section {
+    margin-bottom: 25px;
+}
+
+.contact-modal-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 15px;
+    color: #65432f;
+    font-size: 15px;
+}
+
+/* INFORMATION GRID */
+
+.contact-modal-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.contact-modal-info-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid #eee6df;
+    border-radius: 9px;
+    background: #fdfbf9;
+}
+
+.contact-modal-info-box span,
+.contact-full-message span {
+    color: #888;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.contact-modal-info-box strong {
+    color: #392b23;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.contact-modal-info-box a {
+    color: #946044;
+    text-decoration: none;
+}
+
+.contact-modal-info-box a:hover {
+    text-decoration: underline;
+}
+
+/* FULL MESSAGE */
+
+.contact-full-message {
+    margin-top: 14px;
+    padding: 16px;
+    border: 1px solid #eee6df;
+    border-radius: 9px;
+    background: #fdfbf9;
+}
+
+.contact-full-message p {
+    margin: 10px 0 0;
+    color: #51443c;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* STATUS SELECT */
+
+.contact-modal-info-box select {
+    width: fit-content;
+    max-width: 100%;
+}
+
+/* FOOTER ACTIONS */
+
+.contact-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #eee6df;
+}
+
+.contact-reply-btn,
+.contact-modal-done-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.contact-reply-btn {
+    border: 1px solid #8e5a3b;
+    background: #8e5a3b;
+    color: #fff;
+}
+
+.contact-reply-btn:hover {
+    background: #74452e;
+}
+
+.contact-modal-done-btn {
+    border: 1px solid #e7ded7;
+    background: #fff;
+    color: #654a3a;
+}
+
+.contact-modal-done-btn:hover {
+    background: #f8f2ed;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+    .contact-modal-overlay {
+        padding: 10px;
+    }
+
+    .contact-message-modal {
+        max-height: 95vh;
+    }
+
+    .contact-modal-header,
+    .contact-modal-body {
+        padding: 18px;
+    }
+
+    .contact-modal-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-modal-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .contact-reply-btn,
+    .contact-modal-done-btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
