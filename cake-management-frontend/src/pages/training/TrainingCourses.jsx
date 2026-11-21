@@ -578,13 +578,6 @@ export default function TrainingCourses() {
                                                 </span>
 
                                                 <h3>
-                                                    {/* Stretched link: the whole card is clickable */}
-                                                    {/* <Link
-                                                        to={`/training/${course.id}`}
-                                                        className="training-course-link"
-                                                    >
-                                                        {course.name}
-                                                    </Link> */}
                                                     <Link
     to={`/training/${course.slug || course.id}`}
     className="training-course-link"
@@ -629,7 +622,7 @@ export default function TrainingCourses() {
                                         WHY CHOOSE SWEETCAKES?
                                     </span>
 
-                                    <h3>Learn. Create. Grow.</h3>
+                                    <h3>Learn Create Grow</h3>
 
                                     <p>
                                         Practical training for every skill
@@ -677,39 +670,6 @@ export default function TrainingCourses() {
                             </aside>
                         </>
                     )}
-                </section>
-
-                {/* Bottom benefits strip */}
-                <section
-                    className="training-benefits"
-                    aria-label="Benefits of SweetCakes training"
-                >
-                    <div className="training-benefit-item">
-                       <Sparkles size={16} aria-hidden="true" />
-
-                        <div>
-                            <h3>Expert Learning</h3>
-                            <p>Build practical baking and decorating skills.</p>
-                        </div>
-                    </div>
-
-                    <div className="training-benefit-item">
-                       <Heart size={16} aria-hidden="true" />
-
-                        <div>
-                            <h3>Learn Your Way</h3>
-                            <p>Find courses suited to your experience.</p>
-                        </div>
-                    </div>
-
-                    <div className="training-benefit-item">
-                        <span aria-hidden="true">↗</span>
-
-                        <div>
-                            <h3>Grow Your Skills</h3>
-                            <p>Take the next step in your baking journey.</p>
-                        </div>
-                    </div>
                 </section>
             </main>
         </div>
