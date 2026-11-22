@@ -98,7 +98,7 @@
    Desktop: text left, photo right.
    Tablet/phone (max-width 960px): photo on top, text below.
    ------------------------------------------------------------------------ */
-/* .cu-page .cu-hero {
+.cu-page .cu-hero {
   position: relative;
   overflow: hidden;
   background: var(--color-hero-bg);
@@ -133,7 +133,8 @@
   max-width: 480px;
 }
 
-
+/* small sentence-case line above the heading.
+   To remove it, delete the <span className="cu-eyebrow"> in Contact.jsx. */
 .cu-page .cu-eyebrow {
   margin-bottom: 10px;
   color: var(--color-accent);
@@ -160,46 +161,6 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 28px;
-} */
-
-/* ---------- Hero ----------
-   Compact, text-only. The heading's left edge lines up with the
-   left edge of the cards below (both use --content-gutter). */
-.cu-page .cu-hero {
-  background: var(--color-hero-bg);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.cu-page .cu-hero-inner {
-  padding: 44px var(--content-gutter) 48px;
-}
-
-.cu-page .cu-hero-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  max-width: 560px;
-}
-
-.cu-page .cu-hero h1 {
-  font-size: clamp(32px, 3.4vw, 44px);
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-}
-
-.cu-page .cu-hero p {
-  max-width: 460px;
-  margin: 10px 0 0;
-  color: var(--color-ink-muted);
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.cu-page .cu-hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 24px;
 }
 
 /* pill buttons, same height, hero only */
@@ -570,7 +531,6 @@
   .cu-page .cu-col { padding: var(--space-3) var(--space-2); }
   .cu-page .cu-form-row { grid-template-columns: 1fr; }
   .cu-page .cu-hero-actions .cu-btn { flex: 1 1 100%; }
-  .cu-page .cu-hero-inner { padding: 32px var(--content-gutter) 36px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
