@@ -16,7 +16,6 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -156,6 +155,12 @@ builder.Services.AddScoped<TrainingEnrollmentService>();
 
 // Add contact service to the container
 builder.Services.AddHttpClient<IContactEmailService, ContactEmailService>();
+
+// Add contact service to the container
+builder.Services.AddScoped<IContactMessageService, ContactMessageService>();
+
+// Add contact service to the container
+builder.Services.AddScoped<IContactService, ContactService>();
 
 // Add cart services to the container
 builder.Services.AddScoped<ICartService, CartService>();

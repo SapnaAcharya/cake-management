@@ -54,6 +54,13 @@ namespace CakeManagementAPI.Data
         // email verification for enrollment
         public DbSet<EmailVerificationCode> EmailVerificationCodes => Set<EmailVerificationCode>();
        // public DbSet<TrainingSession> TrainingSessions { get; set; }
+
+        public DbSet<ContactSettings> ContactSettings { get; set; }
+
+        public DbSet<ContactFaq> ContactFaqs { get; set; }
+
+        public DbSet<ContactMessage> ContactMessages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
