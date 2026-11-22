@@ -1,24 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Pacifico&display=swap");
 
-/* ==========================================================
-   CakeCustomizationPage.css
-   Layout: header / (left tools | canvas | right panels) / bottom bar
-   Every class used in CakeCustomizationPage.jsx and DecorationPanel.jsx
-   is styled here. This file replaces cake-decoration.css and
-   cake-customizer-layout.css: do not import those alongside it.
-
-   What changed in this version
-   1. Decoration catalog: real grid of thumbnails (was unbounded images)
-   2. Canvas: no CSS border on .canvas-container (it clipped the canvas
-      by 2px), and the stage can no longer cut off the left edge
-   3. Layers: title stays visible, long lists scroll inside the panel
-   4. Small feedback details: press states, delete hover, 100dvh
-   ========================================================== */
-
-
-/* ----------------------------------------------------------
+/* 
    Design tokens
----------------------------------------------------------- */
+ */
 
 .cake-customization-page {
     /* Brand */

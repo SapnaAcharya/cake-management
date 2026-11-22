@@ -218,7 +218,7 @@ const Contact = () => {
                 {/* HERO: text on the page background (left), photo fading in
                     from the right. No overlay, so nothing covers the faces.
                     Layout and fade are done in CSS (.cu-hero, .cu-hero-image). */}
-                <section className="cu-hero">
+                {/* <section className="cu-hero">
                     <div className="cu-hero-inner">
                         <div className="cu-hero-text">
                             <span className="cu-eyebrow">Contact us</span>
@@ -256,7 +256,43 @@ const Contact = () => {
                             e.currentTarget.style.display = "none";
                         }}
                     />
-                </section>
+                </section> */}
+
+                <section className="cu-hero">
+    <div className="cu-hero-inner">
+        <div className="cu-hero-text">
+            <h1>{settings?.heroTitle || "Get in Touch"}</h1>
+            <p>
+                {settings?.heroText ||
+                    "We are here to help you with your cake orders."}
+            </p>
+
+            <div className="cu-hero-actions">
+                <a
+                    className="cu-btn cu-btn-primary"
+                    href="#contact-form"
+                    onClick={scrollToForm}
+                >
+                    Send a Message
+                </a>
+
+                {phoneHref ? (
+                    <a className="cu-btn cu-btn-outline" href={phoneHref}>
+                        Call Us
+                    </a>
+                ) : (
+                    <a
+                        className="cu-btn cu-btn-outline"
+                        href="#contact-details"
+                        onClick={scrollToDetails}
+                    >
+                        Call Us
+                    </a>
+                )}
+            </div>
+        </div>
+    </div>
+</section>
 
                 <div className="cu-container">
                     {pageError && (

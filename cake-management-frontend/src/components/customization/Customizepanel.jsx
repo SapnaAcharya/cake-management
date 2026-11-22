@@ -13,8 +13,6 @@ import { getImageUrl } from "../../utils/imageUrl";
 // how many fonts are visible before the "More fonts" link
 const FONT_PREVIEW_COUNT = 6;
 
-/* ---- Small building blocks ---------------------------------------------- */
-
 /* Collapsible section: the header always shows the current choice (summary),
    so the customer sees everything at a glance without scrolling. */
 function Section({ id, icon: Icon, title, summary, defaultOpen = false, children }) {
@@ -70,7 +68,7 @@ function Chip({ on, dot, image, children, ...rest }) {
   );
 }
 
-/* ---- Panel --------------------------------------------------------------- */
+/*  Panel  */
 
 export default function CustomizePanel({
   template, cfg, onChange, price, added, onAddToCart, addingToCart,

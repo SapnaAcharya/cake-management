@@ -53,7 +53,8 @@ import AddTrainingBatch from "./pages/admin/AddTrainingBatch";
 import EditTrainingBatch from "./pages/admin/EditTrainingBatch";
 import TrainingCourseDetails from "./pages/training/TrainingCourseDetails";
 import ManageTrainingEnrollments from "./pages/admin/ManageTrainingEnrollments";
-//import OrderDetailsPage from "./pages/OrderDetailsPage";
+import ManageContactMessages from "./pages/admin/contact/ManageContactMessage";
+import ContactSettings from "./pages/admin/contact/ContactSettings";
 
 // Pages that should not show the footer
 const NO_FOOTER_PREFIXES = [
@@ -131,6 +132,8 @@ function AppContent() {
           <Route path="/admin/training-batches/add" element={<AddTrainingBatch />} />
           <Route path="/admin/training-batches/:id/edit" element={<EditTrainingBatch />} />
           <Route path="/admin/training-enrollments" element={<ManageTrainingEnrollments />} />
+          <Route path="/admin/contact-messages" element={<ManageContactMessages />} />
+          <Route path="/admin/contact-settings" element={<ContactSettings />} />
         {/* </Route> */}
       </Routes>
 

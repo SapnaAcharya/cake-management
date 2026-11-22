@@ -17,6 +17,8 @@ import {
   BookOpen,
   CalendarDays,
   ClipboardCheck,
+  Mail,
+  Settings,
 } from "lucide-react";
 import useProfilePhoto from "../hooks/useProfilePhoto";
 import "../styles/AdminLayout.css";
@@ -29,6 +31,8 @@ const navItems = [
   { label: "Categories", to: "/admin/categories", icon: Tags },
   { label: "Orders", to: "/admin/orders", icon: ShoppingBag },
   { label: "Users", to: "/admin/users", icon: Users },
+  { label: "Contact Messages", to: "/admin/contact-messages", icon: Mail },
+  { label: "Contact Settings", to: "/admin/contact-settings", icon: Settings },
 ];
 
 const trainingNavItems = [
