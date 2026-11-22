@@ -1,0 +1,620 @@
+
+/* PAGE ACTIONS */
+
+.contact-messages-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.contact-messages-refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 17px;
+    border: 1px solid #dedede;
+    border-radius: 8px;
+    background: #fff;
+    color: #444;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.contact-messages-refresh-btn:hover {
+    background: #f8f5f5;
+}
+
+.contact-messages-refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* STATISTICS */
+
+.contact-message-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.contact-message-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 21px;
+    background: #fff;
+    border: 1px solid #e9e9e9;
+    border-radius: 12px;
+}
+
+.contact-message-stat-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #f5eeee;
+    color: #a85e69;
+    flex-shrink: 0;
+}
+
+.contact-message-stat-icon.pending-icon {
+    background: #fff5e6;
+    color: #bd8129;
+}
+
+.contact-message-stat-icon.read-icon {
+    background: #eaf2ff;
+    color: #3973b9;
+}
+
+.contact-message-stat-icon.replied-icon {
+    background: #eaf7ef;
+    color: #328453;
+}
+
+.contact-message-stat-card p {
+    margin: 0 0 6px;
+    color: #777;
+    font-size: 13px;
+}
+
+.contact-message-stat-card h2 {
+    margin: 0;
+    color: #292929;
+    font-size: 24px;
+}
+
+/* MESSAGE CARD */
+
+.contact-messages-card {
+    background: #fff;
+    border: 1px solid #e9e9e9;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.contact-messages-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 22px;
+    border-bottom: 1px solid #eee;
+}
+
+.contact-messages-card-header h2 {
+    margin: 0 0 6px;
+    color: #292929;
+    font-size: 19px;
+}
+
+.contact-messages-card-header p {
+    margin: 0;
+    color: #888;
+    font-size: 13px;
+}
+
+/* SEARCH AND FILTER */
+
+.contact-message-filters {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.contact-message-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 250px;
+    padding: 0 12px;
+    border: 1px solid #dedede;
+    border-radius: 8px;
+    color: #888;
+}
+
+.contact-message-search input {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 0;
+    border: none;
+    outline: none;
+    font-size: 13px;
+}
+
+.contact-message-status-filter {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.contact-message-status-filter label {
+    color: #666;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.contact-message-status-filter select {
+    padding: 10px 12px;
+    border: 1px solid #dedede;
+    border-radius: 8px;
+    background: #fff;
+    color: #444;
+    font-size: 13px;
+    outline: none;
+}
+
+/* TABLE */
+
+.contact-messages-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.contact-messages-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.contact-messages-table th {
+    padding: 15px 17px;
+    background: #faf9f9;
+    color: #666;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.contact-messages-table td {
+    padding: 16px 17px;
+    border-top: 1px solid #eee;
+    color: #555;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.contact-messages-table tbody tr:hover {
+    background: #fdfbfb;
+}
+
+.contact-customer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.contact-customer-info strong {
+    color: #333;
+    font-size: 13px;
+}
+
+.contact-customer-info span {
+    color: #888;
+    font-size: 12px;
+}
+
+.contact-message-subject {
+    color: #444;
+    font-weight: 600;
+}
+
+/* STATUS */
+
+.contact-message-status {
+    min-width: 105px;
+    padding: 7px 10px;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+}
+
+.contact-message-status.pending {
+    background: #fff5e6;
+    border-color: #f2dfbd;
+    color: #a66d1c;
+}
+
+.contact-message-status.read {
+    background: #eaf2ff;
+    border-color: #d4e3fb;
+    color: #346da9;
+}
+
+.contact-message-status.replied {
+    background: #eaf7ef;
+    border-color: #cdebd8;
+    color: #287448;
+}
+
+.contact-message-status:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ROW ACTIONS */
+
+.contact-message-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contact-message-view-btn,
+.contact-message-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 11px;
+    border: none;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.contact-message-view-btn {
+    background: #f5eeee;
+    color: #9d5661;
+}
+
+.contact-message-view-btn:hover {
+    background: #eadbde;
+}
+
+.contact-message-delete-btn {
+    width: 34px;
+    height: 34px;
+    background: #fff0ee;
+    color: #c0392b;
+}
+
+.contact-message-delete-btn:hover {
+    background: #fbdedb;
+}
+
+.contact-message-delete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* EMPTY AND LOADING */
+
+.contact-messages-empty,
+.contact-messages-loading {
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 25px;
+    color: #999;
+    text-align: center;
+}
+
+.contact-messages-empty h3 {
+    margin: 5px 0 0;
+    color: #444;
+    font-size: 17px;
+}
+
+.contact-messages-empty p,
+.contact-messages-loading p {
+    margin: 0;
+    font-size: 13px;
+}
+
+/* SUCCESS AND ERROR */
+
+.contact-messages-success,
+.contact-messages-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 13px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.contact-messages-success {
+    background: #edf8f0;
+    color: #247447;
+}
+
+.contact-messages-error {
+    background: #fff0ee;
+    color: #b42318;
+}
+
+/* MODAL */
+
+.contact-message-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.48);
+}
+
+.contact-message-modal {
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.18);
+}
+
+.contact-message-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    padding-bottom: 19px;
+    border-bottom: 1px solid #eee;
+}
+
+.contact-message-modal-header h2 {
+    margin: 0 0 6px;
+    color: #292929;
+    font-size: 21px;
+}
+
+.contact-message-modal-header p {
+    margin: 0;
+    color: #888;
+    font-size: 13px;
+}
+
+.contact-message-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 7px;
+    background: #f4f4f4;
+    color: #555;
+    cursor: pointer;
+}
+
+.contact-message-modal-close:hover {
+    background: #eee;
+}
+
+/* MESSAGE DETAILS */
+
+.contact-message-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+    padding: 22px 0;
+}
+
+.contact-message-detail-box {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.contact-message-detail-box span {
+    color: #888;
+    font-size: 12px;
+}
+
+.contact-message-detail-box strong,
+.contact-message-detail-box a {
+    color: #333;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.contact-message-detail-box a {
+    color: #a85e69;
+    text-decoration: none;
+}
+
+.contact-message-detail-status {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 20px;
+}
+
+.contact-message-detail-status label {
+    color: #555;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* MESSAGE BODY */
+
+.contact-message-body {
+    padding: 18px;
+    background: #faf8f8;
+    border: 1px solid #eee;
+    border-radius: 9px;
+}
+
+.contact-message-body h3 {
+    margin: 0 0 12px;
+    color: #444;
+    font-size: 15px;
+}
+
+.contact-message-body p {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.contact-message-updated {
+    margin: 13px 0 0;
+    color: #999;
+    font-size: 12px;
+    text-align: right;
+}
+
+/* MODAL ACTIONS */
+
+.contact-message-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.contact-message-reply-btn,
+.contact-message-modal-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.contact-message-reply-btn {
+    background: #a85e69;
+    color: #fff;
+}
+
+.contact-message-reply-btn:hover {
+    background: #914b56;
+}
+
+.contact-message-modal-delete-btn {
+    background: #fff0ee;
+    color: #c0392b;
+}
+
+.contact-message-modal-delete-btn:hover {
+    background: #fbdedb;
+}
+
+.contact-message-modal-delete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.contact-message-details-loading {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #888;
+}
+
+/* SPINNER */
+
+.refresh-spinning {
+    animation: contact-message-spin 1s linear infinite;
+}
+
+@keyframes contact-message-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+    .contact-message-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contact-messages-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .contact-message-filters {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 650px) {
+    .contact-message-stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-message-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .contact-message-search {
+        min-width: 0;
+    }
+
+    .contact-message-status-filter {
+        justify-content: space-between;
+    }
+
+    .contact-message-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-message-modal {
+        padding: 18px;
+    }
+
+    .contact-message-modal-actions {
+        flex-direction: column;
+    }
+
+    .contact-message-reply-btn,
+    .contact-message-modal-delete-btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

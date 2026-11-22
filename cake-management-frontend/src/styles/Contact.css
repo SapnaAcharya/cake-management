@@ -1,92 +1,583 @@
-.contact-page {
+/* ==========================================================================
+   Contact page
+   Layout: hero (text on the page background, photo fading in from the right),
+   then two equal panels (details | form), then two equal panels (FAQ | map).
+   Flat styling: hairline borders, no shadows, no icon tiles, one spacing
+   scale. Colours and fonts match Home.css and the Training page.
+   ========================================================================== */
+
+.cu-page {
+  --color-bg: #faf6f3;
+  --color-surface: #ffffff;
+  --color-ink: #251320;
+  --color-ink-muted: #6f5d66;
+  --color-accent: #9a2c5d;
+  --color-accent-dark: #74204a;
+  --color-border: #e6dadf;
+  --color-hero-bg: #f6ebee;
+
+  /* hero text gutter: stays aligned with the navbar logo */
+  --page-gutter: clamp(16px, 4vw, 64px);
+
+  /* smaller outer gap for the four content panels
+     (Contact details, Send us a message, Common questions, Find us). */
+  --content-gutter: clamp(12px, 1.5vw, 24px);
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 48px;
+  --space-6: 64px;
+
+  --radius: 10px;
+  --btn-radius: 8px;
+
   min-height: 100vh;
-  background-color: #fffaf7;
+  padding-bottom: var(--space-6);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: 'Work Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
 }
 
-.contact-content {
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 60px 24px 80px;
+.cu-page *,
+.cu-page *::before,
+.cu-page *::after { box-sizing: border-box; }
+
+.cu-page h1,
+.cu-page h2 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-.contact-content h1 {
-  font-size: 2.2rem;
-  color: #4a2c2a;
-  margin-bottom: 8px;
+.cu-loading {
+  padding: 80px 16px;
+  color: #6f5d66;
   text-align: center;
 }
 
-.contact-content > p {
-  text-align: center;
-  color: #6b5a56;
-  margin-bottom: 32px;
+/* ---------- Buttons ---------- */
+.cu-page .cu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  padding: 0 24px;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--btn-radius);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-.contact-success {
-  background-color: #e6f7ec;
-  color: #256b3b;
-  border: 1px solid #b5e5c6;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 24px;
-  font-size: 0.95rem;
-  text-align: center;
+.cu-page .cu-btn-primary { background: var(--color-accent); color: #fff; }
+.cu-page .cu-btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-dark);
+  border-color: var(--color-accent-dark);
 }
 
-.contact-form {
+.cu-page .cu-btn-outline { background: var(--color-surface); color: var(--color-accent); }
+.cu-page .cu-btn-outline:hover { background: var(--color-accent); color: #fff; }
+
+.cu-page .cu-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.cu-page .cu-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ---------- Hero ----------
+   Text sits on the page background (left). The photo is anchored to the
+   right and its left edge fades into the background with a mask, so there
+   is no dark overlay and nothing covers the faces.
+   Desktop: text left, photo right.
+   Tablet/phone (max-width 960px): photo on top, text below.
+   ------------------------------------------------------------------------ */
+/* .cu-page .cu-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-hero-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cu-page .cu-hero-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 62%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 30%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 38%);
+          mask-image: linear-gradient(90deg, transparent 0%, #000 38%);
+}
+
+.cu-page .cu-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-height: clamp(360px, 32vw, 440px);
+  padding: 48px var(--page-gutter);
+}
+
+.cu-page .cu-hero-text {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  background-color: #ffffff;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  align-items: flex-start;
+  max-width: 480px;
 }
 
-.contact-form label {
-  font-size: 0.9rem;
+
+.cu-page .cu-eyebrow {
+  margin-bottom: 10px;
+  color: var(--color-accent);
+  font-size: 15px;
   font-weight: 600;
-  color: #4a2c2a;
-  margin-top: 14px;
 }
 
-.contact-form input,
-.contact-form textarea {
-  padding: 10px 12px;
-  border: 1px solid #e2d6d3;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-family: inherit;
-  color: #4a2c2a;
-  outline: none;
-  resize: vertical;
-  transition: border-color 0.2s ease;
+.cu-page .cu-hero h1 {
+  font-size: clamp(34px, 3.4vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
 }
 
-.contact-form input:focus,
-.contact-form textarea:focus {
-  border-color: #d1477a;
+.cu-page .cu-hero p {
+  max-width: 400px;
+  margin: 16px 0 0;
+  color: var(--color-ink-muted);
+  font-size: 17px;
+  line-height: 1.6;
 }
 
-.contact-submit-btn {
+.cu-page .cu-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+} */
+
+/* ---------- Hero ----------
+   Compact, text-only. The heading's left edge lines up with the
+   left edge of the cards below (both use --content-gutter). */
+.cu-page .cu-hero {
+  background: var(--color-hero-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cu-page .cu-hero-inner {
+  padding: 44px var(--content-gutter) 48px;
+}
+
+.cu-page .cu-hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 560px;
+}
+
+.cu-page .cu-hero h1 {
+  font-size: clamp(32px, 3.4vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+.cu-page .cu-hero p {
+  max-width: 460px;
+  margin: 10px 0 0;
+  color: var(--color-ink-muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.cu-page .cu-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-top: 24px;
-  padding: 12px 20px;
-  background-color: #d1477a;
-  color: #ffffff;
-  border: none;
+}
+
+/* pill buttons, same height, hero only */
+.cu-page .cu-hero .cu-btn {
+  height: 48px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font-size: 16px;
+}
+
+.cu-page .cu-hero .cu-btn-outline { background: transparent; }
+.cu-page .cu-hero .cu-btn-outline:hover { background: var(--color-accent); color: #fff; }
+
+/* ---------- Layout ---------- */
+
+/* full width, with only a small gap at the far left and right.
+   The gap between the two panels in each row is set by the grid gap. */
+.cu-page .cu-container {
+  width: 100%;
+  max-width: none;
+  padding: 0 var(--content-gutter);
+}
+
+.cu-page .cu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3); /* the gap in the middle between the two panels */
+  align-items: stretch;
+}
+
+.cu-page .cu-top { padding-top: var(--space-5); }
+.cu-page .cu-bottom { margin-top: var(--space-3); }
+.cu-page .cu-bottom.cu-bottom-single { grid-template-columns: 1fr; }
+
+/* every section is the same panel */
+.cu-page .cu-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.cu-page .cu-col h2 {
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+.cu-page .cu-sub {
+  margin: 6px 0 var(--space-3);
+  color: var(--color-ink-muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.cu-page .cu-muted { color: var(--color-ink-muted); font-size: 14px; }
+
+/* ---------- Contact details ---------- */
+.cu-page .cu-info-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.cu-page .cu-info-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: 18px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cu-page .cu-info-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+
+/* plain icon, no tile */
+.cu-page .cu-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 24px;
+  margin-top: 2px;
+  background: none;
+  color: var(--color-accent);
+}
+
+.cu-page .cu-info-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cu-page .cu-label {
+  color: var(--color-ink-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cu-page .cu-value {
+  color: var(--color-ink);
+  font-family: 'Work Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.cu-page a.cu-value:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cu-page .cu-info-list small {
+  color: var(--color-ink-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.cu-page .cu-socials { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+
+.cu-page .cu-socials a {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cu-page .cu-socials a:hover { color: var(--color-accent-dark); }
+.cu-page .cu-socials a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+/* ---------- Form ---------- */
+/* keeps the panel headings clear of the navbar when a hero button scrolls here */
+.cu-page .cu-form-panel,
+.cu-page .cu-info { scroll-margin-top: 96px; }
+
+.cu-page .cu-form { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.cu-page .cu-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.cu-page .cu-field { position: relative; display: flex; flex-direction: column; min-width: 0; }
+
+.cu-page .cu-field label {
+  margin-bottom: 6px;
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cu-page .cu-field label span { color: var(--color-ink-muted); font-weight: 400; }
+
+.cu-page .cu-field input,
+.cu-page .cu-field select,
+.cu-page .cu-field textarea {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #d6c8ce;
   border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 16px; /* avoids iPhone zoom-on-focus */
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cu-page .cu-field select {
+  padding-right: 36px;
+  appearance: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f5d66' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
 }
 
-.contact-submit-btn:hover {
-  background-color: #b8385f;
+.cu-page .cu-field textarea {
+  min-height: 130px;
+  padding-bottom: 28px;
+  resize: vertical;
+  line-height: 1.55;
 }
 
-@media (max-width: 600px) {
-  .contact-form {
-    padding: 24px 20px;
+.cu-page .cu-field input:hover,
+.cu-page .cu-field select:hover,
+.cu-page .cu-field textarea:hover { border-color: #bfaeb5; }
+
+.cu-page .cu-field input:focus,
+.cu-page .cu-field select:focus,
+.cu-page .cu-field textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(154, 44, 93, 0.12);
+}
+
+.cu-page .cu-field input:user-invalid,
+.cu-page .cu-field textarea:user-invalid,
+.cu-page .cu-field select:user-invalid { border-color: #b3261e; }
+
+.cu-page .cu-counter {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  color: var(--color-ink-muted);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.cu-page .cu-submit { width: 100%; margin-top: 4px; }
+
+/* ---------- Alerts ---------- */
+.cu-page .cu-alert {
+  margin: 0 0 var(--space-2);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.cu-page .cu-container > .cu-alert { margin-top: var(--space-3); }
+
+.cu-page .cu-alert-success { background: #eef8f1; color: #1d6b3f; border: 1px solid #c6e6d3; }
+.cu-page .cu-alert-error   { background: #fdf3f2; color: #b42318; border: 1px solid #f3cdca; }
+
+/* ---------- FAQ ---------- */
+.cu-page .cu-faq-list { border-top: 1px solid var(--color-border); }
+
+.cu-page .cu-faq-item { border-bottom: 1px solid var(--color-border); }
+
+.cu-page .cu-faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 14px 0;
+  list-style: none;
+  color: var(--color-ink);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.cu-page .cu-faq-item summary::-webkit-details-marker { display: none; }
+
+.cu-page .cu-faq-item summary::after {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--color-ink-muted);
+  border-bottom: 1.5px solid var(--color-ink-muted);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.cu-page .cu-faq-item[open] summary::after { transform: rotate(225deg) translateY(-2px); }
+.cu-page .cu-faq-item summary:hover { color: var(--color-accent); }
+.cu-page .cu-faq-item summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+.cu-page .cu-faq-item p {
+  margin: 0;
+  padding: 0 32px 16px 0;
+  color: var(--color-ink-muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.cu-page .cu-faq-help {
+  margin: var(--space-3) 0 0;
+  color: var(--color-ink-muted);
+  font-size: 15px;
+}
+
+.cu-page .cu-faq-help a {
+  color: var(--color-accent);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+.cu-page .cu-faq-help a:hover { color: var(--color-accent-dark); }
+
+/* ---------- Map ---------- */
+.cu-page .cu-map-col { min-width: 0; }
+
+.cu-page .cu-map {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 320px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+/* !important only in case ContactLocationMap sets an inline height */
+.cu-page .cu-map > :not(.cu-directions) { flex: 1; height: 100% !important; min-height: 320px; }
+.cu-page .cu-map .leaflet-container { width: 100%; height: 100% !important; min-height: 320px; }
+
+/* sits above Leaflet panes (400) and controls (1000) */
+.cu-page .cu-directions {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 1100;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.cu-page .cu-directions:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.cu-page .cu-directions:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+/* ---------- Responsive ---------- */
+
+/* tablets and phones: photo on top, text below */
+@media (max-width: 960px) {
+  .cu-page .cu-grid { grid-template-columns: 1fr; }
+  .cu-page .cu-top { padding-top: var(--space-4); }
+
+  .cu-page .cu-hero {
+    display: flex;
+    flex-direction: column-reverse;
   }
+
+  .cu-page .cu-hero-image {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    object-position: 50% 30%;
+    -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+  }
+
+  .cu-page .cu-hero-inner {
+    min-height: 0;
+    padding: 8px var(--page-gutter) 32px;
+  }
+}
+
+@media (max-width: 560px) {
+  .cu-page .cu-col { padding: var(--space-3) var(--space-2); }
+  .cu-page .cu-form-row { grid-template-columns: 1fr; }
+  .cu-page .cu-hero-actions .cu-btn { flex: 1 1 100%; }
+  .cu-page .cu-hero-inner { padding: 32px var(--content-gutter) 36px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cu-page .cu-btn,
+  .cu-page .cu-directions,
+  .cu-page .cu-field input,
+  .cu-page .cu-field select,
+  .cu-page .cu-field textarea,
+  .cu-page .cu-faq-item summary::after { transition: none; }
 }

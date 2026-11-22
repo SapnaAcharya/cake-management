@@ -1,0 +1,307 @@
+.contact-settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.contact-settings-card {
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.contact-settings-card-header {
+    margin-bottom: 22px;
+}
+
+.contact-settings-card-header h2 {
+    font-size: 19px;
+    font-weight: 600;
+    color: #292929;
+    margin: 0 0 7px;
+}
+
+.contact-settings-card-header p {
+    color: #777;
+    font-size: 14px;
+    margin: 0;
+}
+
+.contact-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.contact-settings-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contact-settings-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.contact-settings-field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+}
+
+.contact-settings-field input,
+.contact-settings-field textarea,
+.contact-subject-add input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid #dedede;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.contact-settings-field input:focus,
+.contact-settings-field textarea:focus,
+.contact-subject-add input:focus {
+    border-color: #b76e79;
+}
+
+.contact-settings-field textarea {
+    resize: vertical;
+}
+
+.contact-settings-map-note {
+    margin-top: 18px;
+    padding: 12px;
+    background: #fff8f5;
+    border-radius: 7px;
+    color: #76504b;
+    font-size: 13px;
+}
+
+.contact-subject-add {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.contact-subject-add-btn,
+.contact-settings-save-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 18px;
+    background: #a85e69;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.contact-subject-add-btn:hover,
+.contact-settings-save-btn:hover {
+    background: #914b56;
+}
+
+.contact-subject-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.contact-subject-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f7f3f3;
+    padding: 9px 12px;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+.contact-subject-item button {
+    display: flex;
+    align-items: center;
+    border: none;
+    background: transparent;
+    color: #c0392b;
+    cursor: pointer;
+}
+
+.contact-subject-empty {
+    color: #888;
+    font-size: 14px;
+}
+
+.contact-settings-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.contact-settings-save-btn {
+    min-width: 160px;
+    padding: 13px 22px;
+}
+
+.contact-settings-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.contact-settings-save-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 24px;
+}
+
+.contact-settings-success,
+.contact-settings-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.contact-settings-success {
+    color: #247447;
+    background: #edf8f0;
+}
+
+.contact-settings-error {
+    color: #b42318;
+    background: #fff0ee;
+}
+
+.contact-settings-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 250px;
+    color: #777;
+}
+
+.refresh-spinning {
+    animation: contact-spin 1s linear infinite;
+}
+
+
+.contact-faq-admin-list {
+    margin-top: 30px;
+}
+
+.contact-faq-admin-list h3 {
+    font-size: 19px;
+    font-weight: 600;
+    color: #292929;
+    margin: 0 0 16px;
+}
+
+.contact-faq-admin-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 18px;
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+}
+
+.contact-faq-admin-item h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #292929;
+    margin: 0 0 8px;
+}
+
+.contact-faq-admin-item p {
+    font-size: 14px;
+    margin: 0 0 8px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.contact-faq-admin-item small {
+    font-size: 13px;
+    color: #888;
+}
+
+.contact-faq-admin-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.contact-faq-admin-actions button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.contact-faq-admin-actions button:hover {
+    background: #f8f1f2;
+}
+
+@media (max-width: 600px) {
+    .contact-faq-admin-item {
+        flex-direction: column;
+    }
+}
+
+
+@keyframes contact-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-settings-field.full-width {
+        grid-column: auto;
+    }
+
+    .contact-settings-card {
+        padding: 18px;
+    }
+
+    .contact-subject-add {
+        flex-direction: column;
+    }
+
+    .contact-subject-add-btn {
+        width: 100%;
+    }
+
+    .contact-settings-save-bar {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .contact-settings-save-bar .contact-settings-save-btn {
+        width: 100%;
+    }
+}
