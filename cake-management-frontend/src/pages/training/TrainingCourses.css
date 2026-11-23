@@ -1,6 +1,4 @@
-/* =========================================
-   SWEETCAKES TRAINING COURSES
-========================================= */
+/* SWEETCAKES TRAINING COURSES */
 
 .training-page {
     min-height: 100vh;
@@ -28,9 +26,7 @@
     line-height: 1.7;
 }
 
-/* =========================================
-   HERO SLIDER  (split layout)
-========================================= */
+/* HERO SLIDER  (split layout) */
 
 .training-courses-page .hero {
     position: relative;
@@ -259,7 +255,7 @@
     }
 }
 
-/* ---------- Hero: mobile (photo on top, text below) ---------- */
+/*  Hero: mobile (photo on top, text below)  */
 @media (max-width: 720px) {
     .training-courses-page .hero {
         display: block;
@@ -299,9 +295,7 @@
     }
 }
 
-/* =========================================
-   MAIN CONTENT
-========================================= */
+/* MAIN CONTENT */
 
 .training-courses-content {
     width: min(1180px, calc(100% - 48px));
@@ -347,9 +341,7 @@
     font-weight: 700;
 }
 
-/* =========================================
-   SEARCH AND FILTER TOOLBAR
-========================================= */
+/* SEARCH AND FILTER TOOLBAR */
 
 .training-course-toolbar {
     display: grid;
@@ -460,9 +452,7 @@
     clip-path: inset(50%);
 }
 
-/* =========================================
-   COURSE GRID
-========================================= */
+/* COURSE GRID */
 
 .training-courses-grid {
     display: grid;
@@ -471,9 +461,7 @@
     gap: 18px;
 }
 
-/* =========================================
-   COURSE CARD
-========================================= */
+/* COURSE CARD */
 
 .training-course-card {
     display: flex;
@@ -723,77 +711,70 @@
     font-size: 16px;
 }
 
-/* =========================================
-   WHY CHOOSE SWEETCAKES CARD
-========================================= */
-
+/*  Why Choose SweetCakes: centered  */
 .training-why-card {
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
-    min-width: 0;
-    padding: 22px 18px;
-    overflow: hidden;
-    border: 1px solid #f3dce5;
-    border-radius: 12px;
-    background: linear-gradient(145deg, #fff3f6, #fff9fa);
+    gap: 28px;
+    width: 100%;
+    max-width: 1180px;
+    margin: 32px auto 0;
+    padding: 36px 28px;
+    text-align: center;
+    grid-column: 1 / -1; /* in case it sits inside a grid */
 }
 
-.training-why-card > .training-eyebrow {
-    font-size: 10px;
-    letter-spacing: 1.2px;
+.training-why-card__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 520px;
+    margin: 0 auto;
+    text-align: center;
 }
 
-.training-why-card h3 {
-    margin: 8px 0 19px;
-    color: #392543;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 23px;
-    line-height: 1.3;
+.training-why-card__intro h3 {
+    margin: 8px 0 10px;
+}
+
+.training-why-card__intro p {
+    margin: 0;
+}
+
+.training-why-items {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
 }
 
 .training-why-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 11px;
-    margin-bottom: 17px;
-}
-
-.training-why-item:last-child {
-    margin-bottom: 0;
-}
-
-.training-why-item > span {
-    display: flex;
-    flex-shrink: 0;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
+    gap: 10px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.training-why-item svg {
+    width: 38px;
+    height: 38px;
+    padding: 10px;
     border-radius: 50%;
     background: #fbe1e9;
     color: #c02f60;
-    font-size: 18px;
 }
 
-.training-why-item h4 {
-    margin: 0 0 4px;
-    color: #49364f;
-    font-size: 12px;
-    font-weight: 750;
-    line-height: 1.5;
+@media (max-width: 720px) {
+    .training-why-items {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
 }
 
-.training-why-item p {
-    margin: 0;
-    color: #817281;
-    font-size: 11px;
-    line-height: 1.6;
-}
-
-/* =========================================
-   BENEFITS STRIP
-========================================= */
+/* BENEFITS STRIP */
 
 .training-benefits {
     display: grid;
@@ -842,9 +823,7 @@
     line-height: 1.7;
 }
 
-/* =========================================
-   LOADING, ERROR AND EMPTY STATES
-========================================= */
+/* LOADING, ERROR AND EMPTY STATES */
 
 .training-state {
     display: flex;
@@ -914,9 +893,7 @@
     }
 }
 
-/* =========================================
-   TABLET
-========================================= */
+/* TABLET */
 
 @media (max-width: 1000px) {
     .training-courses-grid {
@@ -932,9 +909,7 @@
     }
 }
 
-/* =========================================
-   SMALL TABLET
-========================================= */
+/* SMALL TABLET */
 
 @media (max-width: 720px) {
     .training-courses-content,
@@ -968,9 +943,7 @@
     }
 }
 
-/* =========================================
-   MOBILE
-========================================= */
+/* MOBILE */
 
 @media (max-width: 480px) {
     .training-courses-page .hero-text p {

@@ -72,31 +72,7 @@ namespace CakeManagementAPI.Services
 
             return ToProfileDto(user);
         }
-
-        //public async Task<string?> UploadProfileImageAsync(int userId, IFormFile file)
-        //{
-        //    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        //    if (user == null) return null;
-
-        //    var url = await _imageService.UploadAsync(file, "profile-photos");
-
-        //    user.ProfileImageUrl = url;
-        //    await _context.SaveChangesAsync();
-
-        //    return url;
-        //}
-
-        //public async Task<bool> RemoveProfileImageAsync(int userId)
-        //{
-        //    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        //    if (user == null) return false;
-
-        //    user.ProfileImageUrl = null;
-        //    await _context.SaveChangesAsync();
-
-        //    return true;
-        //}
-
+       
         public async Task<string?> UploadProfileImageAsync(int userId, IFormFile file)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
