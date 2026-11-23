@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigation, Phone, Mail, MapPin, MessageCircle, Cake } from "lucide-react";
+import { Navigation, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 
 import Navbar from "../components/Navbar";
 import ContactLocationMap from "../components/ContactLocationMap";
@@ -215,41 +215,48 @@ const Contact = () => {
             <Navbar />
 
             <main className="cu-page">
+                {/* HERO: text on the page background (left), photo fading in
+                    from the right. No overlay, so nothing covers the faces.
+                    Layout and fade are done in CSS (.cu-hero, .cu-hero-image). */}
                 <section className="cu-hero">
-    <div className="cu-hero-inner">
-        <div className="cu-hero-text">
-            <h1>{settings?.heroTitle || "Get in Touch"}</h1>
-            <p>
-                {settings?.heroText ||
-                    "We are here to help you with your cake orders."}
-            </p>
+                    <div className="cu-hero-inner">
+                        <div className="cu-hero-text">
+                            <span className="cu-eyebrow">Contact us</span>
+                            <h1>{settings?.heroTitle || "Get in Touch"}</h1>
+                            <p>
+                                {settings?.heroText ||
+                                    "Questions about an order or a custom cake? Send us a message and we will reply soon."}
+                            </p>
 
-            <div className="cu-hero-actions">
-                <a
-                    className="cu-btn cu-btn-primary"
-                    href="#contact-form"
-                    onClick={scrollToForm}
-                >
-                    Send a Message
-                </a>
+                            <div className="cu-hero-actions">
+                                <a
+                                    className="cu-btn cu-btn-primary"
+                                    href="#contact-form"
+                                    onClick={scrollToForm}
+                                >
+                                    Send a message
+                                </a>
 
-                {phoneHref ? (
-                    <a className="cu-btn cu-btn-outline" href={phoneHref}>
-                        Call Us
-                    </a>
-                ) : (
-                    <a
-                        className="cu-btn cu-btn-outline"
-                        href="#contact-details"
-                        onClick={scrollToDetails}
-                    >
-                        Call Us
-                    </a>
-                )}
-            </div>
-        </div>
-    </div>
-</section>
+                                <a
+                                    className="cu-btn cu-btn-outline"
+                                    href="#contact-details"
+                                    onClick={scrollToDetails}
+                                >
+                                    Call us
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <img
+                        className="cu-hero-image"
+                        src="/images/contact/contact_hero.png"
+                        alt="A baker discussing a cake order with a customer"
+                        onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                        }}
+                    />
+                </section>
 
                 <div className="cu-container">
                     {pageError && (
