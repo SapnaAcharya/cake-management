@@ -110,7 +110,7 @@ namespace CakeManagementAPI.Controllers
             }
         }
 
-        // DELETE: api/contact/settings/faqs/{id}
+        // DELETE: api/contact/settings/faqs/{idCon}
         // Admin only
         [HttpDelete("faqs/{id:int}")]
         [Authorize(Roles = "Admin")]

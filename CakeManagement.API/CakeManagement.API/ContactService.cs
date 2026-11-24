@@ -151,8 +151,9 @@ namespace CakeManagementAPI.Services
         }
 
         // 4. CREATE FAQ
+
         public async Task<ContactFaqDto> CreateFaqAsync(
-            CreateContactFaqDto dto)
+    CreateContactFaqDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Question))
                 throw new ArgumentException("FAQ question is required.");
@@ -160,9 +161,31 @@ namespace CakeManagementAPI.Services
             if (string.IsNullOrWhiteSpace(dto.Answer))
                 throw new ArgumentException("FAQ answer is required.");
 
+            // Normalize question for duplicate comparison
+            var normalizedQuestion = NormalizeFaqQuestion(dto.Question);
+
+            // Check all existing FAQs, including inactive ones
+            var existingQuestions = await _context.ContactFaqs
+                .Select(x => x.Question)
+                .ToListAsync();
+
+            var duplicateExists = existingQuestions.Any(x =>
+                NormalizeFaqQuestion(x) == normalizedQuestion
+            );
+
+            if (duplicateExists)
+            {
+                throw new ArgumentException(
+                    "This FAQ question already exists. Please enter a different question."
+                );
+            }
+
+            // Store clean question while preserving capitalization
+            var cleanQuestion = CleanFaqQuestion(dto.Question);
+
             var faq = new ContactFaq
             {
-                Question = dto.Question.Trim(),
+                Question = cleanQuestion,
                 Answer = dto.Answer.Trim(),
                 DisplayOrder = dto.DisplayOrder,
                 IsActive = true,
@@ -171,7 +194,6 @@ namespace CakeManagementAPI.Services
             };
 
             _context.ContactFaqs.Add(faq);
-
             await _context.SaveChangesAsync();
 
             return new ContactFaqDto
@@ -183,10 +205,11 @@ namespace CakeManagementAPI.Services
             };
         }
 
+
         // 5. UPDATE FAQ
         public async Task<ContactFaqDto?> UpdateFaqAsync(
-            int id,
-            CreateContactFaqDto dto)
+    int id,
+    CreateContactFaqDto dto)
         {
             var faq = await _context.ContactFaqs
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -200,7 +223,26 @@ namespace CakeManagementAPI.Services
             if (string.IsNullOrWhiteSpace(dto.Answer))
                 throw new ArgumentException("FAQ answer is required.");
 
-            faq.Question = dto.Question.Trim();
+            var normalizedQuestion = NormalizeFaqQuestion(dto.Question);
+
+            // Exclude the FAQ currently being edited
+            var existingQuestions = await _context.ContactFaqs
+                .Where(x => x.Id != id)
+                .Select(x => x.Question)
+                .ToListAsync();
+
+            var duplicateExists = existingQuestions.Any(x =>
+                NormalizeFaqQuestion(x) == normalizedQuestion
+            );
+
+            if (duplicateExists)
+            {
+                throw new ArgumentException(
+                    "Another FAQ with this question already exists. Please enter a different question."
+                );
+            }
+
+            faq.Question = CleanFaqQuestion(dto.Question);
             faq.Answer = dto.Answer.Trim();
             faq.DisplayOrder = dto.DisplayOrder;
             faq.UpdatedAt = DateTime.UtcNow;
@@ -217,7 +259,7 @@ namespace CakeManagementAPI.Services
         }
 
         // 6. DELETE FAQ
-      
+
         public async Task<bool> DeleteFaqAsync(int id)
         {
             var faq = await _context.ContactFaqs
@@ -231,6 +273,30 @@ namespace CakeManagementAPI.Services
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        // 7. Normalized FAQs
+        private static string NormalizeFaqQuestion(string question)
+        {
+            return string.Join(
+                " ",
+                question.Split(
+                    (char[]?)null,
+                    StringSplitOptions.RemoveEmptyEntries
+                )
+            ).ToLowerInvariant();
+        }
+
+        // Clean question before saving while preserving capitalization
+        private static string CleanFaqQuestion(string question)
+        {
+            return string.Join(
+                " ",
+                question.Split(
+                    (char[]?)null,
+                    StringSplitOptions.RemoveEmptyEntries
+                )
+            );
         }
     }
 }

@@ -6,6 +6,7 @@ import {
     XCircle,
     Plus,
     Trash2,
+    CloudSnow,
 } from "lucide-react";
 
 import AdminLayout from "../../../layouts/AdminLayout";
