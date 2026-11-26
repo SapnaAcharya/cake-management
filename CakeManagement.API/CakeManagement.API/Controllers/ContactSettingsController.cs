@@ -128,5 +128,6 @@ namespace CakeManagementAPI.Controllers
                 message = "FAQ deleted successfully."
             });
         }
+
     }
 }

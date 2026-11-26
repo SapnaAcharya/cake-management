@@ -11,10 +11,12 @@ namespace CakeManagementAPI.Services
     public class ContactMessageService : IContactMessageService
     {
         private readonly AppDbContext _context;
+        private readonly IContactEmailService _contactEmailService;
 
-        public ContactMessageService(AppDbContext context)
+        public ContactMessageService(AppDbContext context, IContactEmailService contactEmailService)
         {
             _context = context;
+            _contactEmailService = contactEmailService;
         }
 
         // Save a customer enquiry
@@ -101,6 +103,41 @@ namespace CakeManagementAPI.Services
 
             message.Status = validStatus;
             message.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        // Send an admin reply to a customer's contact enquiry
+        public async Task<bool> SendAdminReplyAsync(
+            int id,
+            string replyMessage)
+        {
+            if (string.IsNullOrWhiteSpace(replyMessage))
+            {
+                throw new ArgumentException(
+                    "Reply message cannot be empty.");
+            }
+
+            var contactMessage = await _context.ContactMessages
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (contactMessage == null)
+            {
+                return false;
+            }
+
+            // Send the admin's reply to the customer's email
+            await _contactEmailService.SendAdminReplyAsync(
+                contactMessage.Name,
+                contactMessage.Email,
+                contactMessage.Subject,
+                replyMessage.Trim());
+
+            // Update the enquiry status after sending the reply
+            contactMessage.Status = "Replied";
+            contactMessage.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 

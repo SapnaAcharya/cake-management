@@ -16,6 +16,8 @@ namespace CakeManagementAPI.Services.Interfaces
             int id,
             UpdateContactMessageStatusDto dto);
 
+        Task<bool> SendAdminReplyAsync(int id, string replyMessage);
+
         Task<bool> DeleteMessageAsync(int id);
     }
 }
