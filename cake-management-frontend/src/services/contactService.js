@@ -58,6 +58,7 @@ const sendContactMessage = async (data) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
+            signal: AbortSignal.timeout(15000),
         }
     );
 
@@ -147,6 +148,24 @@ const getContactMessageById = async (id) => {
     return handleResponse(response);
 };
 
+
+ // Send admin reply to the customer's contact message
+const sendAdminReply = async (id, replyMessage) => {
+    const response = await fetch(
+        `${API_BASE_URL}/contact/messages/${id}/reply`,
+        {
+            method: "POST",
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+                replyMessage: replyMessage,
+            }),
+        }
+    );
+
+    return handleResponse(response);
+};
+
+
 // Update contact message status
 const updateContactMessageStatus = async (id, status) => {
     const response = await fetch(
@@ -186,6 +205,7 @@ const contactService = {
 
     getAllContactMessages,
     getContactMessageById,
+    sendAdminReply,
     updateContactMessageStatus,
     deleteContactMessage,
 };

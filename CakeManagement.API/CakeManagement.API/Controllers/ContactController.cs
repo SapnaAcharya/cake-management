@@ -25,19 +25,19 @@ namespace CakeManagementAPI.Controllers
             _logger = logger;
         }
 
-        // POST: api/contact
-        // Customer submits an enquiry.
-        // Save the message and notify admin by email.
         [HttpPost]
         [EnableRateLimiting("ContactForm")]
         public async Task<IActionResult> SendMessage(
             [FromBody] ContactMessageDto dto)
         {
-            // Save the enquiry first so it is available
-            // in the admin dashboard even if email fails.
+            // Step 1: Save the customer's enquiry.
             var savedMessage =
                 await _contactMessageService.CreateMessageAsync(dto);
 
+            var adminEmailSent = false;
+            var customerEmailSent = false;
+
+            // Step 2: Send notification to the admin.
             try
             {
                 await _contactEmailService.SendContactMessageAsync(
@@ -46,40 +46,53 @@ namespace CakeManagementAPI.Controllers
                     dto.Subject.Trim(),
                     dto.Message.Trim());
 
-                return Ok(new
-                {
-                    message = "Your enquiry has been submitted successfully.",
-                    emailNotificationSent = true,
-                    id = savedMessage.Id
-                });
+                adminEmailSent = true;
+
+                _logger.LogInformation(
+                    "Admin contact notification sent for message ID: {MessageId}",
+                    savedMessage.Id);
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
                 _logger.LogError(
                     ex,
-                    "Contact email configuration is missing.");
-
-                return Ok(new
-                {
-                    message = "Your enquiry was received, but the email notification could not be sent.",
-                    emailNotificationSent = false,
-                    id = savedMessage.Id
-                });
+                    "Failed to send admin notification for message ID: {MessageId}",
+                    savedMessage.Id);
             }
-            catch (HttpRequestException ex)
+
+            // Step 3: Send confirmation to the customer.
+            try
+            {
+                await _contactEmailService.SendCustomerConfirmationAsync(
+                    dto.Name.Trim(),
+                    dto.Email.Trim(),
+                    dto.Subject.Trim());
+
+                customerEmailSent = true;
+
+                _logger.LogInformation(
+                    "Customer confirmation sent for message ID: {MessageId}",
+                    savedMessage.Id);
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(
                     ex,
-                    "Failed to send contact email.");
-
-                return Ok(new
-                {
-                    message = "Your enquiry was received, but the email notification could not be sent.",
-                    emailNotificationSent = false,
-                    id = savedMessage.Id
-                });
+                    "Failed to send customer confirmation for message ID: {MessageId}",
+                    savedMessage.Id);
             }
+
+            // Step 4: Return the result to React.
+            return Ok(new
+            {
+                message = "Your enquiry has been received successfully.",
+                id = savedMessage.Id,
+                adminEmailSent,
+                customerEmailSent
+            });
         }
+
+
 
         // GET: api/contact/messages
         // Admin: Get all customer enquiries.
@@ -111,6 +124,60 @@ namespace CakeManagementAPI.Controllers
             }
 
             return Ok(message);
+        }
+
+        // POST: api/contact/messages/{id}/reply
+        // Admin: Reply to a customer enquiry.
+        [HttpPost("messages/{id:int}/reply")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ReplyToMessage(
+            int id,
+            [FromBody] AdminReplyDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.ReplyMessage))
+            {
+                return BadRequest(new
+                {
+                    message = "Reply message cannot be empty."
+                });
+            }
+
+            try
+            {
+                var result =
+                    await _contactMessageService.SendAdminReplyAsync(
+                        id,
+                        dto.ReplyMessage.Trim());
+
+                if (!result)
+                {
+                    return NotFound(new
+                    {
+                        message = "Contact enquiry not found."
+                    });
+                }
+
+                _logger.LogInformation(
+                    "Admin reply sent for contact message ID: {MessageId}",
+                    id);
+
+                return Ok(new
+                {
+                    message = "Admin reply sent successfully to the customer."
+                });
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to send admin reply for contact message ID: {MessageId}",
+                    id);
+
+                return StatusCode(502, new
+                {
+                    message = "The reply could not be sent. Please try again."
+                });
+            }
         }
 
         // PUT: api/contact/messages/{id}/status

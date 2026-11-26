@@ -34,6 +34,10 @@ function ManageContactMessages() {
     const [updatingMessageId, setUpdatingMessageId] = useState(null);
     const [deletingMessageId, setDeletingMessageId] = useState(null);
 
+    // Admin reply state
+   const [replyMessage, setReplyMessage] = useState("");
+   const [sendingReply, setSendingReply] = useState(false);
+
     // Load all contact messages
     const loadMessages = async () => {
         try {
@@ -123,6 +127,67 @@ function ManageContactMessages() {
             setUpdatingMessageId(null);
         }
     };
+
+    // Send admin reply to customer
+const handleSendReply = async () => {
+    if (!selectedMessage) return;
+
+    const trimmedReply = replyMessage.trim();
+
+    if (!trimmedReply) {
+        setError("Please enter a reply message.");
+        return;
+    }
+
+    try {
+        setSendingReply(true);
+        setError("");
+        setSuccess("");
+
+        await contactService.sendAdminReply(
+            selectedMessage.id,
+            trimmedReply
+        );
+
+        // Update message status in the table
+        setMessages((prev) =>
+            prev.map((message) =>
+                message.id === selectedMessage.id
+                    ? {
+                        ...message,
+                        status: "Replied",
+                        updatedAt: new Date().toISOString(),
+                    }
+                    : message
+            )
+        );
+
+        // Update the open details modal
+        setSelectedMessage((prev) =>
+            prev
+                ? {
+                    ...prev,
+                    status: "Replied",
+                    updatedAt: new Date().toISOString(),
+                }
+                : prev
+        );
+
+        setReplyMessage("");
+
+        setSuccess(
+            "Reply sent successfully to the customer."
+        );
+    } catch (err) {
+        console.error(err);
+
+        setError(
+            err.message || "Failed to send reply."
+        );
+    } finally {
+        setSendingReply(false);
+    }
+};
 
     // Delete contact message
     const handleDeleteMessage = async (messageId) => {
@@ -480,6 +545,7 @@ function ManageContactMessages() {
                     onClick={() => {
                         if (!detailsLoading) {
                             setSelectedMessage(null);
+                            setReplyMessage("");
                         }
                     }}
                 >
@@ -487,6 +553,7 @@ function ManageContactMessages() {
                         className="contact-message-modal"
                         onClick={(e) => e.stopPropagation()}
                     >
+                        {/* Modal Header */}
                         <div className="contact-message-modal-header">
                             <div>
                                 <h2>Message Details</h2>
@@ -497,7 +564,10 @@ function ManageContactMessages() {
 
                             <button
                                 className="contact-message-modal-close"
-                                onClick={() => setSelectedMessage(null)}
+                                onClick={() => {
+                                    setSelectedMessage(null);
+                                    setReplyMessage("");
+                                }}
                                 disabled={detailsLoading}
                                 aria-label="Close modal"
                             >
@@ -505,6 +575,7 @@ function ManageContactMessages() {
                             </button>
                         </div>
 
+                        {/* Loading State */}
                         {detailsLoading ? (
                             <div className="contact-message-details-loading">
                                 <RefreshCw
@@ -513,122 +584,157 @@ function ManageContactMessages() {
                                 />
                                 <p>Loading message details...</p>
                             </div>
-                        ) : selectedMessage && (
-                            <>
-                                <div className="contact-message-detail-grid">
-                                    <div className="contact-message-detail-box">
-                                        <span>Customer Name</span>
-                                        <strong>
-                                            {selectedMessage.name}
-                                        </strong>
-                                    </div>
+                        ) : (
+                            selectedMessage && (
+                                <>
+                                    {/* Customer Details */}
+                                    <div className="contact-message-detail-grid">
+                                        <div className="contact-message-detail-box">
+                                            <span>Customer Name</span>
+                                            <strong>
+                                                {selectedMessage.name}
+                                            </strong>
+                                        </div>
 
-                                    <div className="contact-message-detail-box">
-                                        <span>Email Address</span>
-                                        <a
-                                            href={`mailto:${selectedMessage.email}`}
-                                        >
-                                            {selectedMessage.email}
-                                        </a>
-                                    </div>
-
-                                    <div className="contact-message-detail-box">
-                                        <span>Subject</span>
-                                        <strong>
-                                            {selectedMessage.subject}
-                                        </strong>
-                                    </div>
-
-                                    <div className="contact-message-detail-box">
-                                        <span>Received Date</span>
-                                        <strong>
-                                            {formatDate(
-                                                selectedMessage.createdAt
-                                            )}
-                                        </strong>
-                                    </div>
-                                </div>
-
-                                <div className="contact-message-detail-status">
-                                    <label htmlFor="selectedMessageStatus">
-                                        Message Status
-                                    </label>
-
-                                    <select
-                                        id="selectedMessageStatus"
-                                        className={getStatusClass(
-                                            selectedMessage.status
-                                        )}
-                                        value={selectedMessage.status}
-                                        disabled={
-                                            updatingMessageId ===
-                                            selectedMessage.id
-                                        }
-                                        onChange={(e) =>
-                                            handleStatusChange(
-                                                selectedMessage.id,
-                                                e.target.value
-                                            )
-                                        }
-                                    >
-                                        {statuses.map((status) => (
-                                            <option
-                                                key={status}
-                                                value={status}
+                                        <div className="contact-message-detail-box">
+                                            <span>Email Address</span>
+                                            <a
+                                                href={`mailto:${selectedMessage.email}`}
                                             >
-                                                {status}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                                {selectedMessage.email}
+                                            </a>
+                                        </div>
 
-                                <div className="contact-message-body">
-                                    <h3>Customer Message</h3>
+                                        <div className="contact-message-detail-box">
+                                            <span>Subject</span>
+                                            <strong>
+                                                {selectedMessage.subject}
+                                            </strong>
+                                        </div>
 
-                                    <p>{selectedMessage.message}</p>
-                                </div>
+                                        <div className="contact-message-detail-box">
+                                            <span>Received Date</span>
+                                            <strong>
+                                                {formatDate(
+                                                    selectedMessage.createdAt
+                                                )}
+                                            </strong>
+                                        </div>
+                                    </div>
 
-                                {selectedMessage.updatedAt && (
-                                    <p className="contact-message-updated">
-                                        Last updated:{" "}
-                                        {formatDate(
-                                            selectedMessage.updatedAt
-                                        )}
-                                    </p>
-                                )}
+                                    {/* Message Status */}
+                                    <div className="contact-message-detail-status">
+                                        <label htmlFor="selectedMessageStatus">
+                                            Message Status
+                                        </label>
 
-                                <div className="contact-message-modal-actions">
-                                    <a
-                                        className="contact-message-reply-btn"
-                                        href={`mailto:${selectedMessage.email}?subject=${encodeURIComponent(
-                                            `Re: ${selectedMessage.subject}`
-                                        )}`}
-                                    >
-                                        <MessageCircle size={17} />
-                                        Reply via Email
-                                    </a>
-
-                                    <button
-                                        className="contact-message-modal-delete-btn"
-                                        onClick={() =>
-                                            handleDeleteMessage(
+                                        <select
+                                            id="selectedMessageStatus"
+                                            className={getStatusClass(
+                                                selectedMessage.status
+                                            )}
+                                            value={selectedMessage.status}
+                                            disabled={
+                                                updatingMessageId ===
                                                 selectedMessage.id
-                                            )
-                                        }
-                                        disabled={
-                                            deletingMessageId ===
-                                            selectedMessage.id
-                                        }
-                                    >
-                                        <Trash2 size={17} />
-                                        Delete Message
-                                    </button>
-                                </div>
-                            </>
+                                            }
+                                            onChange={(e) =>
+                                                handleStatusChange(
+                                                    selectedMessage.id,
+                                                    e.target.value
+                                                )
+                                            }
+                                        >
+                                            {statuses.map((status) => (
+                                                <option
+                                                    key={status}
+                                                    value={status}
+                                                >
+                                                    {status}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    {/* Customer Message */}
+                                    <div className="contact-message-body">
+                                        <h3>Customer Message</h3>
+                                        <p>{selectedMessage.message}</p>
+                                    </div>
+
+                                    {/* Last Updated */}
+                                    {selectedMessage.updatedAt && (
+                                        <p className="contact-message-updated">
+                                            Last updated:{" "}
+                                            {formatDate(
+                                                selectedMessage.updatedAt
+                                            )}
+                                        </p>
+                                    )}
+
+                                    {/* Reply to Customer */}
+                                    <div className="contact-message-reply-form">
+                                        <h3>Reply to Customer</h3>
+
+                                        <p className="contact-message-reply-recipient">
+                                            To: {selectedMessage.email}
+                                        </p>
+
+                                        <textarea
+                                            value={replyMessage}
+                                            onChange={(e) =>
+                                                setReplyMessage(
+                                                    e.target.value
+                                                )
+                                            }
+                                            placeholder="Write your reply to the customer..."
+                                            rows={5}
+                                            maxLength={5000}
+                                            disabled={sendingReply}
+                                        />
+
+                                        <button
+                                            type="button"
+                                            className="contact-message-reply-btn"
+                                            onClick={handleSendReply}
+                                            disabled={
+                                                sendingReply ||
+                                                !replyMessage.trim()
+                                            }
+                                        >
+                                            <MessageCircle size={17} />
+
+                                            {sendingReply
+                                                ? "Sending..."
+                                                : "Send Reply"}
+                                        </button>
+                                    </div>
+
+                                    {/* Modal Actions */}
+                                    <div className="contact-message-modal-actions">
+                                        <button
+                                            className="contact-message-modal-delete-btn"
+                                            onClick={() =>
+                                                handleDeleteMessage(
+                                                    selectedMessage.id
+                                                )
+                                            }
+                                            disabled={
+                                                deletingMessageId ===
+                                                selectedMessage.id
+                                            }
+                                        >
+                                            <Trash2 size={17} />
+                                            Delete Message
+                                        </button>
+                                    </div>
+                                </>
+                            )
                         )}
                     </div>
                 </div>
             )}
+
         </AdminLayout>
     );
 }
